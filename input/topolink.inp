@@ -19,48 +19,189 @@ linkdir ./links
 
 compute reactive
 
+# Only consider observed links with score greater than scorecut
+
+scorecut 0.d0
+
 # Cross-links observed:
 
-experiment SDS
+experiment acidic
 
   # Possible types of cross-links and maximum distances
   #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
-  linktype   MET     all       1       N          LYS     all     all       CB        30.
-  linktype   MET     all       1       N          SER     all     all       CB        24.
-  linktype   LYS     all     all      CB          LYS     all     all       CB        34.
-  linktype   SER     all     all      CB          SER     all     all       CB        24.
-  linktype   LYS     all     all      CB          SER     all     all       CB        27.
+  linktype   GLU     all     all      CB          GLU     all     all       CB        16.9
+  linktype   GLU     all     all      CB          ASP     all     all       CB        15.6
+  linktype   ASP     all     all      CB          ASP     all     all       CB        14.3
 
-  observed LYS A   6 LYS A  113
-  observed LYS A   8 LYS A  113
-  observed SER A  71 SER A   78
-  observed LYS A 113 SER A  116
-  observed MET A   1 LYS A    8
-  observed MET A   1 LYS A  113
-  
-end experiment SDS
+  #        Residue1   Residue2   Score (optional, default = 0.)
+  observed ASP  A   3 GLU  A  20   4
+  observed ASP  A   3 ASP  A  22   4
+  observed GLU  A   4 GLU  A  20  31
+  observed GLU  A   4 ASP  A  22  31
+  observed GLU  A   4 GLU  A  32   8
+  observed GLU  A   9 GLU  A  20  14
+  observed GLU  A   9 ASP  A  22  23
+  observed GLU  A   9 GLU  A  32   6
+  observed GLU  A  13 GLU  A  20  57
+  observed GLU  A  13 ASP  A  22 154
+  observed GLU  A  13 ASP  A  24  11
+  observed GLU  A  13 GLU  A  28  32
+  observed GLU  A  13 GLU  A  32  15
+  observed GLU  A  13 GLU  A  53   3
+  observed ASP  A  22 GLU  A  28   2
+  observed ASP  A  22 GLU  A  32   3
+  observed ASP  A  22 ASP  A  43   6
+  observed ASP  A  22 GLU  A  46   8
+  observed ASP  A  22 GLU  A  62   5
+  observed ASP  A  24 GLU  A  28  13
+  observed GLU  A  28 GLU  A  37   6
+  observed GLU  A  28 ASP  A  38   7
+  observed GLU  A  28 GLU  A  62  17
+  #observed GLU  A  28 GLU  A 142   4
+  observed GLU  A  32 ASP  A  38   8
+  observed GLU  A  32 ASP  A  43   3
+  observed GLU  A  32 GLU  A  46   7
+  observed GLU  A  32 GLU  A  53   9
+  observed GLU  A  32 GLU  A  62  11
+  observed GLU  A  32 GLU  A  66  13
+  observed GLU  A  37 ASP  A  43   3
+  observed GLU  A  37 GLU  A  46  13
+  observed GLU  A  37 GLU  A  53   5
+  observed GLU  A  37 GLU  A  62  22
+  observed GLU  A  37 GLU  A  66   6
+  observed GLU  A  37 ASP  A 125   3
+  observed ASP  A  38 ASP  A  43  11
+  observed ASP  A  38 GLU  A  46  64
+  observed ASP  A  38 GLU  A  53   9
+  observed ASP  A  38 GLU  A  62  10
+  #observed ASP  A  38 ASP  A 135   3
+  #observed ASP  A  38 GLU  A 142   6
+  observed GLU  A  53 GLU  A  66   3
+  observed GLU  A  53 GLU  A  86   4
+  #observed GLU  A  53 GLU  A 142   3
+  observed GLU  A  62 GLU  A  66   1
+  observed GLU  A  62 GLU  A  86  22
+  observed GLU  A  62 ASP  A  92   7
+  observed GLU  A  62 GLU  A 111  10
+  observed GLU  A  62 ASP  A 125   3
+  #observed GLU  A  62 ASP  A 135  11
+  #observed GLU  A  62 GLU  A 142  95
+  observed GLU  A  66 ASP  A  75   4
+  observed GLU  A  66 GLU  A  86  83
+  observed GLU  A  66 ASP  A  92  15
+  #observed GLU  A  66 GLU  A 142  71
+  observed ASP  A  75 GLU  A  86  69
+  observed ASP  A  75 ASP  A  92   5
+  observed ASP  A  75 ASP  A 125   3
+  #observed GLU  A  86 GLU  A 142   6
+  #observed ASP  A  92 GLU  A 142   3
+  observed ASP  A 104 GLU  A 111   1
+  #observed ASP  A 104 GLU  A 142   3
+  observed GLU  A 111 ASP  A 115 127
+  observed GLU  A 111 ASP  A 125  17
+  #observed GLU  A 111 GLU  A 142   9
+  observed ASP  A 115 ASP  A 125   4
+  #observed ASP  A 125 GLU  A 142   5
+  #observed ASP  A 135 GLU  A 142  23
 
-experiment basic
+end experiment acidic
 
-  linktype   GLU     all     all      CB          GLU     all     all       CB        28.
-  linktype   GLU     all     all      CB          ASP     all     all       CB        27.
-  linktype   ASP     all     all      CB          ASP     all     all       CB        26. 
-
-  observed GLU A  13 GLU A   28
-
-end experiment basic
-
-experiment 0length
+experiment zerolength
 
   # Possible types of cross-links and maximum distances
   #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
-  linktype   LYS     all     all      CB          GLU     all     all       CB        17.
-  linktype   LYS     all     all      CB          ASP     all     all       CB        17.
+  linktype   ASP     all     all      CB          LYS     all     all       CB        11.4
+  linktype   GLU     all     all      CB          LYS     all     all       CB        12.7
+  linktype   GLU     all     all      CB          SER     all     all       CB         8.8
+  linktype   ASP     all     all      CB          SER     all     all       CB         7.5
 
-  observed GLU A  86 LYS A   99
-  observed GLU A 111 LYS A  113
+  observed GLU  A   4 LYS  A  17  15
+  observed GLU  A   4 SER  A  57   3
+  observed LYS  A   6 GLU  A  13   7
+  observed LYS  A   6 GLU  A  20  18
+  observed LYS  A   6 ASP  A  22   5
+  observed LYS  A   8 GLU  A  20  12
+  observed LYS  A   8 ASP  A  22  12
+  observed LYS  A   8 ASP  A  24   4
+  observed GLU  A   9 LYS  A  17  11
+  observed GLU  A  13 LYS  A  17   5
+  observed LYS  A  17 ASP  A  22   4
+  #observed LYS  A  17 GLU  A 142   9
+  observed ASP  A  22 SER  A  57   2
+  observed ASP  A  24 SER  A  57   2
+  observed GLU  A  28 SER  A  57   3
+  observed GLU  A  32 LYS  A  42   4
+  observed GLU  A  32 SER  A  57  41
+  observed GLU  A  37 SER  A  57  25
+  observed ASP  A  38 SER  A  57  11
+  observed LYS  A  42 GLU  A  62   2
+  #observed LYS  A  42 GLU  A 142  33
+  observed GLU  A  46 SER  A  57   6
+  observed GLU  A  53 SER  A  57   6
+  observed GLU  A  53 SER  A  71   1
+  observed GLU  A  53 LYS  A  99   4
+  observed SER  A  57 GLU  A  62  17
+  observed SER  A  57 ASP  A  75   6
+  observed SER  A  57 GLU  A  86   4
+  observed SER  A  57 ASP  A  92   7
+  observed SER  A  57 ASP  A 104   2
+  observed SER  A  57 ASP  A 125   3
+  #observed SER  A  57 ASP  A 135  10
+  #observed SER  A  57 GLU  A 142  32
+  #observed GLU  A  62 SER  A 131   5
+  #observed GLU  A  62 SER  A 133  10
+  #observed GLU  A  62 LYS  A 136   9
+  observed ASP  A  75 SER  A  78   4
+  observed GLU  A  86 LYS  A  99   1
+  #observed LYS  A  99 GLU  A 142  11
+  observed GLU  A 111 SER  A 116  29
+  observed SER  A 116 ASP  A 125   5
+  #observed SER  A 116 GLU  A 142  21
+  #observed SER  A 131 GLU  A 142   2
+  #observed SER  A 133 GLU  A 142   2
 
 end experiment 0length
+
+experiment ds
+
+  # Possible types of cross-links and maximum distances
+  #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
+  linktype   MET      A       1       N           LYS     all     all       CB         8.8
+  linktype   LYS     all     all      CB          LYS     all     all       CB        22.1
+  linktype   LYS     all     all      CB          SER     all     all       CB        18.2
+  linktype   SER     all     all      CB          SER     all     all       CB        14.3
+
+  observed MET  A   1 LYS  A 113   8
+  observed LYS  A   6 LYS  A   8   3
+  observed LYS  A   6 LYS  A  17  25
+  observed LYS  A   6 SER  A 116  29
+  observed LYS  A   8 LYS  A  99   4
+  observed LYS  A   8 LYS  A 113  24
+  observed LYS  A  42 SER  A  78   7
+  observed LYS  A  42 LYS  A  99   6
+  observed SER  A  71 SER  A  78  45
+  observed SER  A  71 SER  A 116   6
+  observed LYS  A 113 SER  A 116   1
+  #observed LYS  A   8 SER  A 131   8
+  #observed LYS  A  42 SER  A 131   6
+  #observed LYS  A  42 LYS  A 136   6
+  #observed LYS  A  99 SER  A 131  35
+  #observed LYS  A  99 SER  A 132 106
+  #observed LYS  A  99 SER  A 133 147
+  #observed LYS  A  99 LYS  A 136  39
+  #observed  MET  A   1 LYS  A 136  11
+  #observed LYS  A   6 LYS  A 113 153
+  #observed LYS  A   6 SER  A 132   7
+  #observed LYS  A   6 SER  A 133   5
+  #observed LYS  A   6 LYS  A 136  11
+  #observed LYS  A   8 SER  A 132   3
+  #observed LYS  A   8 SER  A 133  52
+  #observed LYS  A   8 LYS  A 136  28
+  #observed LYS  A 113 SER  A 131   8
+  #observed SER  A 131 SER  A 132  93
+  #observed SER  A 131 LYS  A 136  11
+
+end experiment ds
 
 # Optional parameters 
 

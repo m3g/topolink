@@ -28,9 +28,7 @@ BIN=../bin
 #                                                                 #
 ###################################################################
 
-all : $(BIN)/topolink
-
-DIRECTORIES = bindir
+all : bindir $(BIN)/topolink
 
 $(BIN)/topolink: Makefile \
                  functionpars.mod \
@@ -95,6 +93,9 @@ topolink_operations.mod : topolink_operations.f90 topolink_data.mod
 
 topolink_data.mod : topolink_data.f90
 	$(FORTRAN) -c topolink_data.f90 $(FLAGS)
+
+bindir : 
+	mkdir -p $(BIN)
 
 clean : 
 	rm -f ./*.o ./*.mod $(BIN)/*
