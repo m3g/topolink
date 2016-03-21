@@ -27,7 +27,8 @@ program topolink
              i1, i2, compute,  ndeadends, readatoms, nexp, iexp, ntypes, npairs, &
              nbad, ngood, nmiss_type, nmiss_obs, natreactive, nmax, nloglines, linkstatus, countwords
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
-                     kpath, likelyhood, userlikelyhood, lnf, nlnp, pgood, pbad, totscore 
+                     kpath, likelyhood, userlikelyhood, lnf, nlnp, pgood, pbad, totscore, scorecut, &
+                     readscore
   character(len=4) :: char1, char2 
   character(len=200) :: pdbfile, record, linkdir, linkfile, inputfile, keyword, keyvalue, endread, &
                         dashes, readlog
@@ -83,6 +84,7 @@ program topolink
   pgood = -1.d0
   pbad = -1.d0
   observedscores = .false.
+  scorecut = 0.d0
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -188,6 +190,9 @@ program topolink
       case ("kbond") 
         record = keyvalue(record,1)
         read(record,*) kbond
+      case ("scorecut") 
+        record = keyvalue(record,1)
+        read(record,*) scorecut
       case ("vdwrad") 
         record = keyvalue(record,1)
         read(record,*) vdwrad
@@ -267,6 +272,7 @@ program topolink
   write(*,floatout) ' Link bond force-constant: ', kbond
   write(*,floatout) ' VdW radius for volume exclusion: ', vdwrad
   write(*,floatout) ' Path energy constant: ', kpath
+  write(*,floatout) ' Cutoff for observed scores: ', scorecut
   write(*,intout) ' Number of trials for link search: ', ntrial
   write(*,intout) ' Number of repeated best links to find until quit: ', nbest
   write(*,intout) ' Maximum number of function evaluations of CGNewton: ', optpars(1)
@@ -338,7 +344,17 @@ program topolink
       cycle
     end if
 
-    if ( keyword(record) == 'observed' ) nobs = nobs + 1
+    if ( keyword(record) == 'observed' ) then
+      ! Reads only observed links with scores greater than scorecut
+      readscore = 0.d0
+      if ( countwords(record) == 8 ) then
+        observedscores = .true.
+        char1 = keyvalue(record,7)
+        read(char1,*) readscore
+      end if
+      if ( readscore < scorecut ) cycle
+      nobs = nobs + 1
+    end if
     if ( keyword(record) == 'linktype'  ) ntypes = ntypes + 1
     if ( keyword(record) == 'deadend' ) ndeadends = ndeadends + 1
 
@@ -373,6 +389,13 @@ program topolink
     end if
 
     if ( keyword(record) == 'observed' ) then 
+      readscore = 0.d0
+      if ( countwords(record) == 8 ) then
+        observedscores = .true.
+        char1 = keyvalue(record,7)
+        read(char1,*) readscore
+      end if
+      if ( readscore < scorecut ) cycle
       nobs = nobs + 1
       experiment(iexp)%observed(nobs)%residue1%name = keyvalue(record,1)
       experiment(iexp)%observed(nobs)%residue1%chain = keyvalue(record,2)
@@ -382,12 +405,7 @@ program topolink
       experiment(iexp)%observed(nobs)%residue2%chain = keyvalue(record,5)
       char1 = keyvalue(record,6)
       read(char1,*) experiment(iexp)%observed(nobs)%residue2%index
-      experiment(iexp)%observed(nobs)%score = 0.d0
-      if ( countwords(record) == 8 ) then
-        observedscores = .true.
-        char1 = keyvalue(record,7)
-        read(char1,*) experiment(iexp)%observed(nobs)%score
-      end if
+      experiment(iexp)%observed(nobs)%score = readscore
     end if                      
 
     if ( keyword(record) == 'linktype'  ) then
