@@ -55,6 +55,7 @@ $(BIN)/topolink: Makefile \
                  random.f90 \
                  stretch.f90 \
                  test_grad.f90 \
+                 title.f90 \
                  topolink.f90
 	$(FORTRAN) -o $(BIN)/topolink \
                           cgnewton.f90 \
@@ -79,6 +80,7 @@ $(BIN)/topolink: Makefile \
                           random.f90 \
                           stretch.f90 \
                           test_grad.f90 \
+                          title.f90 \
                           topolink.f90 \
                           $(FLAGS)
 

@@ -49,13 +49,11 @@ program topolink
 
   ! Print title
 
+  call title()
+
+  ! Check if the number of arguments is correct
+
   nargs = iargc()
-  write(*,*) 
-  write(*,"(a)") "  ########################################### TOPOLINK #################################################"
-  write(*,"(a)") '        L. Martinez, Institute of Chemistry - University of Campinas. http://leandro.iqm.unicamp.br'
-  write(*,*) 
-  write(*,"( t90, a )") " Version 16.079 "
-  write(*,*) 
   if ( nargs /= 1 .and. nargs /= 2 .and. nargs /= 3 ) then
     write(*,*) ' Run with: '
     write(*,*) 
