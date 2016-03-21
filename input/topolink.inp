@@ -1,0 +1,87 @@
+#
+# TOPOLINK input file example
+#
+# L. Martinez - Institute of Chemistry, University of Campinas
+# http://leandro.iqm.unicamp.br
+#
+
+# PDB file (can be provided in the command line, overwriting this definition)
+pdbfile ./cristalografica.pdb
+
+endread ENDMDL  # Use this to stop reading atoms if this keyword is found (comment otherwise)
+readatoms heavy # Which atoms to consider (all/heavy(no-H)/backbone/backplusCB)
+
+# Output directory for links (comment if you do not want the PDB files, that may be a lot)
+printlinks no
+linkdir ./links
+
+# What cross-links to compute (all/reactive/observed)
+
+compute reactive
+
+# Cross-links observed:
+
+experiment SDS
+
+  # Possible types of cross-links and maximum distances
+  #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
+  linktype   MET     all       1       N          LYS     all     all       CB        30.
+  linktype   MET     all       1       N          SER     all     all       CB        24.
+  linktype   LYS     all     all      CB          LYS     all     all       CB        34.
+  linktype   SER     all     all      CB          SER     all     all       CB        24.
+  linktype   LYS     all     all      CB          SER     all     all       CB        27.
+
+  observed LYS A   6 LYS A  113
+  observed LYS A   8 LYS A  113
+  observed SER A  71 SER A   78
+  observed LYS A 113 SER A  116
+  observed MET A   1 LYS A    8
+  observed MET A   1 LYS A  113
+  
+end experiment SDS
+
+experiment basic
+
+  linktype   GLU     all     all      CB          GLU     all     all       CB        28.
+  linktype   GLU     all     all      CB          ASP     all     all       CB        27.
+  linktype   ASP     all     all      CB          ASP     all     all       CB        26. 
+
+  observed GLU A  13 GLU A   28
+
+end experiment basic
+
+experiment 0length
+
+  # Possible types of cross-links and maximum distances
+  #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
+  linktype   LYS     all     all      CB          GLU     all     all       CB        17.
+  linktype   LYS     all     all      CB          ASP     all     all       CB        17.
+
+  observed GLU A  86 LYS A   99
+  observed GLU A 111 LYS A  113
+
+end experiment 0length
+
+# Optional parameters 
+
+pgood 0.70 # Probability of observing a link which is within link reach
+pbad  0.01 # Probability of observing a link which is NOT within linker reach
+
+vdwrad 3.         # Radius to be used for excluded atom volume computation
+print 0          # Extensive or concise printing
+printnotfound yes # Print data for pairs for which links were not found
+quitgood no      # Quit whenever a valid link is found (stop searching for shortest one)
+dbond 1.5        # Bond distance of link "atoms"
+kbond 10.        # Energy constant for link bonds
+kpath 10.        # Energy constant for the complete path distension, used for computing probability
+
+# Technical parameters for the optimization method
+
+ntrial 200  # Maximum number of trials for best link search
+nbest 5     # Number of times the same best link is found until satisfied
+maxfunc 500 # Maximum number of function evaluations of CG-Newton
+maxcg 100   # Maximum number of CG iterations
+seed random # Seed for random number generator (random or integer number)
+
+exit # You can add anything after this
+
