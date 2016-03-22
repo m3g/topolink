@@ -22,7 +22,7 @@ subroutine title()
   write(*,"(a)") "  ########################################### TOPOLINK #################################################"
   write(*,"(a)") '        L. Martinez, Institute of Chemistry - University of Campinas. http://leandro.iqm.unicamp.br'
   write(*,*) 
-  write(*,"( t90, a )") " Version 16.082 "
+  write(*,"( t90, a )") " Version 16.082.2 "
   write(*,*) 
 
 end subroutine title
