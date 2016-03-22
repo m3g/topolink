@@ -95,7 +95,7 @@ topolink_data.mod : topolink_data.f90
 	$(FORTRAN) -c topolink_data.f90 $(FLAGS)
 
 bindir : 
-	mkdir -p $(BIN)
+	@mkdir -p $(BIN)
 
 clean : 
 	rm -f ./*.o ./*.mod $(BIN)/*
