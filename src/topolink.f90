@@ -25,7 +25,7 @@ program topolink
   integer :: nargs, iargc, ioerr, i, j, k, print, ii, n, seed, ix, iy, iz, ntrial, itrial, &
              iguess, optpars(10), best_repeat, length, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
              i1, i2, compute,  ndeadends, readatoms, nexp, iexp, ntypes, npairs, &
-             nbad, ngood, nmiss_type, nmiss_obs, natreactive, nmax, nloglines, linkstatus, countwords
+             ngood, natreactive, nmax, nloglines, linkstatus, countwords
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
                      kpath, likelyhood, userlikelyhood, lnf, nlnp, pgood, pbad, totscore, scorecut, &
                      readscore
@@ -34,7 +34,7 @@ program topolink
                         dashes, readlog
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  logical :: quitgood, printlinks, printnotfound, error, r1, r2, observedscores
+  logical :: quitgood, printlinks, printnotfound, error, r1, r2, observedscores, inexp
 
   external :: computef, computeg
 
@@ -84,7 +84,7 @@ program topolink
   pgood = -1.d0
   pbad = -1.d0
   observedscores = .false.
-  scorecut = 0.d0
+  scorecut = -1.d0
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -313,6 +313,7 @@ program topolink
   ! Reading and annotating number of observed links, types of links and deadends
   ! 
 
+  inexp = .false.
   iexp = 0
   do 
     read(10,"( a200 )",iostat=ioerr) record
@@ -321,6 +322,7 @@ program topolink
     if ( length(record) < 1 .or. record(1:1) == "#" ) cycle
 
     if ( keyword(record) == 'experiment' ) then
+      inexp = .true.
       iexp = iexp + 1
       nobs = 0
       ntypes = 0
@@ -341,6 +343,7 @@ program topolink
       allocate( experiment(iexp)%observed(nobs) )
       allocate( experiment(iexp)%linktype(ntypes) )
       allocate( experiment(iexp)%deadend(ndeadends) )
+      inexp = .false.
       cycle
     end if
 
@@ -357,6 +360,15 @@ program topolink
     end if
     if ( keyword(record) == 'linktype'  ) ntypes = ntypes + 1
     if ( keyword(record) == 'deadend' ) ndeadends = ndeadends + 1
+
+    if ( .not. inexp ) then
+      if ( keyword(record) == 'observed' .or. &
+           keyword(record) == 'linktype' .or. &
+           keyword(record) == 'deadend' ) then
+        write(*,*) ' ERROR: On input: observed, linktype or deadend keyword outside experiment section. '
+        stop
+      end if
+    end if
 
     if ( keyword(record) == 'exit' ) exit
 

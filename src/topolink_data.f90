@@ -234,7 +234,6 @@ module topolink_data
 
      function print_linktype(link)
 
-       integer :: i
        type(link_type) :: link
        character(len=90) :: print_linktype
         

@@ -101,7 +101,6 @@ module topolink_operations
 
       use topolink_data
       implicit none
-      integer :: i
       type(pdbatom), intent(in) :: atom
       type(pdbresidue), intent(in) :: residue
       logical :: atom_in_residue
