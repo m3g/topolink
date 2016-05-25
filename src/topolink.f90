@@ -1397,11 +1397,11 @@ program topolink
   write(*,*)
   write(*,*) ' FINAL RESULTS: '
   write(*,*)
-  write(*,"( t3, a, i5, a )") ' RESULT0: ', ngood, ': Number of observations that are consistent with the structure.' 
+  write(*,"( t3, a, i5, a )") ' RESULT0: ', ngood, ' : Number of observations that are consistent with the structure.' 
   write(*,*)
-  write(*,"( t3, a, i5, a )") ' RESULT1: ', ngooddist, ': Number of topological distances consistent with all observations. ' 
-  write(*,"( t3, a, i5, a )") ' RESULT2: ', nbaddist, ': Number of topological distances NOT consistent with observations.  ' 
-  write(*,"( t3, a, i5, a )") ' RESULT3: ', nmisslinks, ': Number of missing links.  ' 
+  write(*,"( t3, a, i5, a )") ' RESULT1: ', ngooddist, ' : Number of topological distances consistent with all observations. ' 
+  write(*,"( t3, a, i5, a )") ' RESULT2: ', nbaddist, ' : Number of topological distances NOT consistent with observations.  ' 
+  write(*,"( t3, a, i5, a )") ' RESULT3: ', nmisslinks, ' : Number of missing links.  ' 
 
   if ( nobs > 0 ) then
     likelyhood = 1.d0
