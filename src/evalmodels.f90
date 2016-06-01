@@ -15,11 +15,11 @@ program evalmodels
   integer :: i
   integer :: nargs, nmodels, ioerr, imodel, ilink, maxlinks, nlinks
   double precision :: scoremin
-  character(len=200) :: loglist, record, record2, line
+  character(len=200) :: loglist, record, record2, record3, line
   character(len=200), allocatable :: name(:)
  
   type(resultlist), allocatable :: result(:)
-  double precision, allocatable :: score(:), order(:)
+  double precision, allocatable :: score(:), order(:), tmscore(:)
 
   type(specific_link) :: linktemp
   type(specific_link), allocatable :: link(:,:)
@@ -71,11 +71,11 @@ program evalmodels
   write(*,*) '#'
   write(*,*) '# Reading model data file ... '
   write(*,*) '#'
-  allocate(score(nmodels),result(nmodels))
+  allocate(score(nmodels),result(nmodels),tmscore(nmodels))
   allocate(name(nmodels),link(nmodels,maxlinks))
   imodel = 0
   do
-    read(10,*,iostat=ioerr) record, record2
+    read(10,*,iostat=ioerr) record, record2, record3
     if ( ioerr /= 0 ) exit
     open(20,file=record,status='old',action='read',iostat=ioerr)
     if ( ioerr /= 0 ) cycle
@@ -101,9 +101,13 @@ program evalmodels
       if ( line(4:11) == "RESULT8:") read(line(12:200),*) result(imodel)%r8
     end do
     close(20)
-    read(record2,*,iostat=ioerr) score(imodel)
+    read(record2,*,iostat=ioerr) score(imodel) 
     if ( ioerr /= 0 ) then
       write(*,*) ' ERROR: Could not read score of model: ', trim(adjustl(record))
+    end if
+    read(record3,*,iostat=ioerr) tmscore(imodel) 
+    if ( ioerr /= 0 ) then
+      write(*,*) ' ERROR: Could not read TM-score of model: ', trim(adjustl(record))
     end if
   end do
 
@@ -117,8 +121,7 @@ program evalmodels
   mflash = 1 + nmodels/10
   allocate(indflash(nmodels),lflash(nmodels),order(nmodels))
   do imodel = 1, nmodels
-    !order(imodel) = score(imodel)
-    order(imodel) = result(imodel)%r5*(exp(-1.d0*(score(imodel)-scoremin)/0.593d0))
+    order(imodel) = tmscore(imodel)
   end do
   call flash1(order,nmodels,lflash,mflash,indflash)
  
@@ -126,16 +129,8 @@ program evalmodels
 
   do imodel = 1, nmodels
     i = indflash(imodel)
-    write(*,*) score(i), result(i)%r5, order(imodel), trim(adjustl(name(i)))
+    write(*,*) score(i), result(i)%r5, tmscore(i), trim(adjustl(name(i)))
   end do
-
-    
-  
-
-
-
-  
-
 
 end program evalmodels
 
