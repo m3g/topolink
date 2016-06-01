@@ -143,58 +143,54 @@ module topolink_data
         character(len=200) :: record
         character(len=13) :: charstat
       
-        if ( record(3:7) == "LINK:" ) then
-         
-          read(record(9:12),*) read_link%atom1%residue%name
-          read(record(14:14),*) read_link%atom1%residue%chain
-          read(record(16:19),*) read_link%atom1%residue%index
-          read(record(21:24),*) read_link%atom1%name
+        read(record(9:12),*) read_link%atom1%residue%name
+        read(record(14:14),*) read_link%atom1%residue%chain
+        read(record(16:19),*) read_link%atom1%residue%index
+        read(record(21:24),*) read_link%atom1%name
         
-          read(record(26:29),*) read_link%atom2%residue%name
-          read(record(31:31),*) read_link%atom2%residue%chain
-          read(record(33:36),*) read_link%atom2%residue%index
-          read(record(38:41),*) read_link%atom2%name
+        read(record(26:29),*) read_link%atom2%residue%name
+        read(record(31:31),*) read_link%atom2%residue%chain
+        read(record(33:36),*) read_link%atom2%residue%index
+        read(record(38:41),*) read_link%atom2%name
       
-          read(record(43:50),*) read_link%euclidean
+        read(record(43:50),*) read_link%euclidean
 
-          read(record(89:101),"( a13 )") charstat
+        read(record(89:101),"( a13 )") charstat
 
-          if ( charstat == "   FOUND GOOD" ) then
-            read_link%status = 0
-            read_link%found = .true.
-            read(record(52:60),*) read_link%topodist
-          end if
-          if ( charstat == "   FOUND VIOL" ) then
-            read_link%status = 1 
-            read_link%found = .true.
-            read(record(52:60),*) read_link%topodist
-          end if
-          if ( charstat == "    EUCL VIOL" ) then
-            read_link%status = 2
-            read_link%found = .false.
-            read_link%topodist = -1.d0
-          end if
-          if ( charstat == "NOTFOUND VIOL" ) then
-            read_link%status = 3
-            read_link%found = .false.
-            read_link%topodist = -1.d0
-          end if
-          if ( charstat == "   FOUND MISS" ) then
-            read_link%status = 4
-            read_link%found = .true.
-            read(record(52:60),*) read_link%topodist
-          end if
-          if ( charstat == "    EUCL GOOD" ) then
-            read_link%status = 5
-            read_link%found = .false.
-            read_link%topodist = -1.d0
-          end if
-          if ( charstat == "NOTFOUND GOOD" ) then
-            read_link%status = 6
-            read_link%found = .false.
-            read_link%topodist = -1.d0
-          end if
-
+        if ( charstat == "   FOUND GOOD" ) then
+          read_link%status = 0
+          read_link%found = .true.
+          read(record(52:60),*) read_link%topodist
+        end if
+        if ( charstat == "   FOUND VIOL" ) then
+          read_link%status = 1 
+          read_link%found = .true.
+          read(record(52:60),*) read_link%topodist
+        end if
+        if ( charstat == "    EUCL VIOL" ) then
+          read_link%status = 2
+          read_link%found = .false.
+          read_link%topodist = -1.d0
+        end if
+        if ( charstat == "NOTFOUND VIOL" ) then
+          read_link%status = 3
+          read_link%found = .false.
+          read_link%topodist = -1.d0
+        end if
+        if ( charstat == "   FOUND MISS" ) then
+          read_link%status = 4
+          read_link%found = .true.
+          read(record(52:60),*) read_link%topodist
+        end if
+        if ( charstat == "    EUCL GOOD" ) then
+          read_link%status = 5
+          read_link%found = .false.
+          read_link%topodist = -1.d0
+        end if
+        if ( charstat == "NOTFOUND GOOD" ) then
+          read_link%status = 6
+          read_link%found = .false.
+          read_link%topodist = -1.d0
         end if
 
      end function read_link

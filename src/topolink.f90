@@ -261,6 +261,10 @@ program topolink
       write(*,*) ' ERROR: Need linkdir if printlinks is yes. '
       stop
     else 
+      i = length(linkdir)
+      if ( linkdir(i:i) /= "/" ) then
+        linkdir(i+1:i+1) = "/"
+      end if
       write(*,*) ' Directory to output links as PDB files: ', trim(adjustl(linkdir))
     end if
   end if
@@ -1035,6 +1039,8 @@ program topolink
     link(i)%status = -1
     if ( readlog /= "none" ) then
       do i1 = 1, nloglines
+        record = logline(i1)
+        if ( record(3:7) /= "LINK:" ) cycle
         linktest = read_link(logline(i1))
         if ( linktest .eq. link(i) ) then
           if ( linktest%status /= -1 ) then
