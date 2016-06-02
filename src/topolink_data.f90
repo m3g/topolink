@@ -142,6 +142,7 @@ module topolink_data
         type(specific_link) :: read_link
         character(len=200) :: record
         character(len=13) :: charstat
+        character(len=3) :: charobs
       
         read(record(9:12),*) read_link%atom1%residue%name
         read(record(14:14),*) read_link%atom1%residue%chain
@@ -154,6 +155,13 @@ module topolink_data
         read(record(38:41),*) read_link%atom2%name
       
         read(record(43:50),*) read_link%euclidean
+
+        read(record(64:66),*) charobs
+        if ( charobs == "YES" ) then
+          read_link%observed = .true.
+        else
+          read_link%observed = .false.
+        end if
 
         read(record(89:101),"( a13 )") charstat
 
@@ -194,6 +202,23 @@ module topolink_data
         end if
 
      end function read_link
+
+     ! Prints the data of a general link
+
+     function print_link(link)
+
+       type(specific_link) :: link
+       character(len=90) :: print_link
+
+       write(print_link,"(2(tr2,a4),tr2,i5,2(tr2,a4),tr2,i5)") &
+                          link%atom1%residue%name, &
+                          link%atom1%residue%chain, &
+                          link%atom1%residue%index, &
+                          link%atom2%residue%name, &
+                          link%atom2%residue%chain, &
+                          link%atom2%residue%index
+
+     end function print_link
 
      ! Prints the data of an observed link
 

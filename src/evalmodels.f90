@@ -7,27 +7,47 @@ program evalmodels
 
   implicit none
 
-  type resultlist
-    integer :: r0, r1, r2, r3
-    double precision :: r4, r5, r6, r7, r8
-  end type resultlist
+  !
+  ! Model data type
+  !
 
-  integer :: i
-  integer :: nargs, nmodels, ioerr, imodel, ilink, maxlinks, nlinks
+  type modeldata
+    ! Model log file name
+    character(len=200) :: name
+    ! Number of links in this file
+    integer :: nlinks
+    ! Score (rosetta?) read from input data file
+    double precision :: score
+    ! Similarity score (TM-score?) read from input data file
+    double precision :: tmscore
+    ! Link results for this model
+    type(specific_link), allocatable :: link(:)
+    ! Results
+    integer :: nobscons  ! RESULT0: Number of observations that are consistent with the structure.
+    integer :: ntopcons  ! RESULT1: Number of topological distances consistent with all observations.
+    integer :: ntopnot   ! RESULT2: Number of topological distances NOT consistent with observations.
+    integer :: nmiss     ! RESULT3: Number of missing links.
+    double precision :: sumscores  ! RESULT4: Sum of scores of observed links of all experiments.
+    double precision :: likely     ! RESULT5: Likelyhood of the set of experimental results.
+    double precision :: loglikely  ! RESULT6: Log-likelyhood of the set of experimental results.
+    double precision :: usrlike    ! RESULT7: Likelyhood of the set of experimental results. (with user pgood and pbad)
+    double precision :: usrloglike ! RESULT8: Log-likelyhood of the set of experimental results. (with user pgood and pbad)
+    ! Index of link in overall model links lists
+    integer, allocatable :: linkindex(:)
+  end type modeldata
+
+  integer :: i, j, ilink, ifind, imodel
+  integer :: nargs, nmodels, ioerr, maxlinks, nlinks
   double precision :: scoremin
   character(len=200) :: loglist, record, record2, record3, line
-  character(len=200), allocatable :: name(:)
- 
-  type(resultlist), allocatable :: result(:)
-  double precision, allocatable :: score(:), order(:), tmscore(:)
-
+  double precision, allocatable :: order(:)
   type(specific_link) :: linktemp
-  type(specific_link), allocatable :: link(:,:)
+  type(modeldata), allocatable :: model(:)
 
   ! Read list of log files from the command line
 
   nargs = iargc()
-  if ( nargs /= 1 ) then
+  if ( nargs /= 2 ) then
     write(*,*) ' Run with: evalmodels loglist.txt '
     stop
   end if
@@ -35,9 +55,9 @@ program evalmodels
 
   ! Checks how many log files are available
 
-  write(*,*) '#'
-  write(*,*) '# Reading input file ... '
-  write(*,*) '#'
+  write(*,"(a)") '#'
+  write(*,"(a)") '# Reading input file ... '
+  write(*,"(a)") '#'
   open(10,file=loglist,action='read',status='old',iostat=ioerr)
   if ( ioerr /= 0 ) then
     write(*,*) ' ERROR: Could not open log list file. '
@@ -62,17 +82,19 @@ program evalmodels
     close(20)
   end do
   close(20)
-  write(*,*) '# Number of topolink log files found: ', nmodels
-  write(*,*) '# Maximum number of links in a file: ', maxlinks
+  write(*,"(a,i5)") '# Number of topolink log files found: ', nmodels
+  write(*,"(a,i5)") '# Maximum number of links in a file: ', maxlinks
   rewind(10)
 
   ! Read model data
 
-  write(*,*) '#'
-  write(*,*) '# Reading model data file ... '
-  write(*,*) '#'
-  allocate(score(nmodels),result(nmodels),tmscore(nmodels))
-  allocate(name(nmodels),link(nmodels,maxlinks))
+  write(*,"(a)") '#'
+  write(*,"(a)") '# Reading model data file ... '
+  write(*,"(a)") '#'
+  allocate(model(nmodels))
+  do imodel = 1, nmodels
+    allocate(model(imodel)%link(maxlinks),model(imodel)%linkindex(maxlinks))
+  end do
   imodel = 0
   do
     read(10,*,iostat=ioerr) record, record2, record3
@@ -80,7 +102,7 @@ program evalmodels
     open(20,file=record,status='old',action='read',iostat=ioerr)
     if ( ioerr /= 0 ) cycle
     imodel = imodel + 1
-    name(imodel) = record
+    model(imodel)%name = record
     ilink = 0
     do 
       read(20,"(a200)",iostat=ioerr) line
@@ -88,48 +110,80 @@ program evalmodels
       if ( line(3:7) == "LINK:" ) then
         linktemp = read_link(line)
         ilink = ilink + 1
-        link(imodel,ilink) = linktemp
+        model(imodel)%link(ilink) = linktemp
       end if
-      if ( line(4:11) == "RESULT0:") read(line(12:200),*) result(imodel)%r0
-      if ( line(4:11) == "RESULT1:") read(line(12:200),*) result(imodel)%r1
-      if ( line(4:11) == "RESULT2:") read(line(12:200),*) result(imodel)%r2
-      if ( line(4:11) == "RESULT3:") read(line(12:200),*) result(imodel)%r3
-      if ( line(4:11) == "RESULT4:") read(line(12:200),*) result(imodel)%r4
-      if ( line(4:11) == "RESULT5:") read(line(12:200),*) result(imodel)%r5
-      if ( line(4:11) == "RESULT6:") read(line(12:200),*) result(imodel)%r6
-      if ( line(4:11) == "RESULT7:") read(line(12:200),*) result(imodel)%r7
-      if ( line(4:11) == "RESULT8:") read(line(12:200),*) result(imodel)%r8
+      if ( line(4:11) == "RESULT0:") read(line(12:200),*) model(imodel)%nobscons
+      if ( line(4:11) == "RESULT1:") read(line(12:200),*) model(imodel)%ntopcons
+      if ( line(4:11) == "RESULT2:") read(line(12:200),*) model(imodel)%ntopnot
+      if ( line(4:11) == "RESULT3:") read(line(12:200),*) model(imodel)%nmiss
+      if ( line(4:11) == "RESULT4:") read(line(12:200),*) model(imodel)%sumscores
+      if ( line(4:11) == "RESULT5:") read(line(12:200),*) model(imodel)%likely
+      if ( line(4:11) == "RESULT6:") read(line(12:200),*) model(imodel)%loglikely
+      if ( line(4:11) == "RESULT7:") read(line(12:200),*) model(imodel)%usrlike
+      if ( line(4:11) == "RESULT8:") read(line(12:200),*) model(imodel)%usrloglike
     end do
     close(20)
-    read(record2,*,iostat=ioerr) score(imodel) 
+    model(imodel)%nlinks = ilink
+    read(record2,*,iostat=ioerr) model(imodel)%score
     if ( ioerr /= 0 ) then
-      write(*,*) ' ERROR: Could not read score of model: ', trim(adjustl(record))
+      write(*,*) ' ERROR: Could not read score of model: ', trim(adjustl(model(imodel)%name))
     end if
-    read(record3,*,iostat=ioerr) tmscore(imodel) 
+    read(record3,*,iostat=ioerr) model(imodel)%tmscore
     if ( ioerr /= 0 ) then
-      write(*,*) ' ERROR: Could not read TM-score of model: ', trim(adjustl(record))
+      write(*,*) ' ERROR: Could not read TM-score of model: ', trim(adjustl(model(imodel)%name))
     end if
+  end do
+
+  ! Indexing the links
+
+  imodel = 1
+  do i = 1, model(imodel)%nlinks
+    model(imodel)%linkindex(i) = i
+  end do
+  do imodel = 2, nmodels 
+    do i = 1, model(imodel)%nlinks
+      jdo : do j = 1, model(1)%nlinks 
+        if ( model(imodel)%link(i) .eq. model(1)%link(j) ) then
+          model(imodel)%linkindex(i) = model(1)%linkindex(j)
+          exit jdo
+        end if
+      end do jdo
+    end do 
   end do
 
   ! Ordering the models in terms of score
 
   scoremin = 0.d0
   do imodel = 1, nmodels
-    scoremin = dmin1(scoremin,score(imodel))
+    scoremin = dmin1(scoremin,model(imodel)%score)
   end do
 
   mflash = 1 + nmodels/10
   allocate(indflash(nmodels),lflash(nmodels),order(nmodels))
   do imodel = 1, nmodels
-    order(imodel) = tmscore(imodel)
+    order(imodel) = model(imodel)%tmscore
   end do
   call flash1(order,nmodels,lflash,mflash,indflash)
  
   ! Write something
 
+  call getarg(2,record)
+  read(record,*) ifind
+  j = 0
+  do i = 1, model(1)%nlinks
+    if ( model(1)%link(i)%observed ) then
+      j = j + 1
+      if ( j == ifind ) then
+        write(*,"(a,a)") "# ", trim(print_link(model(1)%link(i)))
+        ilink = i
+        exit
+      end if
+    end if
+  end do
+
   do imodel = 1, nmodels
     i = indflash(imodel)
-    write(*,*) score(i), result(i)%r5, tmscore(i), trim(adjustl(name(i)))
+    write(*,*) trim(adjustl(model(i)%name)), model(i)%score, model(i)%tmscore, model(i)%link(ilink)%status
   end do
 
 end program evalmodels

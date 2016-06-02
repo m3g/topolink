@@ -13,8 +13,8 @@ endif
 ifeq "$(COMPILER)" "GNU"
    MPIFORTRAN = mpif90
    FORTRAN = gfortran
-   FLAGS = -O3 -ffast-math
-#   FLAGS = -fbounds-check -Wunused
+#   FLAGS = -O3 -ffast-math
+   FLAGS = -fbounds-check -Wunused
 #   FLAGS = -fbounds-check
 #   FLAGS = -g -pg 
 endif
