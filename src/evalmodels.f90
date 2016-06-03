@@ -174,7 +174,7 @@ program evalmodels
     if ( model(1)%link(i)%observed ) then
       j = j + 1
       if ( j == ifind ) then
-        write(*,"(a,a)") "# ", trim(print_link(model(1)%link(i)))
+        write(*,"(a,a)") "# LINK: ", trim(print_link(model(1)%link(i)))
         ilink = i
         exit
       end if
