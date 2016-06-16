@@ -13,14 +13,15 @@ endif
 ifeq "$(COMPILER)" "GNU"
    MPIFORTRAN = mpif90
    FORTRAN = gfortran
-#   FLAGS = -O3 -ffast-math
-   FLAGS = -fbounds-check -Wunused
-#   FLAGS = -fbounds-check
-#   FLAGS = -g -pg 
+   FLAGS = -O3 -ffast-math
 endif
 
 # Directory for executables
 BIN=../bin
+
+ifeq ($(MAKECMDGOALS),devel)
+  FLAGS = -Wall -fcheck=bounds
+endif
  
 ###################################################################
 #                                                                 #
@@ -29,6 +30,7 @@ BIN=../bin
 ###################################################################
 
 all : bindir $(BIN)/topolink $(BIN)/evalmodels
+devel : bindir $(BIN)/topolink $(BIN)/evalmodels
 
 $(BIN)/topolink: Makefile \
                  functionpars.mod \
