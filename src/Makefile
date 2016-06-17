@@ -47,6 +47,7 @@ $(BIN)/topolink: Makefile \
                  initcells.f90 \
                  initguess.f90 \
                  linkstatus.f90 \
+                 linkconsistency.f90 \
                  keywords.f90 \
                  lnf.f90 \
                  overlapcell.f90 \
@@ -71,6 +72,7 @@ $(BIN)/topolink: Makefile \
                  initcells.f90 \
                  initguess.f90 \
                  linkstatus.f90 \
+                 linkconsistency.f90 \
                  keywords.f90 \
                  linkedcells.f90 \
                  lnf.f90 \

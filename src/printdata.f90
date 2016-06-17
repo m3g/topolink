@@ -11,41 +11,47 @@ subroutine printdata(print,link)
   character(len=3) :: charobs
   character(len=9) :: charmax, chardist
   character(len=13) :: charresult
-  character(len=200) :: lineformat, dashes
+  character(len=200) :: dashes
+  character(len=800) :: lineformat
 
   ! Formats
 
-  dashes = "( tr2,99('-') )"
+  dashes = "( tr2,115('-') )"
 
   ! Print title
 
   if ( print == -1 ) then
     write(*,dashes) 
-    write(*,"( '        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED    DMIN      DMAX        RESULT')")
+    write(*,"( '        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED&
+               &    DMIN      DMAX        RESULT  OBSRES REACRES')")
     write(*,dashes)
     return
   end if
 
   ! Output line format for each link
-  !  ---------------------------------------------------------------------------------------------------
-  !        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED    DMIN      DMAX        RESULT
-  !  LINK: LYSX A 1000 XXCB LYSX A 1008 XXCB 0014.000 >0013.756   YES   0000.000 >0034.000 NOTFOUND GOOD
+  !  -------------------------------------------------------------------------------------------------------------------
+  !        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED    DMIN      DMAX        RESULT  OBSRES REACRES
+  !  LINK: LYSX A 1000 XXCB LYSX A 1008 XXCB 0014.000 >0013.756   YES   0000.000 >0034.000 NOTFOUND GOOD   00/00   11/11
 
-  lineformat = "( t3,'LINK:',"//&       ! LINK:
-                 &"t9,a4,"//&           ! LYS
-                 &"t14,a1,"//&          ! A
-                 &"t16,i4,"//&          ! 6
-                 &"t21,a4,"//&          ! CB
-                 &"t26,a4,"//&          ! LYS
-                 &"t31,a1,"//&          ! A
-                 &"t33,i4,"//&          ! 8
-                 &"t38,a4,"//&          ! CB
-                 &"t43,f8.3,"//&        ! 14.000 
-                 &"t52,a9,"//&          ! 13.756
-                 &"t64,a3,"//&          ! YES
-                 &"t70,f8.3,"//&        ! 0.000
-                 &"t79,a9,"//&          ! 34.000
-                 &"t89,a13 )"           ! FOUND GOOD
+  lineformat = "( t3,"//&
+                 &"'LINK:',"//&           ! LINK:
+                 &"t9,a4,"//&             ! LYS
+                 &"t14,a1,"//&            ! A
+                 &"t16,i4,"//&            ! 6
+                 &"t21,a4,"//&            ! CB
+                 &"t26,a4,"//&            ! LYS
+                 &"t31,a1,"//&            ! A
+                 &"t33,i4,"//&            ! 8
+                 &"t38,a4,"//&            ! CB
+                 &"t43,f8.3,"//&          ! 14.000 
+                 &"t52,a9,"//&            ! 13.756
+                 &"t64,a3,"//&            ! YES
+                 &"t70,f8.3,"//&          ! 0.000
+                 &"t79,a9,"//&            ! 34.000
+                 &"t89,a13,"//&           ! FOUND GOOD
+                 &"t105,i2,'/',i2,"//&    ! 00/00
+                 &"t113,i2,'/',i2,"//&    ! 11/11
+                 &")" 
 
   if ( link%observed ) then
     charobs = 'YES'
@@ -90,7 +96,9 @@ subroutine printdata(print,link)
                       link%atom2%residue%name, link%atom2%residue%chain, &
                       link%atom2%residue%index, link%atom2%name, &
                       link%euclidean, chardist, charobs, &
-                      link%dmin, charmax, charresult
+                      link%dmin, charmax, charresult, &
+                      link%n_obs_consistent, link%n_obs_expected, &
+                      link%n_type_consistent, link%n_type_expected
 
 end subroutine printdata
 

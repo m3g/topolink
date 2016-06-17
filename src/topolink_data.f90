@@ -26,14 +26,22 @@ module topolink_data
 
   end type pdbatom
 
-  ! Atom pair data type
+  ! Specific link data
+
+  type experiment_in_link
+      
+     logical :: observed, type_reactive, obs_reactive, type_consistent, obs_consistent
+
+  end type experiment_in_link
 
   type specific_link
 
     type(pdbatom) :: atom1, atom2
-    integer :: nbeads, status
+    integer :: nbeads, status 
+    integer :: n_type_expected, n_obs_expected, n_type_consistent, n_obs_consistent
     double precision :: euclidean, topodist, dcut, dmax, dmin
     logical :: observed, type_reactive, obs_reactive, found
+    type(experiment_in_link), allocatable :: exp(:)
 
   end type specific_link
 

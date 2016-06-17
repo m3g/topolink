@@ -795,6 +795,18 @@ program topolink
   allocate( observed(npairs,nexp), iobserved(npairs,nexp), &
             obs_reactive(npairs,nexp), type_reactive(npairs,nexp), &
             dlink(npairs,nexp), link(npairs) ) 
+  do i = 1, npairs
+    allocate(link(i)%exp(nexp))
+    link(i)%n_type_expected = 0
+    link(i)%n_obs_expected = 0
+    do iexp = 1, nexp
+      link(i)%exp(iexp)%observed = .false.
+      link(i)%exp(iexp)%type_reactive = .false.
+      link(i)%exp(iexp)%obs_reactive = .false.
+      link(i)%exp(iexp)%type_consistent = .false.
+      link(i)%exp(iexp)%obs_consistent = .false.
+    end do
+  end do
 
   ! Annotating which pairs are of each type, for each experiment
 
@@ -827,6 +839,7 @@ program topolink
         if ( link(ii) .matches. experiment(iexp)%observed(k) ) then
           observed(ii,iexp) = .true.
           iobserved(ii,iexp) = k
+          link(ii)%exp(iexp)%observed = .true.
         end if
       end do
       
@@ -843,6 +856,8 @@ program topolink
           else
             type_reactive(ii,iexp) = .true.
             dlink(ii,iexp) = experiment(iexp)%linktype(k)%dist
+            link(ii)%exp(iexp)%type_reactive = .true.
+            link(ii)%n_type_expected = link(ii)%n_type_expected + 1
           end if
         end if
       end do
@@ -865,6 +880,8 @@ program topolink
         do k = 1, experiment(iexp)%ntypes
           if ( linktest .matches. experiment(iexp)%linktype(k) ) then 
             obs_reactive(ii,iexp) = .true.
+            link(ii)%exp(iexp)%obs_reactive = .true.
+            link(ii)%n_obs_expected = link(ii)%n_obs_expected + 1
           end if
         end do
       end if
@@ -874,7 +891,7 @@ program topolink
   end do
 
   ! Compute the number of reactive pairs of each experiment, according to the link types
-  ! and sequence, of according to the observed reactivity
+  ! and sequence, according to the observed reactivity
 
   do iexp = 1, nexp
     j = 0
@@ -1072,6 +1089,7 @@ program topolink
       if ( link(i)%euclidean > link(i)%dcut ) then
         if ( printnotfound ) then
           link(i)%status = linkstatus(link(i))
+          call linkconsistency(link(i),nexp,experiment)
           call printdata(print,link(i))
         end if
         cycle allpairs
@@ -1144,6 +1162,8 @@ program topolink
     end if
 
     ! Report result of link search for this pair
+  
+    call linkconsistency(link(i),nexp,experiment)
 
     if ( link(i)%found ) then
 
@@ -1182,9 +1202,8 @@ program topolink
 
     else
 
-      if ( printnotfound ) then
-        call printdata(print,link(i))
-      end if
+      ! If a topological distance was not found for this pair
+      if ( printnotfound ) call printdata(print,link(i))
 
     end if
 
