@@ -958,20 +958,20 @@ program topolink
 
   nmax = 0
   do i = 1, npairs
-    link(i)%dcut = 0.d0
+    link(i)%dmaxlink = 0.d0
     link(i)%nbeads = 0
     link(i)%observed = .false.
     link(i)%obs_reactive = .false.
     link(i)%type_reactive = .false.
     do iexp = 1, nexp
-      if ( type_reactive(i,iexp) ) then
-        link(i)%dcut = max(link(i)%dcut,dlink(i,iexp))
+      if ( link(i)%exp(iexp)%type_reactive ) then
+        link(i)%dmaxlink = max(link(i)%dmaxlink,dlink(i,iexp))
       end if
-      if ( observed(i,iexp) ) link(i)%observed = .true.
-      if ( obs_reactive(i,iexp) ) link(i)%obs_reactive = .true.
-      if ( type_reactive(i,iexp) ) link(i)%type_reactive = .true.
+      if ( link(i)%exp(iexp)%observed ) link(i)%observed = .true.
+      if ( link(i)%exp(iexp)%obs_reactive ) link(i)%obs_reactive = .true.
+      if ( link(i)%exp(iexp)%type_reactive ) link(i)%type_reactive = .true.
     end do
-    link(i)%nbeads = int(link(i)%dcut/dbond)+1
+    link(i)%nbeads = int(link(i)%dmaxlink/dbond)+1
     link(i)%topodist = -1.d0
     nmax = max(nmax,link(i)%nbeads)
   end do
@@ -982,14 +982,15 @@ program topolink
 
   do i = 1, npairs
     link(i)%dmin = 0.d0
-    link(i)%dmax = link(i)%dcut
+    link(i)%dmax = link(i)%dmaxlink
     do iexp = 1, nexp
-      if ( observed(i,iexp) ) then
+      if ( link(i)%exp(iexp)%observed ) then
         link(i)%dmax = dmin1(link(i)%dmax,dlink(i,iexp))
       end if
     end do
     do iexp = 1, nexp
-      if ( type_reactive(i,iexp) .and. ( .not. observed(i,iexp) ) ) then
+      if ( link(i)%exp(iexp)%type_reactive .and. &
+           .not. link(i)%exp(iexp)%observed ) then
         if ( dlink(i,iexp) <= link(i)%dmax ) then
           link(i)%dmin = dmax1(link(i)%dmin,dlink(i,iexp))
         end if
@@ -1086,7 +1087,7 @@ program topolink
                                   (coor(atom2,2) - coor(atom1,2))**2 + & 
                                   (coor(atom2,3) - coor(atom1,3))**2 )
       if ( print > 0 ) write(*,floatout) ' Euclidean distance: ', link(i)%euclidean
-      if ( link(i)%euclidean > link(i)%dcut ) then
+      if ( link(i)%euclidean > link(i)%dmaxlink ) then
         if ( printnotfound ) then
           link(i)%status = linkstatus(link(i))
           call linkconsistency(link(i),nexp,experiment)
@@ -1145,7 +1146,7 @@ program topolink
                   f8.3, '( overlap = ', f12.5, ' dmin = ', f8.3,' )', i5)") &
                   itrial, dpath, overviol, dmin, best_repeat
           end if
-          if ( quitgood .and. dpath <= link(i)%dcut ) exit
+          if ( quitgood .and. dpath <= link(i)%dmaxlink ) exit
         else
           if ( print > 0 ) then
             write(*,"( ' Trial ', i5, ' Invalid path with length = ', &
@@ -1289,7 +1290,7 @@ program topolink
         end if
 
       !
-      ! If the link was not found (meaning that its distance is greater than dcut)
+      ! If the link was not found (meaning that its distance is greater than dmaxlink)
       !
       
       else if ( .not. link(i)%found ) then

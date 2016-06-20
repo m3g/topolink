@@ -10,8 +10,8 @@
 !                                 The link was found |                             --NO: Status: 1 
 !                                 (on structure)     |                                   (FOUND VIOL)
 !                           --YES--------------------|                                
-!                           |                        |                                --YES: Status: 2
-!                           |                        |    Euclidean violation of dcut |      (EUCL VIOL)
+!                           |                        |        Euclidean violation     --YES: Status: 2
+!                           |                        |             of dmaxlink        |     (EUCL VIOL)
 !  The link was observed -- |                        --NO-----------------------------|
 !   (experimentally)        |                                                         |
 !                           |                                                         --NO: Status: 3
@@ -48,7 +48,7 @@ integer function linkstatus(link)
         linkstatus = 1 ! FOUND VIOL
       end if
     else
-      if ( link%euclidean > link%dcut ) then
+      if ( link%euclidean > link%dmaxlink ) then
         linkstatus = 2 ! EUCL VIOL
       else
         linkstatus = 3 ! NOTFOUND VIOL
@@ -56,13 +56,13 @@ integer function linkstatus(link)
     end if
   else
     if ( link%found )then
-      if ( link%topodist <= link%dmax ) then
+      if ( link%topodist <= link%dmaxlink ) then
         linkstatus = 4 ! FOUND MISS
       else
         linkstatus = 6 ! NOTFOUND GOOD
       end if
     else
-      if ( link%euclidean > link%dcut ) then
+      if ( link%euclidean > link%dmaxlink ) then
         linkstatus = 5 ! EUCL GOOD
       else
         linkstatus = 6 ! NOTFOUND GOOD

@@ -29,6 +29,14 @@ module topolink_data
   ! Specific link data
 
   type experiment_in_link
+
+     ! observed: The atom pair was observed to link in this experiment
+     ! type_reactive: The atom pair is reactive, according to the link types of this experiment
+     ! obs_reactive: The atom pair is reactive, according to the observed reactivity in this experiment
+     ! type_consistent: The topological distance of this atom pair is consistent with 
+     !                  the observed reactivity of this atom pair, according to atom types
+     ! obs_reactivity: The topological distance is consistent with the observed reactivity of this
+     !                 atom pair, acoording to the observed atom reactivities
       
      logical :: observed, type_reactive, obs_reactive, type_consistent, obs_consistent
 
@@ -36,10 +44,29 @@ module topolink_data
 
   type specific_link
 
+    ! atom1: First atom of this pair
+    ! atom2: Second atom of this pair
+    ! nbeads: Number of beads of the linker, for optimization
+    ! status: Final classification of the linker
+    ! n_type_expected: Number of expected links, according to atom types
+    ! n_obs_expected: Number of expected links, according to observed reactivity
+    ! n_type_consistent: Number of observations consistent with type-reactivity
+    ! n_obs_consistent: Number of observations consistent with observed reactivity
+    ! euclidean: euclidean distance
+    ! topodist: topological distance, if computed 
+    ! dmaxlink: Maximum length of the linker, according to experimental linkers used
+    ! dmax: Maximum distance consistent with observations
+    ! dmin: Minimum distance consistent with observations
+    ! observed: Linker was observed to form in some experiment
+    ! type_reactive: Both atoms are reactive according to some linker types
+    ! obs_reactive: Both atoms are reactive according to some observed reactivity
+    ! found: A topological distance was found
+    ! exp: Data for the experiments, concerning this atom pair
+
     type(pdbatom) :: atom1, atom2
-    integer :: nbeads, status 
+    integer :: nbeads, status
     integer :: n_type_expected, n_obs_expected, n_type_consistent, n_obs_consistent
-    double precision :: euclidean, topodist, dcut, dmax, dmin
+    double precision :: euclidean, topodist, dmaxlink, dmax, dmin
     logical :: observed, type_reactive, obs_reactive, found
     type(experiment_in_link), allocatable :: exp(:)
 
