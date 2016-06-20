@@ -18,8 +18,8 @@
 !                           |                                                              (NOTFOUND VIOL)
 !                           |
 !                           |                                                                         
-!                           |                              The distance is         --YES: Status: 4   
-!                           |                              shorter than dmax       |      (FOUND MISS)
+!                           |                              The distance is         --YES: Status: 5   
+!                           |                              shorter than dmax       |      (NOTFOUND GOOD)
 !                           |                       --YES:-------------------------|                   
 !                           |                       |                              --NO: Status: 1     
 !                           |    The link was found |                                    (FOUND VIOL)                  
@@ -57,7 +57,7 @@ integer function linkstatus(link)
   else
     if ( link%found )then
       if ( link%topodist <= link%dmax ) then
-        linkstatus = 4 ! FOUND MISS
+        linkstatus = 5 ! NOTFOUND GOOD
       else
         linkstatus = 1 ! FOUND VIOL
       end if
