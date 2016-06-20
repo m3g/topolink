@@ -18,11 +18,11 @@
 !                           |                                                              (NOTFOUND VIOL)
 !                           |
 !                           |                                                                         
-!                           |                              The distance is         --YES: Status: 5   
-!                           |                              shorter than dmax       |      (NOTFOUND GOOD)
+!                           |                              The distance is         --YES: Status: 4   
+!                           |                              shorter than dmax       |      (FOUND MISS)
 !                           |                       --YES:-------------------------|                   
-!                           |                       |                              --NO: Status: 1     
-!                           |    The link was found |                                    (FOUND VIOL)                  
+!                           |                       |                              --NO: Status: 6     
+!                           |    The link was found |                                    (NOTFOUND GOOD)                  
 !                           |    (on structure)     |                   
 !                           --NO--------------------|                                                                   
 !                                                   |                               --YES: Status: 5    
@@ -57,9 +57,9 @@ integer function linkstatus(link)
   else
     if ( link%found )then
       if ( link%topodist <= link%dmax ) then
-        linkstatus = 5 ! NOTFOUND GOOD
+        linkstatus = 4 ! FOUND MISS
       else
-        linkstatus = 1 ! FOUND VIOL
+        linkstatus = 6 ! NOTFOUND GOOD
       end if
     else
       if ( link%euclidean > link%dcut ) then
