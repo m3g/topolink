@@ -37,6 +37,7 @@ $(BIN)/topolink: Makefile \
                  linkedcells.mod \
                  topolink_data.mod \
                  topolink_operations.mod \
+                 ioformat.mod \
                  cgnewton.f90 \
                  computedpath.f90 \
                  computef.f90 \
@@ -83,6 +84,7 @@ $(BIN)/topolink: Makefile \
                  stretch.f90 \
                  test_grad.f90 \
                  title.f90 \
+                 ioformat.f90 \
                  topolink.f90 \
                  $(FLAGS)
 
@@ -111,6 +113,9 @@ topolink_operations.mod : topolink_operations.f90 topolink_data.mod
 
 topolink_data.mod : topolink_data.f90
 	$(FORTRAN) -c topolink_data.f90 $(FLAGS)
+
+ioformat.mod : ioformat.f90
+	$(FORTRAN) -c ioformat.f90 $(FLAGS)
 
 flashmod.mod : flashmod.f90
 	$(FORTRAN) -c flashmod.f90 $(FLAGS)

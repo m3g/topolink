@@ -16,14 +16,18 @@
 !   (experimentally)        |                                                         |
 !                           |                                                         --NO: Status: 3
 !                           |                                                              (NOTFOUND VIOL)
-!                           |                       --YES: Status: 4       
-!                           |                       |      (FOUND MISS)    
-!                           |    The link was found |                      
+!                           |
+!                           |                                                                         
+!                           |                              The distance is         --YES: Status: 4   
+!                           |                              shorter than dmax       |      (FOUND MISS)
+!                           |                       --YES:-------------------------|                   
+!                           |                       |                              --NO: Status: 1     
+!                           |    The link was found |                                    (FOUND VIOL)                  
 !                           |    (on structure)     |                   
 !                           --NO--------------------|                                                                   
 !                                                   |                               --YES: Status: 5    
-!                                                   |   Euclidean violation of dcut |      (EUCL GOOD)  
-!                                                   --NO----------------------------|                   
+!                                                   |   Euclidean violation of dcut |      (EUCL GOOD)
+!                                                   --NO----------------------------|                 
 !                                                                                   |                   
 !                                                                                   --NO: Status: 6     
 !                                                                                        (NOTFOUND GOOD)
@@ -52,7 +56,11 @@ integer function linkstatus(link)
     end if
   else
     if ( link%found )then
-      linkstatus = 4 ! FOUND MISS
+      if ( link%topodist <= link%dmax ) then
+        linkstatus = 4 ! FOUND MISS
+      else
+        linkstatus = 1 ! FOUND VIOL
+      end if
     else
       if ( link%euclidean > link%dcut ) then
         linkstatus = 5 ! EUCL GOOD

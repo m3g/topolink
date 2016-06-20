@@ -16,6 +16,7 @@
 
 program topolink
 
+  use ioformat
   use functionpars
   use linkedcells
   use topolink_data
@@ -31,7 +32,7 @@ program topolink
                      readscore
   character(len=4) :: char1, char2 
   character(len=200) :: pdbfile, record, linkdir, linkfile, inputfile, keyword, keyvalue, endread, &
-                        dashes, readlog
+                        readlog
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
   logical :: quitgood, printlinks, printnotfound, error, r1, r2, observedscores, inexp
@@ -60,11 +61,10 @@ program topolink
     write(*,*) 
     write(*,*) ' topolink inputfile.inp [pdbfile] '
     write(*,*) 
-    write(*,"(a)") "  ######################################################################################################"
+    write(*,hashes)
     write(*,*) 
     stop
   end if
-  dashes="( tr2,99('-') )"
 
   ! Random number initialization
   
@@ -1426,7 +1426,7 @@ program topolink
   write(*,*)
   write(*,"( t3, a, i5, a )") ' RESULT1: ', ngooddist, ' : Number of topological distances consistent with all observations. ' 
   write(*,"( t3, a, i5, a )") ' RESULT2: ', nbaddist, ' : Number of topological distances NOT consistent with observations.  ' 
-  write(*,"( t3, a, i5, a )") ' RESULT3: ', nmisslinks, ' : Number of missing links.  ' 
+  write(*,"( t3, a, i5, a )") ' RESULT3: ', nmisslinks, ' : Number of links with missing observations.  ' 
 
   if ( nobs > 0 ) then
     likelyhood = 1.d0
@@ -1451,7 +1451,7 @@ program topolink
   end if
 
   write(*,*)
-  write(*,"(a)") "  ######################################################################################################"
+  write(*,hashes)
 
 end program topolink
 

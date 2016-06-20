@@ -4,6 +4,7 @@
 
 subroutine printdata(print,link)
 
+  use ioformat
   use topolink_data
   implicit none
   integer :: print, ib
@@ -11,12 +12,7 @@ subroutine printdata(print,link)
   character(len=3) :: charobs
   character(len=9) :: charmax, chardist
   character(len=13) :: charresult
-  character(len=200) :: dashes
   character(len=800) :: lineformat
-
-  ! Formats
-
-  dashes = "( tr2,115('-') )"
 
   ! Print title
 
