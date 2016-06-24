@@ -19,10 +19,10 @@
 subroutine title()
 
   write(*,*) 
-  write(*,"(a)") "  ########################################### TOPOLINK #################################################"
-  write(*,"(a)") '        L. Martinez, Institute of Chemistry - University of Campinas. http://leandro.iqm.unicamp.br'
+  write(*,"(t3,53('#'),' TOPOLINK ',52('#'))") 
+  write(*,"(a)") '              L. Martinez, Institute of Chemistry - University of Campinas. http://leandro.iqm.unicamp.br'
   write(*,*) 
-  write(*,"( t87, a )") " Version 16.168 "
+  write(*,"( t97, a )") " Version 16.168 "
   write(*,*) 
 
 end subroutine title
