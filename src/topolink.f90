@@ -1066,6 +1066,16 @@ program topolink
             link(i)%euclidean = linktest%euclidean
             link(i)%topodist = linktest%topodist
             ! Recompute link status using current observations
+            ! If the link was not found previously in the structure, it might have
+            ! to be searched for again if the previous dmax was smaller than the
+            ! new one
+            if ( linktest%status == 3 .or. linktest%status == 6 ) then
+              if ( linktest%dmax < link(i)%dmaxlink .and. &
+                   linktest%euclidean < link(i)%dmaxlink ) then
+                link(i)%status = -1
+                exit
+              end if
+            end if
             link(i)%status = linkstatus(link(i))
             exit
           end if

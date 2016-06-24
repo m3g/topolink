@@ -174,10 +174,12 @@ module topolink_data
      function read_link(record)
 
         implicit none
-        type(specific_link) :: read_link
+        integer :: i
         character(len=200) :: record
         character(len=13) :: charstat
         character(len=3) :: charobs
+        character(len=9) :: chardmax
+        type(specific_link) :: read_link
       
         read(record(9:12),*) read_link%atom1%residue%name
         read(record(14:14),*) read_link%atom1%residue%chain
@@ -197,6 +199,12 @@ module topolink_data
         else
           read_link%observed = .false.
         end if
+
+        read(record(79:87),*) chardmax
+        do i = 1, 9
+          if ( chardmax(i:i) == ">" ) chardmax(i:i) = " "
+        end do
+        read(chardmax,*) read_link%dmax
 
         read(record(89:101),"( a13 )") charstat
 
