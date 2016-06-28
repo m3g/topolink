@@ -1065,17 +1065,20 @@ program topolink
             link(i)%found = linktest%found
             link(i)%euclidean = linktest%euclidean
             link(i)%topodist = linktest%topodist
-            ! Recompute link status using current observations
             ! If the link was not found previously in the structure, it might have
             ! to be searched for again if the previous dmax was smaller than the
             ! new one
-            if ( linktest%status == 3 .or. linktest%status == 6 ) then
+            if ( linktest%status == 3 .or. &
+                 linktest%status == 4 .or. &
+                 linktest%status == 7 .or. &
+                 linktest%status == 8 ) then
               if ( linktest%dmax < link(i)%dmaxlink .and. &
                    linktest%euclidean < link(i)%dmaxlink ) then
                 link(i)%status = -1
                 exit
               end if
             end if
+            ! Set link status, according to the link data
             link(i)%status = linkstatus(link(i))
             exit
           end if
@@ -1242,8 +1245,8 @@ program topolink
 
       ! Only reactive pairs, according to link types, of this experiment are of interest
 
-      if ( .not. type_reactive(i,iexp) ) cycle
-      if ( compute == 2 .and. .not. obs_reactive(i,iexp) ) cycle
+      if ( .not. link(i)%exp(iexp)%type_reactive ) cycle
+      if ( compute == 2 .and. .not. link(i)%exp(iexp)%obs_reactive ) cycle
 
       !
       ! If a topological link was found 
@@ -1258,13 +1261,13 @@ program topolink
           if ( compute == 3 ) then
             experiment(iexp)%nreach_type = experiment(iexp)%nreach_type + 1
           end if
-          if ( obs_reactive(i,iexp) ) then
+          if ( link(i)%exp(iexp)%obs_reactive ) then
             experiment(iexp)%nreach_obs = experiment(iexp)%nreach_obs + 1
           end if
 
           ! ... and the link was observed, this link is a good link 
 
-          if ( observed(i,iexp) ) then
+          if ( link(i)%exp(iexp)%observed ) then
             experiment(iexp)%ngood = experiment(iexp)%ngood + 1
             ii = iobserved(i,iexp)
             experiment(iexp)%score = experiment(iexp)%score + &
@@ -1273,11 +1276,11 @@ program topolink
 
           ! ... and the link was NOT observed, this link is a missing link
 
-          if ( .not. observed(i,iexp) ) then
+          if ( .not. link(i)%exp(iexp)%observed ) then
             if ( compute == 3 ) then
               experiment(iexp)%nmiss_type = experiment(iexp)%nmiss_type + 1
             end if
-            if ( obs_reactive(i,iexp) ) then
+            if ( link(i)%exp(iexp)%obs_reactive ) then
               experiment(iexp)%nmiss_obs = experiment(iexp)%nmiss_obs + 1
             end if
           end if
@@ -1290,7 +1293,7 @@ program topolink
 
           ! ... and the link was observed, this observation is bad
       
-          if ( observed(i,iexp) ) then
+          if ( link(i)%exp(iexp)%observed ) then
             experiment(iexp)%nbad = experiment(iexp)%nbad + 1
             ii = iobserved(i,iexp)
             experiment(iexp)%score = experiment(iexp)%score - &
@@ -1307,7 +1310,7 @@ program topolink
 
         ! If the link was observed, this observation is bad
       
-        if ( observed(i,iexp) ) then
+        if ( link(i)%exp(iexp)%observed ) then
           experiment(iexp)%nbad = experiment(iexp)%nbad + 1
         end if
 
@@ -1418,14 +1421,16 @@ program topolink
     if ( compute == 2 .and. .not. link(i)%obs_reactive ) cycle
     if ( .not. link(i)%type_reactive ) cycle
     if ( link(i)%status == 0 .or. &
-         link(i)%status == 5 .or. &
-         link(i)%status == 6 ) then
+         link(i)%status == 6 .or. &
+         link(i)%status == 7 .or. &
+         link(i)%status == 8 ) then
       ngooddist = ngooddist + 1
     else if ( link(i)%status == 1 .or. &
-         link(i)%status == 2 .or. &
-         link(i)%status == 3 ) then
+              link(i)%status == 2 .or. &
+              link(i)%status == 3 .or. &
+              link(i)%status == 4 ) then
       nbaddist = nbaddist + 1
-    else if ( link(i)%status == 4 ) then
+    else if ( link(i)%status == 5 ) then
       nmisslinks = nmisslinks + 1
     end if
   end do

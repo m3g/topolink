@@ -208,38 +208,48 @@ module topolink_data
 
         read(record(89:101),"( a13 )") charstat
 
-        if ( charstat == "   FOUND GOOD" ) then
+        if ( charstat == "    OK: FOUND" ) then
           read_link%status = 0
           read_link%found = .true.
           read(record(52:60),*) read_link%topodist
         end if
-        if ( charstat == "   FOUND VIOL" ) then
+        if ( charstat == "   BAD: SHORT" ) then
           read_link%status = 1 
           read_link%found = .true.
           read(record(52:60),*) read_link%topodist
         end if
-        if ( charstat == "    EUCL VIOL" ) then
+        if ( charstat == "    BAD: LONG" ) then
           read_link%status = 2
-          read_link%found = .false.
-          read_link%topodist = -1.d0
+          read_link%found = .true.
+          read(record(52:60),*) read_link%topodist
         end if
-        if ( charstat == "NOTFOUND VIOL" ) then
+        if ( charstat == "    BAD: EUCL" ) then
           read_link%status = 3
           read_link%found = .false.
           read_link%topodist = -1.d0
         end if
-        if ( charstat == "   FOUND MISS" ) then
+        if ( charstat == "BAD: NOTFOUND" ) then
           read_link%status = 4
-          read_link%found = .true.
-          read(record(52:60),*) read_link%topodist
-        end if
-        if ( charstat == "    EUCL GOOD" ) then
-          read_link%status = 5
           read_link%found = .false.
           read_link%topodist = -1.d0
         end if
-        if ( charstat == "NOTFOUND GOOD" ) then
+        if ( charstat == " BAD: MISSING" ) then
+          read_link%status = 5
+          read_link%found = .true.
+          read(record(52:60),*) read_link%topodist
+        end if
+        if ( charstat == "     OK: LONG" ) then
           read_link%status = 6
+          read_link%found = .true.
+          read(record(52:60),*) read_link%topodist
+        end if
+        if ( charstat == "     OK: EUCL" ) then
+          read_link%status = 7
+          read_link%found = .false.
+          read_link%topodist = -1.d0
+        end if
+        if ( charstat == " OK: NOTFOUND" ) then
+          read_link%status = 8
           read_link%found = .false.
           read_link%topodist = -1.d0
         end if

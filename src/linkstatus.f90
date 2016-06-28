@@ -5,32 +5,36 @@
 ! Link status:
 !
 !                                                          It is consistent with   --YES: Status: 0 
-!                                                            dmin and dmax         |      (FOUND GOOD)
-!                                                    --YES-------------------------|
-!                                 The link was found |                             --NO: Status: 1 
-!                                 (on structure)     |                                   (FOUND VIOL)
+!                                                            dmin and dmax         |      (OK: FOUND)
+!                                                    --YES-------------------------|    
+!                                                    |                             |      --Too short: Status: 1  
+!                                                    |                             ---NO--|            (BAD: SHORT)
+!                                                    |                                    |           
+!                                                    |                                    --Too long: Status: 2
+!                                 The link was found |                                                (BAD: LONG)
+!                                  (on structure)    |                                                      
 !                           --YES--------------------|                                
-!                           |                        |        Euclidean violation     --YES: Status: 2
-!                           |                        |             of dmaxlink        |     (EUCL VIOL)
+!                           |                        |        Euclidean violation     --YES: Status: 3
+!                           |                        |             of dmaxlink        |     (BAD: EUCL)
 !  The link was observed -- |                        --NO-----------------------------|
 !   (experimentally)        |                                                         |
-!                           |                                                         --NO: Status: 3
-!                           |                                                              (NOTFOUND VIOL)
+!                           |                                                         --NO: Status: 4
+!                           |                                                              (BAD: NOTFOUND)
 !                           |
 !                           |                                                                         
-!                           |                              The distance is         --YES: Status: 4   
-!                           |                              shorter than dmax       |      (FOUND MISS)
+!                           |                              The distance is         --YES: Status: 5   
+!                           |                              shorter than dmax       |      (BAD: MISSING)
 !                           |                       --YES:-------------------------|                   
 !                           |                       |                              --NO: Status: 6     
-!                           |    The link was found |                                    (NOTFOUND GOOD)                  
+!                           |    The link was found |                                    (OK: LONG)                  
 !                           |    (on structure)     |                   
 !                           --NO--------------------|                                                                   
-!                                                   |                               --YES: Status: 5    
-!                                                   |   Euclidean violation of dcut |      (EUCL GOOD)
+!                                                   |                               --YES: Status: 7    
+!                                                   |   Euclidean violation of dcut |      (OK: EUCL)
 !                                                   --NO----------------------------|                 
 !                                                                                   |                   
-!                                                                                   --NO: Status: 6     
-!                                                                                        (NOTFOUND GOOD)
+!                                                                                   --NO: Status: 8     
+!                                                                                        (OK: NOTFOUND)
 !
 
 integer function linkstatus(link)
@@ -43,31 +47,40 @@ integer function linkstatus(link)
     if ( link%found ) then
       if ( link%topodist >= link%dmin .and. &
            link%topodist <= link%dmax ) then
-        linkstatus = 0 ! FOUND GOOD
+        linkstatus = 0 ! OK: FOUND
       else
-        linkstatus = 1 ! FOUND VIOL
+        if ( link%topodist < link%dmin ) then
+          linkstatus = 1 ! BAD: SHORT
+        end if
+        if ( link%topodist > link%dmax ) then
+          linkstatus = 2 ! BAD: LONG
+        end if
       end if
     else
       if ( link%euclidean > link%dmaxlink ) then
-        linkstatus = 2 ! EUCL VIOL
+        linkstatus = 3 ! BAD: EUCL
       else
-        linkstatus = 3 ! NOTFOUND VIOL
+        linkstatus = 4 ! BAD: NOTFOUND
       end if
     end if
   else
     if ( link%found )then
       if ( link%topodist <= link%dmaxlink ) then
-        linkstatus = 4 ! FOUND MISS
+        linkstatus = 5 ! BAD: MISSING
       else
-        linkstatus = 6 ! NOTFOUND GOOD
+        linkstatus = 6 ! OK: LONG
       end if
     else
       if ( link%euclidean > link%dmaxlink ) then
-        linkstatus = 5 ! EUCL GOOD
+        linkstatus = 7 ! OK: EUCL
       else
-        linkstatus = 6 ! NOTFOUND GOOD
+        linkstatus = 8 ! OK: NOTFOUND
       end if
     end if
   end if
 
 end function linkstatus
+
+
+
+

@@ -79,13 +79,15 @@ subroutine printdata(print,link)
     end if
   end if
 
-  if ( link%status == 0 ) charresult ="   FOUND GOOD"
-  if ( link%status == 1 ) charresult ="   FOUND VIOL"
-  if ( link%status == 2 ) charresult ="    EUCL VIOL"
-  if ( link%status == 3 ) charresult ="NOTFOUND VIOL"
-  if ( link%status == 4 ) charresult ="   FOUND MISS"
-  if ( link%status == 5 ) charresult ="    EUCL GOOD"
-  if ( link%status == 6 ) charresult ="NOTFOUND GOOD"
+  if ( link%status == 0 ) charresult ="    OK: FOUND"
+  if ( link%status == 1 ) charresult ="   BAD: SHORT"
+  if ( link%status == 2 ) charresult ="    BAD: LONG"
+  if ( link%status == 3 ) charresult ="    BAD: EUCL"
+  if ( link%status == 4 ) charresult ="BAD: NOTFOUND"
+  if ( link%status == 5 ) charresult =" BAD: MISSING"
+  if ( link%status == 6 ) charresult ="     OK: LONG"
+  if ( link%status == 7 ) charresult ="     OK: EUCL"
+  if ( link%status == 8 ) charresult =" OK: NOTFOUND"
 
   write(*,lineformat) link%atom1%residue%name, link%atom1%residue%chain, &
                       link%atom1%residue%index, link%atom1%name, &
