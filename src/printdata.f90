@@ -61,12 +61,19 @@ subroutine printdata(print,link)
     charmax(ib:ib) = ">"
   end if
 
+  ! If a topological distance was found, print it
+
   if ( link%status == 0 .or. &
        link%status == 1 .or. &
-       link%status == 4 ) then
+       link%status == 2 .or. &
+       link%status == 5 .or. &
+       link%status == 6 ) then
     write(chardist,"( f9.3 )") link%topodist
     ib = 9 - len(trim(adjustl(chardist)))
     chardist(ib:ib) = " "
+
+  ! Otherwise, report that it is greater than dmaxlink
+
   else
     if ( link%observed ) then
       write(chardist,"( f9.3 )") link%dmax
