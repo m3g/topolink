@@ -29,79 +29,182 @@ endif
 #                                                                 #
 ###################################################################
 
-BINARIES = $(BIN)/topolink $(BIN)/evalmodels $(BIN)/linkcorrelation $(BIN)/filtermodels
+BINARIES = $(BIN)/topolink \
+           $(BIN)/evalmodels \
+           $(BIN)/linkcorrelation \
+           $(BIN)/filtermodels
 
-MODULES = functionpars.f90 \
-          linkedcells.f90 \
-          topolink_data.f90 \
-          topolink_operations.f90 \
-          ioformat.f90 \
-          flashmod.f90
+MODULES = functionpars.o \
+          linkedcells.o \
+          topolink_data.o \
+          topolink_operations.o \
+          ioformat.o \
+          flashmod.o
 
 all : bindir $(BINARIES)
 devel : bindir $(BINARIES)
 
-$(BIN)/topolink: Makefile \
-                 modules \
-                 cgnewton.f90 \
-                 computedpath.f90 \
-                 computef.f90 \
-                 computeg.f90 \
-                 goverlapcell.f90 \
-                 goverlap.f90 \
-                 gstretch.f90 \
-                 initcells.f90 \
-                 initguess.f90 \
-                 linkstatus.f90 \
-                 linkconsistency.f90 \
-                 keywords.f90 \
-                 lnf.f90 \
-                 overlapcell.f90 \
-                 overlap.f90 \
-                 printdata.f90 \
-                 random.f90 \
-                 stretch.f90 \
-                 test_grad.f90 \
-                 title.f90 \
-                 topolink.f90
-	$(FORTRAN) -o $(BIN)/topolink \
-                 $(MODULES) \
-                 cgnewton.f90 \
-                 computedpath.f90 \
-                 computef.f90 \
-                 computeg.f90 \
-                 goverlapcell.f90 \
-                 goverlap.f90 \
-                 gstretch.f90 \
-                 initcells.f90 \
-                 initguess.f90 \
-                 linkstatus.f90 \
-                 linkconsistency.f90 \
-                 keywords.f90 \
-                 lnf.f90 \
-                 overlapcell.f90 \
-                 overlap.f90 \
-                 printdata.f90 \
-                 random.f90 \
-                 stretch.f90 \
-                 test_grad.f90 \
-                 title.f90 \
-                 topolink.f90 \
+$(BIN)/topolink: Makefile $(MODULES) \
+                 topolink.o \
+                 cgnewton.o \
+                 computedpath.o \
+                 computef.o \
+                 computeg.o \
+                 goverlapcell.o \
+                 goverlap.o \
+                 gstretch.o \
+                 initcells.o \
+                 initguess.o \
+                 linkstatus.o \
+                 linkconsistency.o \
+                 keywords.o \
+                 lnf.o \
+                 overlapcell.o \
+                 overlap.o \
+                 printdata.o \
+                 random.o \
+                 stretch.o \
+                 test_grad.o \
+                 title.o
+	$(FORTRAN) -o $(BIN)/topolink $(MODULES) \
+                 topolink.o \
+                 cgnewton.o \
+                 computedpath.o \
+                 computef.o \
+                 computeg.o \
+                 goverlapcell.o \
+                 goverlap.o \
+                 gstretch.o \
+                 initcells.o \
+                 initguess.o \
+                 linkstatus.o \
+                 linkconsistency.o \
+                 keywords.o \
+                 lnf.o \
+                 overlapcell.o \
+                 overlap.o \
+                 printdata.o \
+                 random.o \
+                 stretch.o \
+                 test_grad.o \
+                 title.o \
                  $(FLAGS)
 
-$(BIN)/linkcorrelation : Makefile modules linkcorrelation.f90
-	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.f90 $(FLAGS)
+$(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o
+	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o $(FLAGS)
 
-$(BIN)/filtermodels : Makefile modules filtermodels.f90
-	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.f90 $(FLAGS)
+$(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o
+	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o $(FLAGS)
 
-$(BIN)/evalmodels : Makefile modules flashsort.f90 evalmodels.f90
-	$(FORTRAN) -o $(BIN)/evalmodels $(MODULES) flashsort.f90 evalmodels.f90 $(FLAGS)
+$(BIN)/evalmodels : Makefile $(MODULES) flashsort.o evalmodels.o
+	$(FORTRAN) -o $(BIN)/evalmodels $(MODULES) flashsort.o evalmodels.o $(FLAGS)
 
+#
+# Main programs
+#
+
+topolink.o : Makefile topolink.f90
+	$(FORTRAN) -c topolink.f90 $(FLAGS)
+
+linkcorrelation.o : Makefile linkcorrelation.f90 
+	$(FORTRAN) -c linkcorrelation.f90 $(FLAGS)
+
+filtermodels.o : Makefile filtermodels.f90 
+	$(FORTRAN) -c filtermodels.f90 $(FLAGS)
+
+evalmodels.o : Makefile evalmodels.f90 
+	$(FORTRAN) -c evalmodels.f90 $(FLAGS)
+
+#
 # modules
+#
 
 modules : $(MODULES) 
-	$(FORTRAN) -c $(MODULES) $(FLAGS)
+
+functionpars.o : functionpars.f90
+	$(FORTRAN) -c functionpars.f90 $(FLAGS)
+
+linkedcells.o : linkedcells.f90
+	$(FORTRAN) -c linkedcells.f90 $(FLAGS)
+
+topolink_data.o : topolink_data.f90
+	$(FORTRAN) -c topolink_data.f90 $(FLAGS)
+
+topolink_operations.o : topolink_operations.f90
+	$(FORTRAN) -c topolink_operations.f90 $(FLAGS)
+
+ioformat.o : ioformat.f90
+	$(FORTRAN) -c ioformat.f90 $(FLAGS)
+
+flashmod.o : flashmod.f90
+	$(FORTRAN) -c flashmod.f90 $(FLAGS)
+
+#
+# All objects
+#
+
+cgnewton.o : cgnewton.f90 
+	$(FORTRAN) -c cgnewton.f90 $(FLAGS)
+
+computedpath.o : computedpath.f90
+	$(FORTRAN) -c computedpath.f90 $(FLAGS)
+
+computef.o : computef.f90
+	$(FORTRAN) -c computef.f90 $(FLAGS)
+
+computeg.o : computeg.f90
+	$(FORTRAN) -c computeg.f90 $(FLAGS)
+
+goverlapcell.o : goverlapcell.f90
+	$(FORTRAN) -c goverlapcell.f90 $(FLAGS)
+
+goverlap.o : goverlap.f90
+	$(FORTRAN) -c goverlap.f90 $(FLAGS)
+
+gstretch.o : gstretch.f90 
+	$(FORTRAN) -c gstretch.f90 $(FLAGS)
+
+initcells.o : initcells.f90
+	$(FORTRAN) -c initcells.f90 $(FLAGS)
+
+initguess.o : initguess.f90
+	$(FORTRAN) -c initguess.f90 $(FLAGS)
+
+linkstatus.o : linkstatus.f90
+	$(FORTRAN) -c linkstatus.f90 $(FLAGS)
+
+linkconsistency.o : linkconsistency.f90
+	$(FORTRAN) -c linkconsistency.f90 $(FLAGS)
+
+keywords.o : keywords.f90
+	$(FORTRAN) -c keywords.f90 $(FLAGS)
+
+lnf.o : lnf.f90
+	$(FORTRAN) -c lnf.f90 $(FLAGS)
+
+overlapcell.o : overlapcell.f90
+	$(FORTRAN) -c overlapcell.f90 $(FLAGS)
+
+overlap.o : overlap.f90
+	$(FORTRAN) -c overlap.f90 $(FLAGS)
+
+printdata.o : printdata.f90
+	$(FORTRAN) -c printdata.f90 $(FLAGS)
+
+random.o : random.f90
+	$(FORTRAN) -c random.f90 $(FLAGS)
+
+stretch.o : stretch.f90
+	$(FORTRAN) -c stretch.f90 $(FLAGS)
+
+flashsort.o : flashsort.f90 flashmod.o
+	$(FORTRAN) -c flashsort.f90 $(FLAGS)
+
+test_grad.o : test_grad.f90
+	$(FORTRAN) -c test_grad.f90 $(FLAGS)
+
+title.o : title.f90
+	$(FORTRAN) -c title.f90 $(FLAGS)
 
 bindir : 
 	@mkdir -p $(BIN)
