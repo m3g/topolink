@@ -799,6 +799,8 @@ program topolink
     allocate(link(i)%exp(nexp))
     link(i)%n_type_expected = 0
     link(i)%n_obs_expected = 0
+    link(i)%n_type_consistent = 0
+    link(i)%n_obs_consistent = 0
     do iexp = 1, nexp
       link(i)%exp(iexp)%observed = .false.
       link(i)%exp(iexp)%type_reactive = .false.
