@@ -8,7 +8,7 @@ subroutine goverlapcell(n,ix,iy,iz,x,ibox,jbox,kbox,g)
   use linkedcells
   implicit none
   integer :: n, ix, iy, iz, ibox, jbox, kbox, iatom
-  double precision :: x(*), g(*), dx, dy, dz, d, dconst
+  double precision :: x(n), g(n), dx, dy, dz, d, dconst
 
   if ( ibox < 1 .or. jbox < 1 .or. kbox < 1 ) return
   if ( ibox > nboxesx .or. jbox > nboxesy .or. kbox > nboxesz ) return

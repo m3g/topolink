@@ -7,7 +7,7 @@ double precision function stretch(n,x)
   use functionpars
   implicit none
   integer :: n, i, ix, iy, iz, jx, jy, jz
-  double precision :: x(*), d, d2
+  double precision :: x(n), d, d2
 
   stretch = 0.d0
 

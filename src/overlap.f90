@@ -9,7 +9,7 @@ double precision function overlap(n,x)
   use linkedcells
   implicit none
   integer n, ix, iy, iz, ibox, jbox, kbox, i
-  double precision :: x(*)
+  double precision :: x(n)
 
   ! Compute distances
 

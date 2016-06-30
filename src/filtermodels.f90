@@ -32,7 +32,7 @@ program filtermodels
     integer, allocatable :: linkindex(:)
   end type modeldata
 
-  integer :: i, j, ilink, imodel, jmodel
+  integer :: i, j, ilink, imodel
   integer :: nargs, nmodels, ioerr, maxlinks, nlinks, ncut, ngood
   character(len=200) :: loglist, linklist, record, line
   type(specific_link) :: linktemp

@@ -8,7 +8,7 @@ subroutine gstretch(n,x,g)
   use functionpars
   implicit none
   integer :: n, i, ix, iy, iz, jx, jy, jz
-  double precision :: x(*), g(*), d2, dx, dy, dz, d, gx, gy, gz
+  double precision :: x(n), g(n), d2, dx, dy, dz, d, gx, gy, gz
 
   ! First bond, to fixed atom1
 

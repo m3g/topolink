@@ -2,11 +2,11 @@
 ! Subroutine that creates the initial guess for the path
 !
 
-subroutine initguess(n,x,iguess,seed)
+subroutine initguess(n,x,iguess)
 
   use functionpars
   implicit none
-  integer :: n, iguess, seed, ix, iy, iz, i, j, ntrial
+  integer :: n, iguess, ix, iy, iz, i, j, ntrial
   double precision :: x(*), theta, phi, random, vec(3), overlap
   double precision, parameter :: pi = 4.d0*datan(1.d0)
 

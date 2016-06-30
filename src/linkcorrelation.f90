@@ -32,7 +32,7 @@ program linkcorrelation
     integer, allocatable :: linkindex(:)
   end type modeldata
 
-  integer :: i, j, ilink, imodel, jmodel
+  integer :: i, j, ilink, imodel
   integer :: nargs, nmodels, ioerr, maxlinks, nlinks
   character(len=200) :: loglist, record, line
   double precision, allocatable :: correlation(:,:)

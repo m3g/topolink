@@ -7,7 +7,7 @@ double precision function computedpath(n,x)
   use functionpars
   implicit none
   integer :: n, i, ix, iy, iz, jx, jy, jz
-  double precision :: x(*)
+  double precision :: x(n)
 
 
   computedpath = dsqrt( (x(1)-coor(atom1,1))**2 + &

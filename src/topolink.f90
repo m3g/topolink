@@ -356,7 +356,7 @@ program topolink
       readscore = 0.d0
       if ( countwords(record) == 8 ) then
         observedscores = .true.
-        char1 = keyvalue(record,7)
+        char1 = trim(keyvalue(record,7))
         read(char1,*) readscore
       end if
       if ( readscore < scorecut ) cycle
@@ -408,51 +408,51 @@ program topolink
       readscore = 0.d0
       if ( countwords(record) == 8 ) then
         observedscores = .true.
-        char1 = keyvalue(record,7)
+        char1 = trim(keyvalue(record,7))
         read(char1,*) readscore
       end if
       if ( readscore < scorecut ) cycle
       nobs = nobs + 1
-      experiment(iexp)%observed(nobs)%residue1%name = keyvalue(record,1)
-      experiment(iexp)%observed(nobs)%residue1%chain = keyvalue(record,2)
-      char1 = keyvalue(record,3)
+      experiment(iexp)%observed(nobs)%residue1%name = trim(keyvalue(record,1))
+      experiment(iexp)%observed(nobs)%residue1%chain = trim(keyvalue(record,2))
+      char1 = trim(keyvalue(record,3))
       read(char1,*) experiment(iexp)%observed(nobs)%residue1%index
-      experiment(iexp)%observed(nobs)%residue2%name = keyvalue(record,4)
-      experiment(iexp)%observed(nobs)%residue2%chain = keyvalue(record,5)
-      char1 = keyvalue(record,6)
+      experiment(iexp)%observed(nobs)%residue2%name = trim(keyvalue(record,4))
+      experiment(iexp)%observed(nobs)%residue2%chain = trim(keyvalue(record,5))
+      char1 = trim(keyvalue(record,6))
       read(char1,*) experiment(iexp)%observed(nobs)%residue2%index
       experiment(iexp)%observed(nobs)%score = readscore
     end if                      
 
     if ( keyword(record) == 'linktype'  ) then
       ntypes = ntypes + 1
-      experiment(iexp)%linktype(ntypes)%atom1%residue%name = keyvalue(record,1)
-      experiment(iexp)%linktype(ntypes)%atom1%residue%chain = keyvalue(record,2)
-      char1 = keyvalue(record,3)
+      experiment(iexp)%linktype(ntypes)%atom1%residue%name = trim(keyvalue(record,1))
+      experiment(iexp)%linktype(ntypes)%atom1%residue%chain = trim(keyvalue(record,2))
+      char1 = trim(keyvalue(record,3))
       if ( char1 == 'all' ) then
         experiment(iexp)%linktype(ntypes)%atom1%residue%index = -1
       else
         read(char1,*) experiment(iexp)%linktype(ntypes)%atom1%residue%index
       end if
-      experiment(iexp)%linktype(ntypes)%atom1%name = keyvalue(record,4)
-      experiment(iexp)%linktype(ntypes)%atom2%residue%name = keyvalue(record,5)
-      experiment(iexp)%linktype(ntypes)%atom2%residue%chain = keyvalue(record,6)
-      char1 = keyvalue(record,7)
+      experiment(iexp)%linktype(ntypes)%atom1%name = trim(keyvalue(record,4))
+      experiment(iexp)%linktype(ntypes)%atom2%residue%name = trim(keyvalue(record,5))
+      experiment(iexp)%linktype(ntypes)%atom2%residue%chain = trim(keyvalue(record,6))
+      char1 = trim(keyvalue(record,7))
       if ( char1 == 'all' ) then
         experiment(iexp)%linktype(ntypes)%atom2%residue%index = -1
       else
         read(char1,*) experiment(iexp)%linktype(ntypes)%atom2%residue%index
       end if
-      experiment(iexp)%linktype(ntypes)%atom2%name = keyvalue(record,8)
-      char1 = keyvalue(record,9)
+      experiment(iexp)%linktype(ntypes)%atom2%name = trim(keyvalue(record,8))
+      char1 = trim(keyvalue(record,9))
       read(char1,*) experiment(iexp)%linktype(ntypes)%dist
     end if
 
     if ( keyword(record) == 'deadend' ) then
       ndeadends = ndeadends + 1
-      experiment(iexp)%deadend(ndeadends)%residue%name = keyvalue(record,1)
-      experiment(iexp)%deadend(ndeadends)%residue%chain = keyvalue(record,2)
-      char1 = keyvalue(record,3)
+      experiment(iexp)%deadend(ndeadends)%residue%name = trim(keyvalue(record,1))
+      experiment(iexp)%deadend(ndeadends)%residue%chain = trim(keyvalue(record,2))
+      char1 = trim(keyvalue(record,3))
       read(char1,*) experiment(iexp)%deadend(ndeadends)%residue%index
     end if
 
@@ -1130,7 +1130,7 @@ program topolink
 
         ! Initial link guess
 
-        call initguess(n,x,iguess,seed)  
+        call initguess(n,x,iguess)  
 
         ! Test analytical gradient (debugging purposes only)
         ! call test_grad(n,x,g,computef,computeg)
@@ -1158,14 +1158,14 @@ program topolink
           end if
           if ( print > 0 ) then
             write(*,"(' Trial ', i5, ' Valid path with length = ', &
-                  f8.3, '( overlap = ', f12.5, ' dmin = ', f8.3,' )', i5)") &
+                  &f8.3, '( overlap = ', f12.5, ' dmin = ', f8.3,' )', i5)") &
                   itrial, dpath, overviol, dmin, best_repeat
           end if
           if ( quitgood .and. dpath <= link(i)%dmaxlink ) exit
         else
           if ( print > 0 ) then
             write(*,"( ' Trial ', i5, ' Invalid path with length = ', &
-                       f8.3, '( overlap = ', f12.5, ' dmin = ', f8.3,' )' )")&
+                       &f8.3, '( overlap = ', f12.5, ' dmin = ', f8.3,' )' )")&
                     itrial, dpath, overviol, dmin
           end if
         end if
