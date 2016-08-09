@@ -32,7 +32,8 @@ endif
 BINARIES = $(BIN)/topolink \
            $(BIN)/evalmodels \
            $(BIN)/linkcorrelation \
-           $(BIN)/filtermodels
+           $(BIN)/filtermodels \
+           $(BIN)/maxmingyr
 
 MODULES = functionpars.o \
           linkedcells.o \
@@ -93,6 +94,9 @@ $(BIN)/topolink: Makefile $(MODULES) \
 $(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o
 	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o $(FLAGS)
 
+$(BIN)/maxmingyr : Makefile $(MODULES) maxmingyr.o
+	$(FORTRAN) -o $(BIN)/maxmingyr maxmingyr.o $(FLAGS)
+
 $(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o
 	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o $(FLAGS)
 
@@ -111,6 +115,9 @@ linkcorrelation.o : Makefile linkcorrelation.f90
 
 filtermodels.o : Makefile filtermodels.f90 
 	$(FORTRAN) -c filtermodels.f90 $(FLAGS)
+
+maxmingyr.o : Makefile maxmingyr.f90 
+	$(FORTRAN) -c maxmingyr.f90 $(FLAGS)
 
 evalmodels.o : Makefile evalmodels.f90 
 	$(FORTRAN) -c evalmodels.f90 $(FLAGS)
