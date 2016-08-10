@@ -20,7 +20,7 @@ end module datatypes
 
 module scoretype
 
-  integer, parameter :: iscoretype = 3
+  integer, parameter :: iscoretype = 1
 
 end module scoretype
 

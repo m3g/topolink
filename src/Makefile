@@ -34,7 +34,8 @@ BINARIES = $(BIN)/topolink \
            $(BIN)/linkcorrelation \
            $(BIN)/filtermodels \
            $(BIN)/maxmingyr \
-           $(BIN)/modelmaps
+           $(BIN)/modelmaps \
+           $(BIN)/profilediff
 
 MODULES = functionpars.o \
           linkedcells.o \
@@ -101,6 +102,9 @@ $(BIN)/maxmingyr : Makefile $(MODULES) maxmingyr.o
 $(BIN)/modelmaps: Makefile $(MODULES) modelmaps.o
 	$(FORTRAN) -o $(BIN)/modelmaps modelmaps.o $(FLAGS)
 
+$(BIN)/profilediff : Makefile $(MODULES) profilediff.o
+	$(FORTRAN) -o $(BIN)/profilediff profilediff.o $(FLAGS)
+
 $(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o
 	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o $(FLAGS)
 
@@ -125,6 +129,9 @@ maxmingyr.o : Makefile maxmingyr.f90
 
 modelmaps.o : Makefile modelmaps.f90 
 	$(FORTRAN) -c modelmaps.f90 $(FLAGS)
+
+profilediff.o : Makefile profilediff.f90 
+	$(FORTRAN) -c profilediff.f90 $(FLAGS)
 
 evalmodels.o : Makefile evalmodels.f90 
 	$(FORTRAN) -c evalmodels.f90 $(FLAGS)
