@@ -42,7 +42,7 @@ program profilediff
   integer :: narg, i
   double precision :: xmin, xmax, step
   double precision :: f1(gridsize), f2(gridsize), g(gridsize)
-  double precision :: integral
+  double precision :: integral, minx
   type(input_data) :: data1, data2
 
   ! Read file names
@@ -81,6 +81,14 @@ program profilediff
   do i = 1, gridsize
     g(i) = f2(i) - f1(i)
   end do
+
+  ! Integrate the profile difference for scores greater than 30.
+
+  minx = 30.d0
+  write(*,"( a, f8.3, a, e12.5 )") "# Integral for score greater than ", minx, ": ", &
+                                   integral(g,step,xmin,minx)
+
+  ! Write the profile difference
   
   do i = 1, gridsize 
     write(*,*) xmin+(i-1)*step, g(i)
@@ -92,15 +100,17 @@ end program profilediff
 ! Function that integrates the functions
 !
 
-double precision function integral(f,step)
+double precision function integral(f,step,xmin,minx)
 
   use size
   implicit none
   integer :: i
-  double precision :: f(gridsize), step
+  double precision :: f(gridsize), step, xmin, minx, xgrid
 
   integral = 0.d0
   do i = 2, gridsize
+    xgrid = xmin + (i-1)*step
+    if ( xgrid < minx ) cycle
     integral = integral + step*((f(i)+f(i-1))/2.d0)
   end do
 
