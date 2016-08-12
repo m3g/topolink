@@ -1,14 +1,14 @@
 !
-! Program profilediff: Computes the difference between two curves
+! Program pbias: Computes the difference between two curves
 !                      provied by discrete sets of data
 ! 
 ! L. Martinez
 ! Institute of Chemistry - University of Campinas
 ! Aug 5, 2016
 !
-! Run with:  ./profilediff file1.dat file2.dat
+! Run with:  ./pbias file1.dat file2.dat
 !
-! Where data files are plain x y ascii tables.
+! Where data files are plain x y ascii tables with histograms of the populations
 !
 ! For greater interpolation and integral precision, increase gridsize
 !
@@ -34,7 +34,7 @@ end module input
 ! Main program
 !
 
-program profilediff
+program pbias
 
   use size
   use input
@@ -49,7 +49,8 @@ program profilediff
 
   narg = iargc()
   if ( narg /= 2 ) then
-    write(*,*) ' ERROR: Run with ./profilediff file1.dat file2.dat '
+    write(*,*) ' ERROR: Run with ./pbias histogram1.dat histogram2.dat '
+    write(*,*) '        The integral of the difference 2-1 is computed. '
     stop
   end if
   call getarg(1,data1%file)
@@ -76,7 +77,7 @@ program profilediff
   call interpolatef(f1,step,xmin,data1)
   call interpolatef(f2,step,xmin,data2)
 
-  ! Compute profilediff
+  ! Compute pbias
 
   do i = 1, gridsize
     g(i) = f2(i) - f1(i)
@@ -94,7 +95,7 @@ program profilediff
     write(*,*) xmin+(i-1)*step, g(i)
   end do
 
-end program profilediff
+end program pbias
 
 ! 
 ! Function that integrates the functions
