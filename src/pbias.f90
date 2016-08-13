@@ -39,22 +39,34 @@ program pbias
   use size
   use input
   implicit none
-  integer :: narg, i
+  integer :: narg, i, ioerr
   double precision :: xmin, xmax, step
   double precision :: f1(gridsize), f2(gridsize), g(gridsize)
   double precision :: integral, minx
+  character(len=200) :: record
   type(input_data) :: data1, data2
 
   ! Read file names
 
   narg = iargc()
-  if ( narg /= 2 ) then
-    write(*,*) ' ERROR: Run with ./pbias histogram1.dat histogram2.dat '
+  if ( narg < 2 ) then
+    write(*,*) ' ERROR: Run with ./pbias histogram1.dat histogram2.dat [cutoff] '
     write(*,*) '        The integral of the difference 2-1 is computed. '
     stop
   end if
   call getarg(1,data1%file)
   call getarg(2,data2%file)
+  if( narg == 3 ) then
+    call getarg(3,record)
+    read(record,*,iostat=ioerr) minx
+    if ( ioerr /= 0 ) then
+      write(*,*) ' ERROR: Score cutoff (third argument) must be a real number. '
+      stop
+    end if
+  else
+   ! Supose that the score is GDT and use 30.
+   minx = 30.
+  end if
 
   ! Find xmin and xmax  
 
@@ -83,9 +95,8 @@ program pbias
     g(i) = f2(i) - f1(i)
   end do
 
-  ! Integrate the profile difference for scores greater than 30.
+  ! Integrate the profile difference for scores greater than the cutoff
 
-  minx = 30.d0
   write(*,"( a, f8.3, a, e12.5 )") "# Integral for score greater than ", minx, ": ", &
                                    integral(g,step,xmin,minx)
 
