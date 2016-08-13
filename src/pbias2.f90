@@ -100,7 +100,11 @@ program pbias
   integral = 0.d0
   do i = 2, gridsize
     if ( g(i) > 0.d0 ) then
-      integral = integral + step*((g(i)+g(i-1))/2.d0)
+      if ( xmin + (i-1)*step > minx ) then
+        integral = integral + step*((g(i)+g(i-1))/2.d0)
+      else
+        integral = integral - step*((g(i)+g(i-1))/2.d0)
+      end if
     end if
   end do
 
