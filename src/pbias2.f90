@@ -39,8 +39,8 @@ program pbias
   use size
   use input
   implicit none
-  integer :: narg, i, ioerr
-  double precision :: xmin, xmax, step
+  integer :: narg, i, ioerr, j, imax
+  double precision :: xmin, xmax, step, f2max
   double precision :: f1(gridsize), f2(gridsize), g(gridsize)
   double precision :: integral, minx
   character(len=200) :: record
@@ -92,22 +92,39 @@ program pbias
   ! Compute pbias
 
   do i = 1, gridsize
-    g(i) = f2(i) - f1(i)
+    g(i) = 0.d0
   end do
 
-  ! Integrate the positive part of g
-
-  integral = 0.d0
-  do i = 2, gridsize
-    if ( g(i) > 0.d0 ) then
-      if ( xmin + (i-1)*step > minx ) then
-        integral = integral + step*((g(i)+g(i-1))/2.d0)
-      else
-        integral = integral - step*((g(i)+g(i-1))/2.d0)
-      end if
+  ! Find maximum of f2
+  f2max = 0.d0
+  do i = 1, gridsize
+    if ( f2(i) > f2max ) then
+      f2max = f2(i)
+      imax = i
     end if
   end do
-
+  ! Mirror lower part of f2 
+  do i = 1, imax
+    g(i) = f2(i)
+  end do
+  j = imax - 1
+  do i = imax + 1, 2*imax
+    g(i) = f2(j) 
+    j = j - 1
+    if ( i > gridsize ) exit
+  end do
+  ! Subtract random from distribution
+  do i = 1, gridsize
+    g(i) = f2(i) - g(i)
+  end do
+  ! Integrate g
+  integral = 0.d0
+  do i = gridsize, 1, -1
+    if ( xmin + i*step < minx ) exit
+    !integral = integral + g(i)*step
+    integral = integral + f2(i)*step
+  end do
+                          
   ! Integrate the profile difference for scores greater than the cutoff
 
   write(*,"( a, f8.3, a, e12.5 )") "# Integral for score greater than ", minx, ": ", integral
@@ -115,7 +132,7 @@ program pbias
   ! Write the profile difference
   
   do i = 1, gridsize 
-    write(*,*) xmin+(i-1)*step, g(i)
+    write(*,*) xmin+(i-1)*step, g(i), f2(i)
   end do
 
 end program pbias
@@ -191,5 +208,4 @@ subroutine xminxmax(data)
   close(10)
   
 end subroutine xminxmax
-
 
