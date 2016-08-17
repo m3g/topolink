@@ -126,10 +126,12 @@ module topolink_data
 
      function read_atom(record,error)
 
-       integer :: ioerr
+       integer :: ioerr, i, j
        logical :: error
        type(pdbatom) :: read_atom
        character(len=200) :: record
+       character(len=1) :: char
+       character(len=4) :: namestring
        
        error = .false.
        if ( record(1:4) == "ATOM" .or. record(1:6) == "HETATM" ) then
@@ -150,8 +152,30 @@ module topolink_data
        else
          error = .true.
        end if
-
+       
      end function read_atom
+
+     ! Function that checks if an atom is a Hydrogen atom
+
+     function ishydrogen(atom)
+      
+       integer :: i, j, ioerr
+       character(len=4) :: namestring
+       logical :: ishydrogen
+       type(pdbatom) :: atom
+
+       ishydrogen = .false.
+       namestring = adjustl(atom%name)
+       i = 0
+       do while( i < 4 )
+         i = i + 1
+         read(namestring(i:i),*,iostat=ioerr) j
+         if ( ioerr == 0 ) cycle
+         if ( namestring(i:i) == "H" ) ishydrogen = .true.
+         exit
+       end do
+
+     end function ishydrogen
 
      ! Prints the data of an atom
 

@@ -496,7 +496,7 @@ program topolink
     readatom=read_atom(record,error)
     if ( error ) cycle
     if ( readatoms == 1 ) then
-      if ( readatom%name == 'H' ) cycle
+      if ( ishydrogen(readatom) ) cycle
     else if ( readatoms == 2 ) then
       if ( readatom%name /= 'N' .and. &
            readatom%name /= 'CA' .and. &
@@ -524,7 +524,7 @@ program topolink
     readatom=read_atom(record,error)
     if ( error ) cycle
     if ( readatoms == 1 ) then
-      if ( readatom%name == 'H' ) cycle
+      if ( ishydrogen(readatom) ) cycle
     else if ( readatoms == 2 ) then
       if ( readatom%name /= 'N' .and. &
            readatom%name /= 'CA' .and. &
