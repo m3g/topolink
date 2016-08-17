@@ -133,20 +133,31 @@ module topolink_data
        
        error = .false.
        if ( record(1:4) == "ATOM" .or. record(1:6) == "HETATM" ) then
+
          read(record(13:16),*,iostat=ioerr) read_atom%name
+         read_atom%name = trim(adjustl(read_atom%name))
          if ( ioerr /= 0 ) error = .true.
+
          read(record(17:21),*,iostat=ioerr) read_atom%residue%name
+         read_atom%residue%name = trim(adjustl(read_atom%residue%name))
          if ( ioerr /= 0 ) error = .true.
+
          read(record(22:22),*,iostat=ioerr) read_atom%residue%chain
+         read_atom%residue%chain = trim(adjustl(read_atom%residue%chain))
          if ( ioerr /= 0 ) error = .true.
+
          read(record(23:26),*,iostat=ioerr) read_atom%residue%index
          if ( ioerr /= 0 ) error = .true.
+
          read(record(31:38),*,iostat=ioerr) read_atom%x
          if ( ioerr /= 0 ) error = .true.
+
          read(record(39:46),*,iostat=ioerr) read_atom%y
          if ( ioerr /= 0 ) error = .true.
+
          read(record(47:54),*,iostat=ioerr) read_atom%z
          if ( ioerr /= 0 ) error = .true.
+
        else
          error = .true.
        end if

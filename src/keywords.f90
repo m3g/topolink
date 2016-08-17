@@ -14,13 +14,14 @@ function keyword(string)
   implicit none
   integer :: if, il
   character(len=200) :: keyword, string
+  logical :: empty_char
 
   if = 1
-  do while(string(if:if) <= ' '.and. if < 200)
+  do while( empty_char(string(if:if)) .and. if < 200)
     if = if + 1
   end do
   il = if
-  do while(string(il:il) > ' '.and.il < 200)
+  do while( .not. empty_char(string(il:il)) .and. il < 200)
     il = il + 1
   end do
   il = il - 1
@@ -38,15 +39,16 @@ function keyvalue(string,ivalue)
   implicit none
   integer :: if, il, length, ivalue, i
   character(len=200) :: keyvalue, string
+  logical :: empty_char
 
   ! Jump keyword 
 
   if = 1
-  do while(string(if:if) <= ' '.and.if < 200)
+  do while( empty_char(string(if:if)) .and. if < 200 )
     if = if + 1
   end do
   il = if
-  do while(string(il:il) > ' '.and.il < 200)
+  do while( .not. empty_char(string(il:il)) .and. il < 200 )
     il = il + 1
   end do
 
@@ -55,11 +57,11 @@ function keyvalue(string,ivalue)
   do i = 1, ivalue
     il = il - 1
     if = il + 1
-    do while(string(if:if) <= ' '.and.if < 200)
+    do while( empty_char(string(if:if)) .and. if < 200 )
       if = if + 1
     end do
     il = if
-    do while(string(il:il) > ' '.and.il < 200)
+    do while( .not. empty_char(string(il:il)) .and. il < 200 )
       il = il + 1
     end do
   end do
@@ -71,7 +73,7 @@ function keyvalue(string,ivalue)
     stop
   end if
 
-return
+  return
 end function keyvalue
 
 ! Count the number of input data words in an input line
@@ -104,9 +106,10 @@ function length(string)
   implicit none
   integer :: length
   character(len=200) :: string
+  logical :: empty_char
 
   length = 200
-  do while(string(length:length) <= ' ')
+  do while( empty_char(string(length:length)) )
     length = length - 1
     if ( length == 0 ) exit
   end do
@@ -134,6 +137,21 @@ subroutine cleanname(string)
 
 end subroutine cleanname
 
+!
+! Function that determines if a character is empty (empty, space, or tab)
+! (nice suggestion from Ian Harvey -IanH0073- at github)
+!
+
+function empty_char(ch)
+  character :: ch
+  logical empty_char
+  empty_char = .false.
+  if ( ch == '' .or. &
+       ch == achar(9) .or. &
+       ch == achar(32) ) then
+    empty_char = .true.
+  end if
+end function empty_char
 
 
 

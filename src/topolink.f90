@@ -131,7 +131,7 @@ program topolink
   input : do 
     read(10,"( a200 )",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
-    record = adjustl(trim(record))
+    call strclean(record) 
     if ( length(record) < 1 .or. record(1:1) == "#" ) cycle
 
     select case ( keyword(record) )
@@ -290,6 +290,7 @@ program topolink
     do      
       read(20,"( a200 )",iostat=ioerr) record
       if ( ioerr /= 0 ) exit
+      call strclean(record)
       if ( record(3:7) == "LINK:" ) then
         nloglines = nloglines + 1
       end if
@@ -300,6 +301,7 @@ program topolink
     do
       read(20,"( a200 )",iostat=ioerr) record
       if ( ioerr /= 0 ) exit
+      call strclean(record)
       if ( record(3:7) == "LINK:" ) then
         i1 = i1 + 1
         logline(i1) = record
@@ -322,7 +324,7 @@ program topolink
   do 
     read(10,"( a200 )",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
-    record = trim(adjustl(record))
+    call strclean(record)
     if ( length(record) < 1 .or. record(1:1) == "#" ) cycle
 
     if ( keyword(record) == 'experiment' ) then
@@ -387,7 +389,7 @@ program topolink
   do 
     read(10,"( a200 )",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
-    record = trim(adjustl(record))
+    call strclean(record)
     if ( length(record) < 1 .or. record(1:1) == "#" ) cycle
 
     if ( keyword(record) == 'experiment' ) then
@@ -396,10 +398,10 @@ program topolink
       ntypes = 0
       ndeadends = 0
       if ( length(record) > 11 ) then
-        experiment(iexp)%name = record(11:length(record))
+        experiment(iexp)%name = trim(adjustl(record(11:length(record))))
       else
         write(record,*) iexp
-        experiment(iexp)%name = record(11:length(record))
+        experiment(iexp)%name = trim(adjustl(record(11:length(record))))
       end if
       cycle
     end if
@@ -492,6 +494,7 @@ program topolink
   do
     read(10,"( a200 )",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
+    call strclean(record)
     if ( keyword(record) == endread ) exit
     readatom=read_atom(record,error)
     if ( error ) cycle
@@ -520,6 +523,7 @@ program topolink
   do
     read(10,"( a200 )",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
+    call strclean(record)
     if ( keyword(record) == endread ) exit
     readatom=read_atom(record,error)
     if ( error ) cycle
@@ -850,7 +854,7 @@ program topolink
       do k = 1, experiment(iexp)%ntypes
         if ( link(ii) .matches. experiment(iexp)%linktype(k) ) then
           if( type_reactive(ii,iexp) ) then
-            write(*,*) ' ERROR: A reactive pair of atoms correspond to two different types of links '
+            write(*,*) ' ERROR: A reactive pair of atoms corresponds to two different types of links '
             write(*,*) '        of the same experiment. The link types are not correctly defined. '
             write(*,*) ' Experiment: ', trim(experiment(iexp)%name)
             write(*,*) ' Atoms: ', print_atom(link(ii)%atom1), print_atom(link(ii)%atom2)
@@ -1472,9 +1476,6 @@ program topolink
   write(*,hashes)
 
 end program topolink
-
-
-
 
 
 

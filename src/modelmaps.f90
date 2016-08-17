@@ -29,8 +29,8 @@ program modelmaps
   use datatypes
   use scoretype
   implicit none
-  integer :: ioerr, nx, ny, i, j, ix, iy
-  double precision :: xread, xmin, xmax, ymin, ymax, xgrid, ygrid
+  integer :: nx, ny, i, j, ix, iy
+  double precision :: xmin, xmax, ymin, ymax, xgrid, ygrid
   double precision :: gridsize, zdiff_max, dist, xzmax, yzmax
   double precision, allocatable :: z1(:,:), z2(:,:), zdiff(:,:)
   character(len=200) :: diffplot
@@ -233,7 +233,6 @@ subroutine readdata(data)
 
   integer :: i, ioerr
   character(len=200) :: record
-  double precision :: xread
   type(input_data) :: data
 
   character(len=6) :: match
@@ -317,7 +316,6 @@ subroutine getndata(file,ndata)
 
   implicit none
   integer :: ndata, ioerr
-  double precision :: xread
   character(len=200) :: file, record
 
   open(10,file=file,status='old',action='read',iostat=ioerr) 
