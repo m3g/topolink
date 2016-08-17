@@ -126,12 +126,10 @@ module topolink_data
 
      function read_atom(record,error)
 
-       integer :: ioerr, i, j
+       integer :: ioerr
        logical :: error
        type(pdbatom) :: read_atom
        character(len=200) :: record
-       character(len=1) :: char
-       character(len=4) :: namestring
        
        error = .false.
        if ( record(1:4) == "ATOM" .or. record(1:6) == "HETATM" ) then
