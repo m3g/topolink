@@ -96,8 +96,8 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  title.o \
                  $(FLAGS)
 
-$(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o
-	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o $(FLAGS)
+$(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o progress_bar.o
+	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o progress_bar.o $(FLAGS)
 
 $(BIN)/maxmingyr : Makefile $(MODULES) maxmingyr.o
 	$(FORTRAN) -o $(BIN)/maxmingyr maxmingyr.o $(FLAGS)
@@ -124,7 +124,7 @@ $(BIN)/evalmodels : Makefile $(MODULES) flashsort.o evalmodels.o
 topolink.o : Makefile topolink.f90
 	$(FORTRAN) -c topolink.f90 $(FLAGS)
 
-linkcorrelation.o : Makefile linkcorrelation.f90 
+linkcorrelation.o : Makefile linkcorrelation.f90
 	$(FORTRAN) -c linkcorrelation.f90 $(FLAGS)
 
 filtermodels.o : Makefile filtermodels.f90 
@@ -235,6 +235,9 @@ flashsort.o : flashsort.f90 flashmod.o
 
 test_grad.o : test_grad.f90
 	$(FORTRAN) -c test_grad.f90 $(FLAGS)
+
+progress_bar.o : progress_bar.f90
+	$(FORTRAN) -c progress_bar.f90 $(FLAGS)
 
 title.o : title.f90
 	$(FORTRAN) -c title.f90 $(FLAGS)

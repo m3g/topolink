@@ -102,6 +102,7 @@ program linkcorrelation
     open(20,file=record,status='old',action='read',iostat=ioerr)
     if ( ioerr /= 0 ) cycle
     imodel = imodel + 1
+    call progress(imodel,1,nmodels)
     model(imodel)%name = record
     ilink = 0
     do 
@@ -155,7 +156,7 @@ program linkcorrelation
 
   write(*,"(a)") '# Computing link correlations: '
   write(*,*)
-  write(*,"(a)") '# Resting link correlation array ... '
+  write(*,"(a)") '# Reseting link correlation array ... '
   allocate(correlation(nlinks,nlinks))
   do i = 1, nlinks
     do j = i, nlinks
@@ -165,6 +166,7 @@ program linkcorrelation
 
   write(*,"(a)") '# Computing link correlations ... '
   do imodel = 1, nmodels
+    call progress(imodel,1,nmodels)
     do i = 1, model(imodel)%nlinks
       do j = i, model(imodel)%nlinks
         if ( ( model(imodel)%link(i)%status == 0 .or. &
