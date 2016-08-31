@@ -61,7 +61,7 @@ program linkcorrelation
   nmodels = 0
   maxlinks = 0
   do 
-    read(10,*,iostat=ioerr) record
+    read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     open(20,file=record,status='old',action='read',iostat=ioerr)
     if ( ioerr /= 0 ) cycle
@@ -97,12 +97,11 @@ program linkcorrelation
   end do
   imodel = 0
   do
-    read(10,*,iostat=ioerr) record
+    read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     open(20,file=record,status='old',action='read',iostat=ioerr)
     if ( ioerr /= 0 ) cycle
     imodel = imodel + 1
-    call progress(imodel,1,nmodels)
     model(imodel)%name = record
     ilink = 0
     do 
@@ -155,7 +154,7 @@ program linkcorrelation
   ! Computing link satisfaction correlations
 
   write(*,"(a)") '# Computing link correlations: '
-  write(*,*)
+  write(*,"(a)") '#'
   write(*,"(a)") '# Reseting link correlation array ... '
   allocate(correlation(nlinks,nlinks))
   do i = 1, nlinks
@@ -166,7 +165,6 @@ program linkcorrelation
 
   write(*,"(a)") '# Computing link correlations ... '
   do imodel = 1, nmodels
-    call progress(imodel,1,nmodels)
     do i = 1, model(imodel)%nlinks
       do j = i, model(imodel)%nlinks
         if ( ( model(imodel)%link(i)%status == 0 .or. &
