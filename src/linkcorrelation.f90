@@ -167,6 +167,9 @@ program linkcorrelation
   do imodel = 1, nmodels
     do i = 1, model(imodel)%nlinks
       do j = i, model(imodel)%nlinks
+        !
+        ! Satisfied at the same time
+        !
         if ( ( model(imodel)%link(i)%status == 0 .or. &
                model(imodel)%link(i)%status == 1 .or. &
                model(imodel)%link(i)%status == 5 ) .and. &
@@ -174,16 +177,22 @@ program linkcorrelation
                model(imodel)%link(j)%status == 1 .or. &
                model(imodel)%link(j)%status == 5 ) ) then
           correlation(i,j) = correlation(i,j) + 1.d0
-        else if ( & 
-             ( model(imodel)%link(i)%status /= 0 .and. &
-               model(imodel)%link(i)%status /= 1 .and. &
-               model(imodel)%link(i)%status /= 5 ) .and. &
-             ( model(imodel)%link(j)%status /= 0 .and. &
-               model(imodel)%link(j)%status /= 1 .and. &
-               model(imodel)%link(j)%status /= 5 ) ) then
-          correlation(i,j) = correlation(i,j) + 1.d0
-        else
-          correlation(i,j) = correlation(i,j) - 1.d0
+        !
+        ! Not satisfied at the same time
+        !
+        !else if ( & 
+        !     ( model(imodel)%link(i)%status /= 0 .and. &
+        !       model(imodel)%link(i)%status /= 1 .and. &
+        !       model(imodel)%link(i)%status /= 5 ) .and. &
+        !     ( model(imodel)%link(j)%status /= 0 .and. &
+        !       model(imodel)%link(j)%status /= 1 .and. &
+        !       model(imodel)%link(j)%status /= 5 ) ) then
+        !  correlation(i,j) = correlation(i,j) + 1.d0
+        !
+        ! One is satified, the other is not
+        !
+        !else
+        !  correlation(i,j) = correlation(i,j) - 1.d0
         end if
       end do
     end do
