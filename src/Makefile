@@ -34,9 +34,7 @@ BINARIES = $(BIN)/topolink \
            $(BIN)/linkcorrelation \
            $(BIN)/filtermodels \
            $(BIN)/maxmingyr \
-           $(BIN)/modelmaps \
-           $(BIN)/pbias \
-           $(BIN)/pbias2
+           $(BIN)/modelmaps
 
 MODULES = functionpars.o \
           linkedcells.o \
@@ -105,12 +103,6 @@ $(BIN)/maxmingyr : Makefile $(MODULES) maxmingyr.o
 $(BIN)/modelmaps: Makefile $(MODULES) modelmaps.o
 	$(FORTRAN) -o $(BIN)/modelmaps modelmaps.o $(FLAGS)
 
-$(BIN)/pbias : Makefile $(MODULES) pbias.o
-	$(FORTRAN) -o $(BIN)/pbias pbias.o $(FLAGS)
-
-$(BIN)/pbias2 : Makefile $(MODULES) pbias2.o
-	$(FORTRAN) -o $(BIN)/pbias2 pbias2.o $(FLAGS)
-
 $(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o
 	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o $(FLAGS)
 
@@ -135,12 +127,6 @@ maxmingyr.o : Makefile maxmingyr.f90
 
 modelmaps.o : Makefile modelmaps.f90 
 	$(FORTRAN) -c modelmaps.f90 $(FLAGS)
-
-pbias.o : Makefile pbias.f90 
-	$(FORTRAN) -c pbias.f90 $(FLAGS)
-
-pbias2.o : Makefile pbias2.f90 
-	$(FORTRAN) -c pbias2.f90 $(FLAGS)
 
 evalmodels.o : Makefile evalmodels.f90 
 	$(FORTRAN) -c evalmodels.f90 $(FLAGS)

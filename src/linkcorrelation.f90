@@ -1,3 +1,33 @@
+!
+! LinkCorrelation
+!
+! Computes the correlation of topological links given TopoLink log files.
+!
+! Leandro Martinez
+! Institute of Chemistry - University of Campinas
+! http://leandro.iqm.unicamp.br
+!
+! This package obtains the matrix of link correlations given
+! a list of TopoLink output logs.
+!
+! For each link pair, the correlations output will be:
+!
+! type 1 : Print the fraction of structures that satisfy
+!          both links 
+!
+! type 2 : Print the fraction of structures that fail to
+!          satisfy both links
+!
+! type 3 : Print the fraction of structures that satisfy
+!          one OR the other link
+!
+! type 4 : Print the overall correlation, that is, the sum of the fraction
+!          of structures that satify both links or fail to satisfy
+!          both links, minus the fraction of structures that satisfy
+!          one link OR the other.
+!
+! The default option is type = 1, which is easier to visualize.
+!
 
 program linkcorrelation
 
@@ -32,7 +62,7 @@ program linkcorrelation
     integer, allocatable :: linkindex(:)
   end type modeldata
 
-  integer :: i, j, ilink, imodel
+  integer :: i, j, ilink, imodel, type
   integer :: nargs, nmodels, ioerr, maxlinks, nlinks
   character(len=200) :: loglist, record, line
   double precision, allocatable :: correlation(:,:)
@@ -42,11 +72,24 @@ program linkcorrelation
   ! Read list of log files from the command line
 
   nargs = iargc()
-  if ( nargs /= 1 ) then
-    write(*,*) ' Run with: linkcorrelation loglist.txt '
+  if ( nargs /= 1 .or. nargs /= 3 ) then
+    write(*,*) ' Run with: linkcorrelation loglist.txt [-type type]'
     stop
   end if
   call getarg(1,loglist)
+  type = 1
+  if ( nargs == 3 ) then
+    call getarg(3,record)
+    read(record,*,iostat=ioerr) type
+    if ( ioerr /= 0 ) then
+      write(*,*) ' ERROR: Could not read type parameter. '
+      stop
+    end if
+    if ( type < 0 .or. type > 4 ) then
+      write(*,*) ' ERROR: Invalid value for type parameter.'
+      stop
+    end if
+  end if
 
   ! Checks how many log files are available
 
@@ -170,29 +213,36 @@ program linkcorrelation
         !
         ! Satisfied at the same time
         !
-        if ( ( model(imodel)%link(i)%status == 0 .or. &
-               model(imodel)%link(i)%status == 1 .or. &
-               model(imodel)%link(i)%status == 5 ) .and. &
-             ( model(imodel)%link(j)%status == 0 .or. &
-               model(imodel)%link(j)%status == 1 .or. &
-               model(imodel)%link(j)%status == 5 ) ) then
-          correlation(i,j) = correlation(i,j) + 1.d0
+        if ( type == 1 .or. type == 4 ) then
+          if ( ( model(imodel)%link(i)%status == 0 .or. &
+                 model(imodel)%link(i)%status == 1 .or. &
+                 model(imodel)%link(i)%status == 5 ) .and. &
+               ( model(imodel)%link(j)%status == 0 .or. &
+                 model(imodel)%link(j)%status == 1 .or. &
+                 model(imodel)%link(j)%status == 5 ) ) then
+            correlation(i,j) = correlation(i,j) + 1.d0
+            cycle
+          end if
+        end if
         !
         ! Not satisfied at the same time
         !
-        !else if ( & 
-        !     ( model(imodel)%link(i)%status /= 0 .and. &
-        !       model(imodel)%link(i)%status /= 1 .and. &
-        !       model(imodel)%link(i)%status /= 5 ) .and. &
-        !     ( model(imodel)%link(j)%status /= 0 .and. &
-        !       model(imodel)%link(j)%status /= 1 .and. &
-        !       model(imodel)%link(j)%status /= 5 ) ) then
-        !  correlation(i,j) = correlation(i,j) + 1.d0
+        if ( type == 2 .or. type == 4 ) then 
+          if ( ( model(imodel)%link(i)%status /= 0 .and. &
+                model(imodel)%link(i)%status /= 1 .and. &
+                model(imodel)%link(i)%status /= 5 ) .and. &
+              ( model(imodel)%link(j)%status /= 0 .and. &
+                model(imodel)%link(j)%status /= 1 .and. &
+                model(imodel)%link(j)%status /= 5 ) ) then
+            correlation(i,j) = correlation(i,j) + 1.d0
+            cycle
+          end if
+        end if
         !
         ! One is satified, the other is not
         !
-        !else
-        !  correlation(i,j) = correlation(i,j) - 1.d0
+        if ( type == 3 .or. type == 4 ) then
+          correlation(i,j) = correlation(i,j) - 1.d0
         end if
       end do
     end do
