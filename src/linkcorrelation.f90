@@ -72,7 +72,7 @@ program linkcorrelation
   ! Read list of log files from the command line
 
   nargs = iargc()
-  if ( nargs /= 1 .or. nargs /= 3 ) then
+  if ( nargs /= 1 .and. nargs /= 3 ) then
     write(*,*) ' Run with: linkcorrelation loglist.txt [-type type]'
     stop
   end if
@@ -213,33 +213,33 @@ program linkcorrelation
         !
         ! Satisfied at the same time
         !
-        if ( type == 1 .or. type == 4 ) then
-          if ( ( model(imodel)%link(i)%status == 0 .or. &
-                 model(imodel)%link(i)%status == 1 .or. &
-                 model(imodel)%link(i)%status == 5 ) .and. &
-               ( model(imodel)%link(j)%status == 0 .or. &
-                 model(imodel)%link(j)%status == 1 .or. &
-                 model(imodel)%link(j)%status == 5 ) ) then
+        if ( ( model(imodel)%link(i)%status == 0 .or. &
+               model(imodel)%link(i)%status == 1 .or. &
+               model(imodel)%link(i)%status == 5 ) .and. &
+             ( model(imodel)%link(j)%status == 0 .or. &
+               model(imodel)%link(j)%status == 1 .or. &
+               model(imodel)%link(j)%status == 5 ) ) then
+          if ( type == 1 .or. type == 4 ) then
             correlation(i,j) = correlation(i,j) + 1.d0
-            cycle
           end if
+          cycle
         end if
         !
         ! Not satisfied at the same time
         !
-        if ( type == 2 .or. type == 4 ) then 
-          if ( ( model(imodel)%link(i)%status /= 0 .and. &
-                model(imodel)%link(i)%status /= 1 .and. &
-                model(imodel)%link(i)%status /= 5 ) .and. &
-              ( model(imodel)%link(j)%status /= 0 .and. &
-                model(imodel)%link(j)%status /= 1 .and. &
-                model(imodel)%link(j)%status /= 5 ) ) then
+        if ( ( model(imodel)%link(i)%status /= 0 .and. &
+              model(imodel)%link(i)%status /= 1 .and. &
+              model(imodel)%link(i)%status /= 5 ) .and. &
+            ( model(imodel)%link(j)%status /= 0 .and. &
+              model(imodel)%link(j)%status /= 1 .and. &
+              model(imodel)%link(j)%status /= 5 ) ) then
+          if ( type == 2 .or. type == 4 ) then 
             correlation(i,j) = correlation(i,j) + 1.d0
-            cycle
           end if
+          cycle
         end if
         !
-        ! One is satified, the other is not
+        ! One is satified, the other is not (if got here)
         !
         if ( type == 3 .or. type == 4 ) then
           correlation(i,j) = correlation(i,j) - 1.d0
