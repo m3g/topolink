@@ -21,17 +21,18 @@ program topolink
   use linkedcells
   use topolink_data
   use topolink_operations
+  use string_operations
 
   implicit none
   integer :: nargs, iargc, ioerr, i, j, k, print, ii, n, seed, ix, iy, iz, ntrial, itrial, &
-             iguess, optpars(10), best_repeat, length, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
+             iguess, optpars(10), best_repeat, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
              i1, i2, compute,  ndeadends, readatoms, nexp, iexp, ntypes, npairs, &
-             ngood, natreactive, nmax, nloglines, linkstatus, countwords
+             ngood, natreactive, nmax, nloglines, linkstatus 
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
                      kpath, likelyhood, userlikelyhood, lnf, nlnp, pgood, pbad, totscore, scorecut, &
                      readscore
   character(len=4) :: char1, char2 
-  character(len=200) :: pdbfile, record, linkdir, linkfile, inputfile, keyword, keyvalue, endread, &
+  character(len=200) :: pdbfile, record, linkdir, linkfile, inputfile, endread, &
                         readlog
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2

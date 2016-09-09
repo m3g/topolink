@@ -1,108 +1,171 @@
-
+!
+! Program EvalModels
+!
+! Reads a series of TopoLink output files and a file containing the scores
+! (for example, a LovoAlign alignment file, or any other score), and outputs
+! the statistics of link satisfaction obtained by TopoLink as a function of
+! this score. 
+!
+! This is to verify in any of the statistics of links satisfaction is
+! correlated with the quality of the score chosen.
+!
+! L. Martinez
+! Instiute of Chemistry - University of Campinas
+! September 9, 2016
+! http://leandro.iqm.unicamp.br/topolink
+!
 program evalmodels
 
+  use ioformat 
   use topolink_data
   use topolink_operations
   use flashsort
+  use string_operations
 
   implicit none
-
-  !
-  ! Model data type
-  !
-
-  type modeldata
-    ! Model log file name
-    character(len=200) :: name
-    ! Number of links in this file
-    integer :: nlinks
-    ! Score (rosetta?) read from input data file
-    double precision :: score
-    ! Similarity score (TM-score?) read from input data file
-    double precision :: tmscore
-    ! Link results for this model
-    type(specific_link), allocatable :: link(:)
-    ! Results
-    integer :: nobscons  ! RESULT0: Number of observations that are consistent with the structure.
-    integer :: ntopcons  ! RESULT1: Number of topological distances consistent with all observations.
-    integer :: ntopnot   ! RESULT2: Number of topological distances NOT consistent with observations.
-    integer :: nmiss     ! RESULT3: Number of missing links.
-    double precision :: sumscores  ! RESULT4: Sum of scores of observed links of all experiments.
-    double precision :: likely     ! RESULT5: Likelyhood of the set of experimental results.
-    double precision :: loglikely  ! RESULT6: Log-likelyhood of the set of experimental results.
-    double precision :: usrlike    ! RESULT7: Likelyhood of the set of experimental results. (with user pgood and pbad)
-    double precision :: usrloglike ! RESULT8: Log-likelyhood of the set of experimental results. (with user pgood and pbad)
-    ! Index of link in overall model links lists
-    integer, allocatable :: linkindex(:)
-  end type modeldata
-
-  integer :: i, j, ilink, ifind, imodel
-  integer :: nargs, nmodels, ioerr, maxlinks, nlinks
-  double precision :: scoremin
-  character(len=200) :: loglist, record, record2, record3, line
-  double precision, allocatable :: order(:)
+  integer :: i, j, ilink, imodel
+  integer :: nargs, nmodels, ioerr, nlinks, scorecol, statcol
+  character(len=200) :: loglist, scorelist, record, record2, record3, line, name, output
+  logical :: error
   type(specific_link) :: linktemp
   type(modeldata), allocatable :: model(:)
+  integer :: model_index
+
+  ! Print title
+
+  call title()
+  write(*,*) ' EVALMODELS: Associate TopoLink results with model quality scores. '
+  write(*,*)
+  write(*,dashes)
 
   ! Read list of log files from the command line
 
   nargs = iargc()
-  if ( nargs /= 2 ) then
-    write(*,*) ' Run with: evalmodels loglist.txt '
+  if ( nargs /= 5 ) then
+    write(*,*)
+    write(*,*) ' ERROR: Run with: evalmodels loglist.txt scores.dat -c[int] -o output.dat'
+    write(*,*)
+    write(*,*) ' Where: loglist.txt is the file containing a list of TopoLink logs. '
+    write(*,*) '        scores.dat is a LovoAlign log file or a list of model names with scores. '
+    write(*,*) ' The scores are, for a LovoAlign log file: -c3: TM-score '
+    write(*,*) '                                           -c5: RMSD of all atoms. '
+    write(*,*) '                                           -c8: GDT_TS score. '
+    write(*,*) '                                           -c9: GDT_HA score. '
+    write(*,*) ' If the score list is not a LovoAlign log file, -c[int] indicates the column of the '
+    write(*,*) ' list containing the score. '
+    write(*,*)
+    write(*,*) ' output.dat is the name of the output file to be created. '
+    write(*,*)
+    write(*,*) ' More details at: http://leandro.iqm.unicamp/topolink '
+    write(*,*)
+    write(*,hashes)
     stop
   end if
   call getarg(1,loglist)
 
-  ! Checks how many log files are available
+  ! Read from which column the scores have to be read from the scorelist
 
-  write(*,"(a)") '#'
-  write(*,"(a)") '# Reading input file ... '
-  write(*,"(a)") '#'
-  open(10,file=loglist,action='read',status='old',iostat=ioerr)
+  do i = 3, 6
+    call getarg(i,record)
+    if ( record(1:2) == "-c" ) then
+      read(record(3:length(record)),*) scorecol
+    end if
+    if ( record(1:2) == "-r" ) then
+      read(record(3:length(record)),*) statcol
+    end if
+    if ( record(1:2) == "-o" ) then 
+      call getarg(i+1,output)
+    end if
+  end do
+
+  ! Open score file (might be a lovoalign log file, or simply a list of names and scores)
+  
+  call getarg(2,scorelist)
+  open(10,file=scorelist,action='read',status='old',iostat=ioerr)
   if ( ioerr /= 0 ) then
-    write(*,*) ' ERROR: Could not open log list file. '
+    write(*,*) ' ERROR: Could not open file: ', trim(adjustl(scorelist))
     stop
   end if
+
+  ! Read number of models
   nmodels = 0
-  maxlinks = 0
-  do 
-    read(10,*,iostat=ioerr) record
+  do
+    read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
-    open(20,file=record,status='old',action='read',iostat=ioerr)
-    if ( ioerr /= 0 ) cycle
+    if ( comment(record) ) cycle
+    read(record,*,iostat=ioerr) record2, (record3,i=1,scorecol)
+    if ( ioerr /= 0 ) then
+      write(*,*) ' ERROR: Incorrect number of columns in file: ', trim(adjustl(scorelist))
+      stop
+    end if
     nmodels = nmodels + 1
+  end do
+  write(*,*) ' Number of models found in data file: ', nmodels
+  allocate(model(nmodels))
+
+  ! Read model names and scores from score log file
+  rewind(10)
+  imodel = 0
+  do
+    read(10,"(a200)",iostat=ioerr) record
+    if ( ioerr /= 0 ) exit
+    if ( comment(record) ) cycle
+    read(record,*,iostat=ioerr) record2, (record3,i=2,scorecol)
+    imodel = imodel + 1
+    model(imodel)%name = basename(record2)
+    read(record3,*,iostat=ioerr) model(imodel)%score
+    if ( ioerr /= 0 ) then
+      write(*,*) ' ERROR: Could not read score for model: ', trim(adjustl(record2))
+      write(*,*) '        in file: ', trim(adjustl(scorelist))
+      stop
+    end if
+  end do 
+  close(10)
+
+  ! Order all models by name
+  call sort_by_name(nmodels,model)
+
+  write(*,*) ' Reading TopoLink log files ... '
+  open(10,file=loglist,action='read',status='old',iostat=ioerr)
+  if ( ioerr /= 0 ) then
+    write(*,*) ' ERROR: Could not open log list file: ', trim(adjustl(loglist))
+    stop
+  end if
+  i = 0
+  do 
+    read(10,"(a200)",iostat=ioerr) record
+    if ( ioerr /= 0 ) exit
+    if ( comment(record) ) cycle
+    open(20,file=record,status='old',action='read',iostat=ioerr)
+    if ( ioerr /= 0 ) then
+      write(*,*) ' ERROR: Could not open TopoLink log file: ', trim(adjustl(record))
+      write(*,*) '        Listed in: ', trim(adjustl(loglist))
+      stop
+    end if
+    !
+    ! Check which model is this
+    !
+    name = basename(record)
+    imodel = model_index(name,model,nmodels,error)
+    i = i + 1
+    call progress(i,1,nmodels)
+
+    !
     ! Check the number of links reported in this file
+    !
     nlinks = 0
     do 
       read(20,"(a200)",iostat=ioerr) line
       if ( ioerr /= 0 ) exit
       if ( line(3:7) == "LINK:" ) nlinks = nlinks + 1
     end do
-    maxlinks = max0(nlinks,maxlinks)
-    close(20)
-  end do
-  close(20)
-  write(*,"(a,i5)") '# Number of topolink log files found: ', nmodels
-  write(*,"(a,i5)") '# Maximum number of links in a file: ', maxlinks
-  rewind(10)
+    model(imodel)%nlinks = nlinks
+    allocate(model(imodel)%link(nlinks),model(imodel)%linkindex(nlinks))
 
-  ! Read model data
-
-  write(*,"(a)") '#'
-  write(*,"(a)") '# Reading model data file ... '
-  write(*,"(a)") '#'
-  allocate(model(nmodels))
-  do imodel = 1, nmodels
-    allocate(model(imodel)%link(maxlinks),model(imodel)%linkindex(maxlinks))
-  end do
-  imodel = 0
-  do
-    read(10,*,iostat=ioerr) record, record2, record3
-    if ( ioerr /= 0 ) exit
-    open(20,file=record,status='old',action='read',iostat=ioerr)
-    if ( ioerr /= 0 ) cycle
-    imodel = imodel + 1
-    model(imodel)%name = record
+    !
+    ! Read model data
+    ! 
+    rewind(20)
     ilink = 0
     do 
       read(20,"(a200)",iostat=ioerr) line
@@ -122,17 +185,10 @@ program evalmodels
       if ( line(4:11) == "RESULT7:") read(line(12:200),*) model(imodel)%usrlike
       if ( line(4:11) == "RESULT8:") read(line(12:200),*) model(imodel)%usrloglike
     end do
+
     close(20)
-    model(imodel)%nlinks = ilink
-    read(record2,*,iostat=ioerr) model(imodel)%score
-    if ( ioerr /= 0 ) then
-      write(*,*) ' ERROR: Could not read score of model: ', trim(adjustl(model(imodel)%name))
-    end if
-    read(record3,*,iostat=ioerr) model(imodel)%tmscore
-    if ( ioerr /= 0 ) then
-      write(*,*) ' ERROR: Could not read TM-score of model: ', trim(adjustl(model(imodel)%name))
-    end if
   end do
+  close(10)
 
   ! Indexing the links
 
@@ -151,42 +207,61 @@ program evalmodels
     end do 
   end do
 
-  ! Ordering the models in terms of score
-
-  scoremin = 0.d0
+  !
+  ! Write output file
+  ! 
+  open(10,file=output,iostat=ioerr)
+  if ( ioerr /= 0 ) then 
+    write(*,*) ' ERROR: Could not open output file: ', trim(adjustl(output))
+    stop
+  end if
+  
+  write(10,"(a)") "# TopoLink" 
+  write(10,"(a)") "#"
+  write(10,"(a)") "# EvalModels output file. " 
+  write(10,"(a)") "#"
+  write(10,"(a,a)") "# Log file list: ", trim(adjustl(loglist))
+  write(10,"(a,a)") "# Score (possibly LovoAlign log) file: ", trim(adjustl(scorelist))
+  write(10,"(a,i8)") "# Number of models ", nmodels
+  write(10,"(a)") "#"
+  write(10,"(a,i5,a)") "# Score: Model quality score, obtained from column ", scorecol,&
+                       " of the score file. " 
+  write(10,"(a)") "#"
+  write(10,"(a)") "# RESULT0: Number of consistent observations. "
+  write(10,"(a)") "# RESULT1: Number of topological distances consistent with all observations. "
+  write(10,"(a)") "# RESULT2: Number of topological distances NOT consistent with observations. "
+  write(10,"(a)") "# RESULT3: Number of missing links in observations. "
+  write(10,"(a)") "# RESULT4: Sum of the scores of observed links in all observations. "
+  write(10,"(a)") "# RESULT5: Likelyhood of the structural model, based on observations. "
+  write(10,"(a)") "#"
+  write(10,"(a)") "# More details at: http://leandro.iqm.unicamp.br/topolink"
+  write(10,"(a)") "#"
+  write(10,"(a)") "#      Score   RESULT0   RESULT1   RESULT2   RESULT3       RESULT4       RESULT5  MODEL"
   do imodel = 1, nmodels
-    scoremin = dmin1(scoremin,model(imodel)%score)
+    write(10,"( f12.5,4(tr2,i8),tr2,f12.5,tr2,e12.5,tr2,a )") &
+                model(imodel)%score, &
+                model(imodel)%nobscons, &
+                model(imodel)%ntopcons, &
+                model(imodel)%ntopnot, &
+                model(imodel)%nmiss, &
+                model(imodel)%sumscores, &
+                model(imodel)%likely,&
+                trim(adjustl(model(imodel)%name))
   end do
 
-  mflash = 1 + nmodels/10
-  allocate(indflash(nmodels),lflash(nmodels),order(nmodels))
-  do imodel = 1, nmodels
-    order(imodel) = model(imodel)%tmscore
-  end do
-  call flash1(order,nmodels,lflash,mflash,indflash)
- 
-  ! Write something
+  close(10)
 
-  call getarg(2,record)
-  read(record,*) ifind
-  j = 0
-  do i = 1, model(1)%nlinks
-    if ( model(1)%link(i)%observed ) then
-      j = j + 1
-      if ( j == ifind ) then
-        write(*,"(a,a)") "# LINK: ", trim(print_link(model(1)%link(i)))
-        ilink = i
-        exit
-      end if
-    end if
-  end do
-
-  do imodel = 1, nmodels
-    i = indflash(imodel)
-    write(*,*) trim(adjustl(model(i)%name)), model(i)%score, model(i)%tmscore, model(i)%link(ilink)%status
-  end do
+  write(*,*) ' Wrote output file: ', trim(adjustl(output))
+  write(*,*)
+  write(*,hashes)
 
 end program evalmodels
+
+
+
+
+
+
 
 
 

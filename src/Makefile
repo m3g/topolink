@@ -41,6 +41,7 @@ MODULES = functionpars.o \
           topolink_data.o \
           topolink_operations.o \
           ioformat.o \
+          string_operations.o \
           flashmod.o
 
 all : bindir $(BINARIES)
@@ -59,7 +60,6 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  initguess.o \
                  linkstatus.o \
                  linkconsistency.o \
-                 keywords.o \
                  strclean.o \
                  lnf.o \
                  overlapcell.o \
@@ -82,7 +82,6 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  initguess.o \
                  linkstatus.o \
                  linkconsistency.o \
-                 keywords.o \
                  strclean.o \
                  lnf.o \
                  overlapcell.o \
@@ -94,20 +93,21 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  title.o \
                  $(FLAGS)
 
-$(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o 
-	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o $(FLAGS)
+$(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o title.o
+	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o title.o $(FLAGS)
 
-$(BIN)/maxmingyr : Makefile $(MODULES) maxmingyr.o
-	$(FORTRAN) -o $(BIN)/maxmingyr maxmingyr.o $(FLAGS)
+$(BIN)/maxmingyr : Makefile $(MODULES) maxmingyr.o title.o
+	$(FORTRAN) -o $(BIN)/maxmingyr maxmingyr.o title.o $(FLAGS)
 
-$(BIN)/modelmaps: Makefile $(MODULES) modelmaps.o
-	$(FORTRAN) -o $(BIN)/modelmaps modelmaps.o $(FLAGS)
+$(BIN)/modelmaps: Makefile $(MODULES) modelmaps.o title.o
+	$(FORTRAN) -o $(BIN)/modelmaps modelmaps.o title.o $(FLAGS)
 
-$(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o
-	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o $(FLAGS)
+$(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o title.o
+	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o title.o $(FLAGS)
 
-$(BIN)/evalmodels : Makefile $(MODULES) flashsort.o evalmodels.o
-	$(FORTRAN) -o $(BIN)/evalmodels $(MODULES) flashsort.o evalmodels.o $(FLAGS)
+$(BIN)/evalmodels : Makefile $(MODULES) evalmodels.o title.o sort.o model_index.o
+	$(FORTRAN) -o $(BIN)/evalmodels $(MODULES) evalmodels.o title.o \
+                                      sort.o model_index.o $(FLAGS)
 
 #
 # Main programs
@@ -152,6 +152,9 @@ topolink_operations.o : topolink_operations.f90
 ioformat.o : ioformat.f90
 	$(FORTRAN) -c ioformat.f90 $(FLAGS)
 
+string_operations.o : string_operations.f90
+	$(FORTRAN) -c string_operations.f90 $(FLAGS)
+
 flashmod.o : flashmod.f90
 	$(FORTRAN) -c flashmod.f90 $(FLAGS)
 
@@ -192,9 +195,6 @@ linkstatus.o : linkstatus.f90
 linkconsistency.o : linkconsistency.f90
 	$(FORTRAN) -c linkconsistency.f90 $(FLAGS)
 
-keywords.o : keywords.f90
-	$(FORTRAN) -c keywords.f90 $(FLAGS)
-
 strclean.o : strclean.f90
 	$(FORTRAN) -c strclean.f90 $(FLAGS)
 
@@ -221,6 +221,12 @@ flashsort.o : flashsort.f90 flashmod.o
 
 test_grad.o : test_grad.f90
 	$(FORTRAN) -c test_grad.f90 $(FLAGS)
+
+sort.o : sort.f90
+	$(FORTRAN) -c sort.f90 $(FLAGS)
+
+model_index.o : model_index.f90
+	$(FORTRAN) -c model_index.f90 $(FLAGS)
 
 title.o : title.f90
 	$(FORTRAN) -c title.f90 $(FLAGS)

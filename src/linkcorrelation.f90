@@ -36,32 +36,6 @@ program linkcorrelation
   use flashsort
 
   implicit none
-
-  !
-  ! Model data type
-  !
-
-  type modeldata
-    ! Model log file name
-    character(len=200) :: name
-    ! Number of links in this file
-    integer :: nlinks
-    ! Link results for this model
-    type(specific_link), allocatable :: link(:)
-    ! Results
-    integer :: nobscons  ! RESULT0: Number of observations that are consistent with the structure.
-    integer :: ntopcons  ! RESULT1: Number of topological distances consistent with all observations.
-    integer :: ntopnot   ! RESULT2: Number of topological distances NOT consistent with observations.
-    integer :: nmiss     ! RESULT3: Number of missing links.
-    double precision :: sumscores  ! RESULT4: Sum of scores of observed links of all experiments.
-    double precision :: likely     ! RESULT5: Likelyhood of the set of experimental results.
-    double precision :: loglikely  ! RESULT6: Log-likelyhood of the set of experimental results.
-    double precision :: usrlike    ! RESULT7: Likelyhood of the set of experimental results. (with user pgood and pbad)
-    double precision :: usrloglike ! RESULT8: Log-likelyhood of the set of experimental results. (with user pgood and pbad)
-    ! Index of link in overall model links lists
-    integer, allocatable :: linkindex(:)
-  end type modeldata
-
   integer :: i, j, ilink, imodel, type
   integer :: nargs, nmodels, ioerr, maxlinks, nlinks
   character(len=200) :: loglist, record, line
