@@ -1,17 +1,14 @@
 #
 # Which compiler to use
 #
-#COMPILER = INTEL
 COMPILER = GNU
 #
 #
 ifeq "$(COMPILER)" "INTEL"
-   MPIFORTRAN = mpiifort
    FORTRAN = ifort
    FLAGS = -O3
 endif
 ifeq "$(COMPILER)" "GNU"
-   MPIFORTRAN = mpif90
    FORTRAN = gfortran
    FLAGS = -O3 -ffast-math
 endif
@@ -32,17 +29,14 @@ endif
 BINARIES = $(BIN)/topolink \
            $(BIN)/evalmodels \
            $(BIN)/linkcorrelation \
-           $(BIN)/filtermodels \
-           $(BIN)/maxmingyr \
-           $(BIN)/modelmaps
+           $(BIN)/filtermodels
 
 MODULES = functionpars.o \
           linkedcells.o \
           topolink_data.o \
           topolink_operations.o \
           ioformat.o \
-          string_operations.o \
-          flashmod.o
+          string_operations.o
 
 all : bindir $(BINARIES)
 devel : bindir $(BINARIES)
@@ -96,12 +90,6 @@ $(BIN)/topolink: Makefile $(MODULES) \
 $(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o title.o
 	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o title.o $(FLAGS)
 
-$(BIN)/maxmingyr : Makefile $(MODULES) maxmingyr.o title.o
-	$(FORTRAN) -o $(BIN)/maxmingyr maxmingyr.o title.o $(FLAGS)
-
-$(BIN)/modelmaps: Makefile $(MODULES) modelmaps.o title.o
-	$(FORTRAN) -o $(BIN)/modelmaps modelmaps.o title.o $(FLAGS)
-
 $(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o title.o
 	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o title.o $(FLAGS)
 
@@ -121,12 +109,6 @@ linkcorrelation.o : Makefile linkcorrelation.f90
 
 filtermodels.o : Makefile filtermodels.f90 
 	$(FORTRAN) -c filtermodels.f90 $(FLAGS)
-
-maxmingyr.o : Makefile maxmingyr.f90 
-	$(FORTRAN) -c maxmingyr.f90 $(FLAGS)
-
-modelmaps.o : Makefile modelmaps.f90 
-	$(FORTRAN) -c modelmaps.f90 $(FLAGS)
 
 evalmodels.o : Makefile evalmodels.f90 
 	$(FORTRAN) -c evalmodels.f90 $(FLAGS)
@@ -154,9 +136,6 @@ ioformat.o : ioformat.f90
 
 string_operations.o : string_operations.f90
 	$(FORTRAN) -c string_operations.f90 $(FLAGS)
-
-flashmod.o : flashmod.f90
-	$(FORTRAN) -c flashmod.f90 $(FLAGS)
 
 #
 # All objects
@@ -215,9 +194,6 @@ random.o : random.f90
 
 stretch.o : stretch.f90
 	$(FORTRAN) -c stretch.f90 $(FLAGS)
-
-flashsort.o : flashsort.f90 flashmod.o
-	$(FORTRAN) -c flashsort.f90 $(FLAGS)
 
 test_grad.o : test_grad.f90
 	$(FORTRAN) -c test_grad.f90 $(FLAGS)

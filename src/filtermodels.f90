@@ -3,7 +3,6 @@ program filtermodels
 
   use topolink_data
   use topolink_operations
-  use flashsort
 
   implicit none
   integer :: i, j, ilink, imodel

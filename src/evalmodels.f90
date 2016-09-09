@@ -19,7 +19,6 @@ program evalmodels
   use ioformat 
   use topolink_data
   use topolink_operations
-  use flashsort
   use string_operations
 
   implicit none
