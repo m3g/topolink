@@ -23,7 +23,7 @@ program evalmodels
 
   implicit none
   integer :: i, j, ilink, imodel
-  integer :: nargs, nmodels, ioerr, nlinks, scorecol, statcol
+  integer :: nargs, nmodels, ioerr, nlinks, scorecol, modelcol
   character(len=200) :: loglist, scorelist, record, record2, record3, line, name, output
   logical :: error
   type(specific_link) :: linktemp
@@ -42,10 +42,12 @@ program evalmodels
   nargs = iargc()
   if ( nargs /= 5 ) then
     write(*,*)
-    write(*,*) ' ERROR: Run with: evalmodels loglist.txt scores.dat -c[int] -o output.dat'
+    write(*,*) ' ERROR: Run with: evalmodels loglist.txt scores.dat output.dat -c[int] -m[int]'
     write(*,*)
     write(*,*) ' Where: loglist.txt is the file containing a list of TopoLink logs. '
     write(*,*) '        scores.dat is a LovoAlign log file or a list of model names with scores. '
+    write(*,*) '        output.dat is the name of the output file to be created. '
+    write(*,*)
     write(*,*) ' The scores are, for a LovoAlign log file: -c3: TM-score '
     write(*,*) '                                           -c5: RMSD of all atoms. '
     write(*,*) '                                           -c8: GDT_TS score. '
@@ -53,7 +55,7 @@ program evalmodels
     write(*,*) ' If the score list is not a LovoAlign log file, -c[int] indicates the column of the '
     write(*,*) ' list containing the score. '
     write(*,*)
-    write(*,*) ' output.dat is the name of the output file to be created. '
+    write(*,*) ' The -m[int] argument indicates the column of scores.dat containing the model name. '
     write(*,*)
     write(*,*) ' More details at: http://leandro.iqm.unicamp/topolink '
     write(*,*)
@@ -64,18 +66,26 @@ program evalmodels
 
   ! Read from which column the scores have to be read from the scorelist
 
-  do i = 3, 6
+  scorecol = 0
+  modelcol = 0
+  do i = 4, 5
     call getarg(i,record)
     if ( record(1:2) == "-c" ) then
       read(record(3:length(record)),*) scorecol
     end if
-    if ( record(1:2) == "-r" ) then
-      read(record(3:length(record)),*) statcol
-    end if
-    if ( record(1:2) == "-o" ) then 
-      call getarg(i+1,output)
+    if ( record(1:2) == "-m" ) then
+      read(record(3:length(record)),*) modelcol
     end if
   end do
+  if ( scorecol == 0 ) then
+    write(*,*) ' ERROR: Column of ', trim(adjustl(scorelist)), ' containing scores not defined. Ex: -c2 '
+    stop
+  end if
+  if ( modelcol == 0 ) then
+    write(*,*) ' ERROR: Column of ', trim(adjustl(scorelist)), ' containing model names not defined. Ex: -m1 '
+    stop
+  end if
+  call getarg(3,output)
 
   ! Open score file (might be a lovoalign log file, or simply a list of names and scores)
   
@@ -92,7 +102,12 @@ program evalmodels
     read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
-    read(record,*,iostat=ioerr) record2, (record3,i=1,scorecol)
+    read(record,*,iostat=ioerr) (record2, i=1, modelcol)
+    if ( ioerr /= 0 ) then
+      write(*,*) ' ERROR: Incorrect number of columns in file: ', trim(adjustl(scorelist))
+      stop
+    end if
+    read(record,*,iostat=ioerr) (record3, i=1, scorecol)
     if ( ioerr /= 0 ) then
       write(*,*) ' ERROR: Incorrect number of columns in file: ', trim(adjustl(scorelist))
       stop
@@ -109,7 +124,8 @@ program evalmodels
     read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
-    read(record,*,iostat=ioerr) record2, (record3,i=2,scorecol)
+    read(record,*,iostat=ioerr) (record2, i=1, modelcol)
+    read(record,*,iostat=ioerr) (record3, i=1, scorecol)
     imodel = imodel + 1
     model(imodel)%name = basename(record2)
     read(record3,*,iostat=ioerr) model(imodel)%score
