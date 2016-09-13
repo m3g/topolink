@@ -29,6 +29,7 @@ endif
 BINARIES = $(BIN)/topolink \
            $(BIN)/evalmodels \
            $(BIN)/linkcorrelation \
+           $(BIN)/comparecols \
            $(BIN)/filtermodels
 
 MODULES = functionpars.o \
@@ -97,6 +98,10 @@ $(BIN)/evalmodels : Makefile $(MODULES) evalmodels.o title.o sort.o model_index.
 	$(FORTRAN) -o $(BIN)/evalmodels $(MODULES) evalmodels.o title.o \
                                       sort.o model_index.o $(FLAGS)
 
+$(BIN)/comparecols : Makefile $(MODULES) comparecols.o title.o
+	$(FORTRAN) -o $(BIN)/comparecols $(MODULES) comparecols.o title.o $(FLAGS)
+
+
 #
 # Main programs
 #
@@ -112,6 +117,9 @@ filtermodels.o : Makefile filtermodels.f90
 
 evalmodels.o : Makefile evalmodels.f90 
 	$(FORTRAN) -c evalmodels.f90 $(FLAGS)
+
+comparecols.o : Makefile comparecols.f90
+	$(FORTRAN) -c comparecols.f90 $(FLAGS)
 
 #
 # modules
