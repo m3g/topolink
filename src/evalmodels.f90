@@ -225,6 +225,7 @@ program evalmodels
   !
   ! Write output file
   ! 
+  write(*,*) ' Writing output file ... '
   open(10,file=output,iostat=ioerr)
   if ( ioerr /= 0 ) then 
     write(*,*) ' ERROR: Could not open output file: ', trim(adjustl(output))
@@ -253,6 +254,7 @@ program evalmodels
   write(10,"(a)") "#"
   write(10,"(a)") "#      Score   RESULT0   RESULT1   RESULT2   RESULT3       RESULT4       RESULT5  MODEL"
   do imodel = 1, nmodels
+    call progress(imodel,1,nmodels)
     write(10,"( f12.5,4(tr2,i8),tr2,f12.5,tr2,e12.5,tr2,a )") &
                 model(imodel)%score, &
                 model(imodel)%nobscons, &
