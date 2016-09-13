@@ -23,7 +23,7 @@ program evalmodels
 
   implicit none
   integer :: i, j, ilink, imodel
-  integer :: nargs, nmodels, ioerr, nlinks, scorecol, modelcol, nminmax
+  integer :: nargs, nmodels, ioerr, nlinks, scorecol, modelcol, sortcol, nminmax
   character(len=200) :: loglist, scorelist, record, record2, record3, line, name, output
   logical :: error
   type(specific_link) :: linktemp
@@ -40,9 +40,9 @@ program evalmodels
   ! Read list of log files from the command line
 
   nargs = iargc()
-  if ( nargs /= 5 ) then
+  if ( nargs /= 5 .and. nargs /= 6 ) then
     write(*,*)
-    write(*,*) ' ERROR: Run with: evalmodels loglist.txt scores.dat output.dat -c[int] -m[int]'
+    write(*,*) ' ERROR: Run with: evalmodels loglist.txt scores.dat output.dat -c[int] -m[int] -s[int]'
     write(*,*)
     write(*,*) ' Where: loglist.txt is the file containing a list of TopoLink logs. '
     write(*,*) '        scores.dat is a LovoAlign log file or a list of model names with scores. '
@@ -57,6 +57,8 @@ program evalmodels
     write(*,*)
     write(*,*) ' The -m[int] argument indicates the column of scores.dat containing the model name. '
     write(*,*)
+    write(*,*) ' The -s[int] (optional): Order output using the data of this column of output file '
+    write(*,*)
     write(*,*) ' More details at: http://leandro.iqm.unicamp/topolink '
     write(*,*)
     write(*,hashes)
@@ -68,13 +70,17 @@ program evalmodels
 
   scorecol = 0
   modelcol = 0
-  do i = 4, 5
+  sortcol = 0
+  do i = 4, max(5,nargs)
     call getarg(i,record)
     if ( record(1:2) == "-c" ) then
       read(record(3:length(record)),*) scorecol
     end if
     if ( record(1:2) == "-m" ) then
       read(record(3:length(record)),*) modelcol
+    end if
+    if ( record(1:2) == "-s" ) then
+      read(record(3:length(record)),*) sortcol
     end if
   end do
   if ( scorecol == 0 ) then
@@ -229,6 +235,13 @@ program evalmodels
     end do 
   end do
 
+  ! Sorting models according to the user desire
+
+  if ( sortcol > 0 ) then
+    write(*,*) ' Sorting models using column output: ', sortcol
+    call sort_by_value(nmodels,model,sortcol)
+  end if
+
   !
   ! Write output file
   ! 
@@ -260,7 +273,7 @@ program evalmodels
   write(10,"(a)") "#"
   write(10,"(a)") "# More details at: http://leandro.iqm.unicamp.br/topolink"
   write(10,"(a)") "#"
-  write(10,"(a)") "#      Score   RESULT0   RESULT1   RESULT2   RESULT3    RESULT4      RESULT5       RESULT6  MODEL"
+  write(10,"(a)") "#      Score   RESULT0   RESULT1   RESULT2   RESULT3   RESULT4       RESULT5       RESULT6  MODEL"
   do imodel = 1, nmodels
     call progress(imodel,1,nmodels)
     write(10,"( f12.5,5(tr2,i8),tr2,f12.5,tr2,e12.5,tr2,a )") &
