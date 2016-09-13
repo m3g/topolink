@@ -133,6 +133,7 @@ module topolink_data
     integer :: ntopcons  ! RESULT1: Number of topological distances consistent with all observations.
     integer :: ntopnot   ! RESULT2: Number of topological distances NOT consistent with observations.
     integer :: nmiss     ! RESULT3: Number of missing links.
+    integer :: nminmax   ! Number of links with min and max data that are consistent
     double precision :: sumscores  ! RESULT4: Sum of scores of observed links of all experiments.
     double precision :: likely     ! RESULT5: Likelyhood of the set of experimental results.
     double precision :: loglikely  ! RESULT6: Log-likelyhood of the set of experimental results.
@@ -259,6 +260,8 @@ module topolink_data
         else
           read_link%observed = .false.
         end if
+
+        read(record(69:77),*) read_link%dmin
 
         read(record(79:87),*) chardmax
         do i = 1, 9

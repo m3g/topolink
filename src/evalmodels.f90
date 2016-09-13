@@ -23,7 +23,7 @@ program evalmodels
 
   implicit none
   integer :: i, j, ilink, imodel
-  integer :: nargs, nmodels, ioerr, nlinks, scorecol, modelcol
+  integer :: nargs, nmodels, ioerr, nlinks, scorecol, modelcol, nminmax
   character(len=200) :: loglist, scorelist, record, record2, record3, line, name, output
   logical :: error
   type(specific_link) :: linktemp
@@ -182,6 +182,7 @@ program evalmodels
     ! 
     rewind(20)
     ilink = 0
+    nminmax = 0 
     do 
       read(20,"(a200)",iostat=ioerr) line
       if ( ioerr /= 0 ) exit
@@ -189,6 +190,11 @@ program evalmodels
         linktemp = read_link(line)
         ilink = ilink + 1
         model(imodel)%link(ilink) = linktemp
+        if ( linktemp%status == 0 ) then
+          if ( linktemp%dmin > 0.d0 ) then
+            nminmax = nminmax + 1
+          end if
+        end if
       end if
       if ( line(4:11) == "RESULT0:") read(line(12:200),*) model(imodel)%nobscons
       if ( line(4:11) == "RESULT1:") read(line(12:200),*) model(imodel)%ntopcons
@@ -200,6 +206,7 @@ program evalmodels
       if ( line(4:11) == "RESULT7:") read(line(12:200),*) model(imodel)%usrlike
       if ( line(4:11) == "RESULT8:") read(line(12:200),*) model(imodel)%usrloglike
     end do
+    model(imodel)%nminmax = nminmax
 
     close(20)
   end do
@@ -247,20 +254,22 @@ program evalmodels
   write(10,"(a)") "# RESULT1: Number of topological distances consistent with all observations. "
   write(10,"(a)") "# RESULT2: Number of topological distances NOT consistent with observations. "
   write(10,"(a)") "# RESULT3: Number of missing links in observations. "
-  write(10,"(a)") "# RESULT4: Sum of the scores of observed links in all observations. "
-  write(10,"(a)") "# RESULT5: Likelyhood of the structural model, based on observations. "
+  write(10,"(a)") "# RESULT4: Number of distances with min and max bounds that are consistent."
+  write(10,"(a)") "# RESULT5: Sum of the scores of observed links in all observations. "
+  write(10,"(a)") "# RESULT6: Likelyhood of the structural model, based on observations. "
   write(10,"(a)") "#"
   write(10,"(a)") "# More details at: http://leandro.iqm.unicamp.br/topolink"
   write(10,"(a)") "#"
-  write(10,"(a)") "#      Score   RESULT0   RESULT1   RESULT2   RESULT3       RESULT4       RESULT5  MODEL"
+  write(10,"(a)") "#      Score   RESULT0   RESULT1   RESULT2   RESULT3    RESULT4      RESULT5       RESULT6  MODEL"
   do imodel = 1, nmodels
     call progress(imodel,1,nmodels)
-    write(10,"( f12.5,4(tr2,i8),tr2,f12.5,tr2,e12.5,tr2,a )") &
+    write(10,"( f12.5,5(tr2,i8),tr2,f12.5,tr2,e12.5,tr2,a )") &
                 model(imodel)%score, &
                 model(imodel)%nobscons, &
                 model(imodel)%ntopcons, &
                 model(imodel)%ntopnot, &
                 model(imodel)%nmiss, &
+                model(imodel)%nminmax, &
                 model(imodel)%sumscores, &
                 model(imodel)%likely,&
                 trim(adjustl(model(imodel)%name))
