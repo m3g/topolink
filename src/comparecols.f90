@@ -28,7 +28,7 @@ program comparecols
   use string_operations
   use comparecols_data
   implicit none
-  integer :: imodel, i, ioerr
+  integer :: imodel, i, ioerr, npairs
   integer :: nargs, nmodels, scol1, scol2, ncol1, ncol2, sort
   double precision :: score
   character(len=200) :: file1, file2, output, record, string, name
@@ -162,6 +162,10 @@ program comparecols
   end do
   close(10)
 
+  ! Sorting models by name
+
+  call sort_by_name(nmodels,model)
+
   ! Reading data from file 2
 
   open(10,file=file2,action='read',status='old',iostat=ioerr)
@@ -172,6 +176,7 @@ program comparecols
   do imodel = 1, nmodels
     model(imodel)%foundpair = .false.
   end do
+  npairs = 0
   do
     read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
@@ -187,9 +192,11 @@ program comparecols
     if ( .not. error ) then
       model(imodel)%foundpair = .true.
       model(imodel)%score2 = score
+      npairs = npairs + 1
     end if
   end do
   close(10)
+  write(*,*) ' Number of pairs found: ', npairs
 
   open(10,file=output)
   do imodel = 1, nmodels
@@ -250,16 +257,31 @@ function model_index(name,model,n,error)
 
 end function model_index
 
+!
+! Subroutines to sort models
+!
 
+!
+! Sort by names
+!
 
+subroutine sort_by_name(n,model)
 
+  use comparecols_data
+  implicit none
+  integer :: i, j, n
+  type(data) :: model(n), modeltemp
 
+  do i = 1, n-1
+    j = i + 1
+    do while( model(j-1)%name > model(j)%name )
+      modeltemp = model(j-1)
+      model(j-1) = model(j) 
+      model(j) = modeltemp
+      j = j - 1
+      if ( j == 1 ) exit
+    end do
+  end do
 
-
-
-
-
-
-
-
+end subroutine sort_by_name
 
