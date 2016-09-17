@@ -221,23 +221,36 @@ program linkensemble
   write(10,"(a,i8)") "# Number of models ", nmodels
   write(10,"(a,i8)") "# Number of observed crosslinks: ", nobserved
   write(10,"(a)") "#"
-  write(10,"(a)") "# Model  Relative_Probability  Fraction  Links"
+  write(10,"(a)") "# Model  Relative_Probability  DeltaG  Fraction  Links"
+  imodel = 1
+  do i = 1, model(imodel)%nlinks
+    if ( model(imodel)%link(i)%observed ) then
+      write(10,"(a,a)") "# ", trim(adjustl(print_link(model(imodel)%link(i))))
+    end if
+  end do
   nsatisfied = 0
   do imodel = 1, nmodels
+    model(imodel)%nobsgood = 0
     do i = 1, model(imodel)%nlinks
       ilink = model(imodel)%linkindex(i)
-      if ( satisfied(ilink) == 0 ) then
+      if ( model(imodel)%link(ilink)%observed ) then
         if ( model(imodel)%link(ilink)%status == 0 ) then
-          nsatisfied = nsatisfied + 1
-          satisfied(ilink) = 1
+          model(imodel)%nobsgood = model(imodel)%nobsgood + 1
+          if ( satisfied(ilink) == 0 ) then
+            nsatisfied = nsatisfied + 1
+            satisfied(ilink) = 1
+          end if
         end if
       end if
     end do
 !voltar: formatar corretamente
-    write(10,"(a,tr1,f12.5,tr1,f12.5,26(tr1,i2))") &
-                trim(adjustl(model(imodel)%name)), &
+    write(10,"(i8,tr1,a,tr1,i5,2(tr1,f12.5),tr1,i5,26(tr1,i2))") &
+                imodel, &
+                trim(adjustl(model(imodel)%name)),&
+                model(imodel)%nobsgood,&
                 model(imodel)%score / model(1)%score, & 
-                dble(nsatisfied)/nobserved, &
+                -1.987*0.298*dlog(model(imodel)%score / model(1)%score), & 
+                nsatisfied, &
                 (satisfied(j),j=1,nobserved)
   end do
  

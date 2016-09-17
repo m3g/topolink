@@ -134,6 +134,7 @@ module topolink_data
     integer :: ntopnot   ! RESULT2: Number of topological distances NOT consistent with observations.
     integer :: nmiss     ! RESULT3: Number of missing links.
     integer :: nminmax   ! Number of links with min and max data that are consistent
+    integer :: nobsgood  ! Number of observed links that are consistent with observations
     double precision :: sumscores  ! RESULT4: Sum of scores of observed links of all experiments.
     double precision :: likely     ! RESULT5: Likelyhood of the set of experimental results.
     double precision :: loglikely  ! RESULT6: Log-likelyhood of the set of experimental results.
