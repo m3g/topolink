@@ -221,13 +221,21 @@ program linkensemble
   write(10,"(a,i8)") "# Number of models ", nmodels
   write(10,"(a,i8)") "# Number of observed crosslinks: ", nobserved
   write(10,"(a)") "#"
-  write(10,"(a)") "# Model  Relative_Probability  DeltaG  Fraction  Links"
   imodel = 1
   do i = 1, model(imodel)%nlinks
     if ( model(imodel)%link(i)%observed ) then
-      write(10,"(a,a)") "# ", trim(adjustl(print_link(model(imodel)%link(i))))
+      write(10,"(a,i3,tr1,a)") "# ", i, trim(adjustl(print_link(model(imodel)%link(i))))
     end if
   end do
+  write(10,"(a)") "#"
+  write(10,"(a)") "# Nmodel: Number of crosslinks satisfied by this model. "
+  write(10,"(a)") "# RelatP: Relative probability of this model (G-score ratio to best model)."
+  write(10,"(a)") "# DeltaG: RelatP converted to DeltaG (kcal/mol)."
+  write(10,"(a)") "# Ntot: Total number of links satisfied by the ensemble up to this model."
+  write(10,"(a)") "# Next: link indexes according to list above."
+  write(10,"(a)") "#"
+  write(10,"(a,26(tr1,i3))") "#             Model  Nmodel     RelatP       DeltaG  Ntot",(i,i=1,nobserved)
+
   nsatisfied = 0
   do imodel = 1, nmodels
     model(imodel)%nobsgood = 0
@@ -244,7 +252,7 @@ program linkensemble
       end if
     end do
 !voltar: formatar corretamente
-    write(10,"(i8,tr1,a,tr1,i5,2(tr1,f12.5),tr1,i5,26(tr1,i2))") &
+    write(10,"(i8,tr1,a,tr1,i5,2(tr1,f12.5),tr1,i5,26(tr1,i3))") &
                 imodel, &
                 trim(adjustl(model(imodel)%name)),&
                 model(imodel)%nobsgood,&
