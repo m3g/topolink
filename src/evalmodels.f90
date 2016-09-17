@@ -197,7 +197,8 @@ program evalmodels
         ilink = ilink + 1
         model(imodel)%link(ilink) = linktemp
         if ( linktemp%status == 0 ) then
-          if ( linktemp%dmin > 0.d0 ) then
+          if ( linktemp%dmin > 0.d0 .and. &
+               linktemp%dmin /= linktemp%dmax ) then
             nminmax = nminmax + 1
           end if
         end if
