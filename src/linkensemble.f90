@@ -93,7 +93,7 @@ program linkensemble
     if ( comment(record) ) cycle
     read(record,*,iostat=ioerr) gscore, name
     imodel = imodel + 1
-    model(imodel)%name = name
+    model(imodel)%name = basename(name)
     model(imodel)%score = gscore
   end do 
   close(10)
