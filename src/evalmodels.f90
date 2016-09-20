@@ -168,6 +168,11 @@ program evalmodels
     !
     name = basename(record)
     imodel = model_index(name,model,nmodels,error)
+    if ( error ) then
+      write(*,*) ' ERROR: A model was not found in list: ', trim(adjustl(loglist))
+      write(*,*) '        Model: ', trim(adjustl(name))
+      stop
+    end if
     i = i + 1
     call progress(i,1,nmodels)
 

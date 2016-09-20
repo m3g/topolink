@@ -35,11 +35,5 @@ function model_index(name,model,n,error)
       if ( name <= model(iavg)%name ) imax = iavg
     end do
   end if
-  if ( error ) then
-    write(*,*)
-    write(*,*) ' ERROR: A model is listed in a log file but was not found in list: '
-    write(*,*) '        Model: ', trim(adjustl(name))
-    stop
-  end if
 
 end function model_index

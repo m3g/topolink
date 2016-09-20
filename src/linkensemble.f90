@@ -123,6 +123,11 @@ program linkensemble
     !
     name = basename(record)
     imodel = model_index(name,model,nmodels,error)
+    if ( error ) then
+    !  write(*,*) ' Warning: A model was not found in list: ', trim(adjustl(loglist))
+    !  write(*,*) '          Model: ', trim(adjustl(name))
+      cycle
+    end if
     i = i + 1
     call progress(i,1,nmodels)
 
