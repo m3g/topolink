@@ -239,9 +239,10 @@ program linkensemble
   write(10,"(a)") "# Ntot: Total number of links satisfied by the ensemble up to this model."
   write(10,"(a)") "# Next: link indexes according to list above."
   write(10,"(a)") "#"
-  write(10,"(a,26(tr1,i3))") "#             Model  Nmodel     RelatP       DeltaG  Ntot",(i,i=1,nobserved)
-
+  write(record,*) "(a,",nobserved,"(tr1,i3))"
+  write(10,record) "#             Model  Nmodel     RelatP       DeltaG  Ntot",(i,i=1,nobserved)
   nsatisfied = 0
+  write(record,*) "(i8,tr1,a,tr1,i5,2(tr1,f12.5),tr1,i5,",nobserved,"(tr1,i3))"
   do imodel = 1, nmodels
     model(imodel)%nobsgood = 0
     do i = 1, model(imodel)%nlinks
@@ -256,8 +257,7 @@ program linkensemble
         end if
       end if
     end do
-!voltar: formatar corretamente
-    write(10,"(i8,tr1,a,tr1,i5,2(tr1,f12.5),tr1,i5,26(tr1,i3))") &
+    write(10,record) &
                 imodel, &
                 trim(adjustl(model(imodel)%name)),&
                 model(imodel)%nobsgood,&
