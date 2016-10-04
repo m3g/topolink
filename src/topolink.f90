@@ -1202,7 +1202,13 @@ program topolink
           trim(adjustl(char1))//trim(adjustl(link(i)%atom1%name))//&
           '-'//trim(adjustl(link(i)%atom2%residue%name))//trim(adjustl(link(i)%atom2%residue%chain))//&
           trim(adjustl(char2))//trim(adjustl(link(i)%atom2%name))//'.pdb'
-        open(10,file=linkfile)
+        open(10,file=linkfile,iostat=ioerr)
+        if ( ioerr /= 0 ) then
+          write(*,*) ' ERROR: Could not create link PDB file: ', trim(adjustl(linkfile))
+          write(*,*) '        Perhaps the output directory does not exist.'
+          write(*,*) '        Output directory: ', trim(adjustl(linkdir))
+          stop
+        end if
         write(10,"( 'REMARK F: ', 3(tr2,f12.5) )") f, overlap(n,x), stretch(n,x)
         do j = 1, nlinkatoms
           ix = (j-1)*3 + 1
