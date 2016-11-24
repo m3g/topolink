@@ -29,7 +29,6 @@ subroutine overlapcell(x,y,z,ibox,jbox,kbox,overlap)
         (y-coor(iatom,2))**2 + &
         (z-coor(iatom,3))**2 
 
-
     if ( d < vdwrad2 ) then
       d = dsqrt(d)
       dmin = dmin1(d,dmin)
