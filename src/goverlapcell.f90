@@ -20,14 +20,6 @@ subroutine goverlapcell(n,ix,iy,iz,x,ibox,jbox,kbox,g)
       iatom = inextbox(iatom)
       cycle
     end if
-    !if ( iatom >= first(1) .and. iatom <= last(1) ) then
-    !  iatom = inextbox(iatom)
-    !  cycle
-    !end if
-    !if ( iatom >= first(2) .and. iatom <= last(2) ) then
-    !  iatom = inextbox(iatom)
-    !  cycle
-    !end if
 
     dx = x(ix)-coor(iatom,1)
     dy = x(iy)-coor(iatom,2)

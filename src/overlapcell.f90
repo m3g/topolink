@@ -20,14 +20,6 @@ subroutine overlapcell(x,y,z,ibox,jbox,kbox,overlap)
       iatom = inextbox(iatom)
       cycle
     end if
-    !if ( iatom >= first(1) .and. iatom <= last(1) ) then
-    !  iatom = inextbox(iatom)
-    !  cycle
-    !end if
-    !if ( iatom >= first(2) .and. iatom <= last(2) ) then
-    !  iatom = inextbox(iatom)
-    !  cycle
-    !end if
 
     d = (x-coor(iatom,1))**2 + &
         (y-coor(iatom,2))**2 + &
