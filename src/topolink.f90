@@ -1131,7 +1131,7 @@ program topolink
 
       ! Define the atoms that must be invisible in this path calculation
 
-      call setskip(link)
+      call setskip(link(i))
 
       ! Start iterative procedure of linker length minimization
 
