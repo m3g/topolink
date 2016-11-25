@@ -63,6 +63,7 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  printdata.o \
                  random.o \
                  stretch.o \
+                 setskip.o \
                  test_grad.o \
                  title.o
 	$(FORTRAN) -o $(BIN)/topolink $(MODULES) \
@@ -85,6 +86,7 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  printdata.o \
                  random.o \
                  stretch.o \
+                 setskip.o \
                  test_grad.o \
                  title.o \
                  $(FLAGS)
@@ -210,6 +212,9 @@ random.o : random.f90
 
 stretch.o : stretch.f90
 	$(FORTRAN) -c stretch.f90 $(FLAGS)
+
+setskip.o : setskip.f90
+	$(FORTRAN) -c setskip.f90 $(FLAGS)
 
 test_grad.o : test_grad.f90
 	$(FORTRAN) -c test_grad.f90 $(FLAGS)

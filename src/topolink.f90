@@ -27,7 +27,7 @@ program topolink
   integer :: nargs, iargc, ioerr, i, j, k, print, ii, n, seed, ix, iy, iz, ntrial, itrial, &
              iguess, optpars(10), best_repeat, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
              i1, i2, compute,  ndeadends, readatoms, nexp, iexp, ntypes, npairs, &
-             ngood, natreactive, nmax, nloglines, linkstatus 
+             ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2)
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
                      kpath, likelyhood, userlikelyhood, lnf, nlnp, pgood, pbad, totscore, scorecut, &
                      readscore
@@ -518,7 +518,7 @@ program topolink
   rewind(10)
   write(*,*)
   write(*,intout) ' Number of atoms read from PDB file: ', natoms
-  allocate(atom(natoms))
+  allocate(atom(natoms),skip(natoms))
 
   i = 0
   do
@@ -963,6 +963,8 @@ program topolink
   ! Now, starting to set computations
   !
 
+  ! Determine the maximum number of variables possible from linker lengths
+
   nmax = 0
   do i = 1, npairs
     link(i)%dmaxlink = 0.d0
@@ -1126,6 +1128,12 @@ program topolink
         write(*,intout) ' Number of variables of the optimization problem: ', n
         write(*,floatout) ' Force constante for link bonds: ', kbond
       end if
+
+      ! Define the atoms that must be invisible in this path calculation
+
+      call setskip(link)
+
+      ! Start iterative procedure of linker length minimization
 
       dpath_best = 1.d30
       best_repeat = 0
