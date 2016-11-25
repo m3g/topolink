@@ -65,6 +65,7 @@ module string_operations
       length = 200
       do while( empty_char(string(length:length)) ) 
         length = length - 1
+        if ( length == 0 ) exit
       end do
     
     end function length
