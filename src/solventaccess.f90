@@ -1,79 +1,89 @@
 !
-! Determines if a atom is solvent-accessible
+! subroutine solventacess: Determines if the residues are solvent-accessible
 !
 ! An atom is considered solvent accessible here if there
 ! is a path of empty cells sharing faces (not vertices only)
 ! leading to the atom cell to the surface cell
 !
-subroutine solventaccess()
+! A residue is considered solvent-accessible if at least
+! one of its atoms is solvent-accessible
+!
+! L. Martinez
+! Institute of Chemistry - University of Campinas
+! http://leandro.iqm.unicamp.br
+! Nov 26, 2016
+!
+subroutine solventaccess(atom)
 
+  use topolink_data
   use functionpars
   use linkedcells
   implicit none
-  integer :: i, ibox, jbox, kbox
+  integer :: ibox, jbox, kbox, n, nlast, i
   logical :: checkfaces
+  logical, allocatable :: acc(:,:,:), aux(:,:,:)
+  type(pdbatom) :: atom(natoms)
 
-integer :: j, n, nlast
+  ! Allocate logical accessible arrays
 
-  ! Allocate logical accessible array
-
-  allocate( accessible(nboxesx,nboxesy,nboxesz) )
+  allocate( acc(nboxesx,nboxesy,nboxesz), &
+            aux(nboxesx,nboxesy,nboxesz) )
 
   ! Initialize all cells as unaccessible
 
   do ibox = 1, nboxesx
     do jbox = 1, nboxesy
       do kbox = 1, nboxesz
-        accessible(ibox,jbox,kbox) = .false.
+        acc(ibox,jbox,kbox) = .false.
       end do
     end do
   end do
 
-  ! Cells at the surface are solvent accessible
+  ! Cells at the borders of the grid are, of course, accessible
 
   ibox = 1
   do jbox = 1, nboxesy
     do kbox = 1, nboxesz
-      accessible(ibox,jbox,kbox) = .true.
+      acc(ibox,jbox,kbox) = .true.
     end do
   end do
 
   ibox = nboxesx
   do jbox = 1, nboxesy
     do kbox = 1, nboxesz
-      accessible(ibox,jbox,kbox) = .true.
+      acc(ibox,jbox,kbox) = .true.
     end do
   end do
 
   jbox = 1
   do ibox = 1, nboxesx
     do kbox = 1, nboxesz
-      accessible(ibox,jbox,kbox) = .true.
+      acc(ibox,jbox,kbox) = .true.
     end do
   end do
 
   jbox = nboxesy
   do ibox = 1, nboxesx
     do kbox = 1, nboxesz
-      accessible(ibox,jbox,kbox) = .true.
+      acc(ibox,jbox,kbox) = .true.
     end do
   end do
 
   kbox = 1
   do ibox = 1, nboxesx
     do jbox = 1, nboxesy
-      accessible(ibox,jbox,kbox) = .true.
+      acc(ibox,jbox,kbox) = .true.
     end do
   end do
 
   kbox = nboxesz
   do ibox = 1, nboxesx
     do jbox = 1, nboxesy
-      accessible(ibox,jbox,kbox) = .true.
+      acc(ibox,jbox,kbox) = .true.
     end do
   end do
 
-  ! Empty cells vicinal to accessible boxes are accessible
+  ! Empty cells sharing faces with accessible boxes are also accessible (iterate)
 
   n = 0
   nlast = -1
@@ -84,130 +94,94 @@ integer :: j, n, nlast
       do jbox = 2, nboxesy - 1
         do kbox = 2, nboxesz - 1
           if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
-            accessible(ibox,jbox,kbox) = checkfaces(ibox,jbox,kbox)
-            if( .not. accessible(ibox,jbox,kbox) ) then
-              n = n + 1
-            end if
+            if ( checkfaces(ibox,jbox,kbox,acc) ) acc(ibox,jbox,kbox) = .true.
+          end if
+          if( .not. acc(ibox,jbox,kbox) ) then
+            n = n + 1
           end if
         end do
       end do
     end do
-write(*,*) n
   end do
 
-  ! Is there any empty box not solvent-accessible remaining?
+  ! Finally, the boxes containing atoms and are vicinal to
+  ! accessible boxes are accessible
 
-  i = 0
-  do ibox = 1, nboxesx
-    do jbox = 1, nboxesy
-      do kbox = 1, nboxesz
-        if( ifirstbox(ibox,jbox,kbox) == 0 .and. &
-            .not. accessible(ibox,jbox,kbox) ) then
-          i = i + 1
-          write(*,*) 'O', (xmin+ibox*vdwrad+vdwrad/2), &
-                          (ymin+jbox*vdwrad+vdwrad/2), &
-                          (zmin+kbox*vdwrad+vdwrad/2)
-        end if
+  do ibox = 2, nboxesx - 1 
+    do jbox = 2, nboxesy - 1
+      do kbox = 2, nboxesz - 1
+        aux(ibox,jbox,kbox) = .false.
+        if ( checkfaces(ibox,jbox,kbox,acc) ) aux(ibox,jbox,kbox) = .true.
       end do
-    end do  
+    end do
   end do
-stop
+  do ibox = 2, nboxesx - 1 
+    do jbox = 2, nboxesy - 1
+      do kbox = 2, nboxesz - 1
+        if ( aux(ibox,jbox,kbox) ) acc(ibox,jbox,kbox) = .true.
+      end do
+    end do
+  end do
 
+  deallocate(aux)
+
+  ! Check, residue by residue, which are solvent accessible
+
+  do i = 1, natoms
+    atom(i)%accessible = .false.
+    atom(i)%residue%accessible = .false.
+  end do
+  n = 0
+  do i = 1, natoms
+    ibox = int( (coor(i,1)-xmin)/vdwrad ) + 1 
+    jbox = int( (coor(i,2)-ymin)/vdwrad ) + 1 
+    kbox = int( (coor(i,3)-zmin)/vdwrad ) + 1 
+    if ( acc(ibox,jbox,kbox) ) then
+      atom(i)%accessible = .true.
+      atom(i)%residue%accessible = .true.
+      n = n + 1
+    end if
+  end do
+  write(*,*)
+  write(*,*) ' Number of atoms accessible to solvent: ', n
+
+  ! Count number of residues accessible to solvent
+
+  n = 0
+  i = 1
+  do 
+    i = atom(i)%residue%lastatom
+    if ( atom(i)%residue%accessible ) n = n + 1
+    if ( i == natoms ) exit  
+    i = i + 1
+  end do
+  write(*,*) ' Number of residues accessible to solvent: ', n
+
+  deallocate(acc)
 
 end subroutine solventaccess
-
-!
-! This subroutine runs over cells in a wall and checks
-! if this cell is empty, if it is, and it shares a face
-! with an accessible cell, it is also accessible 
-!
-
-subroutine checkwall(axis,i)
-              
-  use linkedcells
-  implicit none
-  integer :: i, ibox, jbox, kbox
-  character :: axis
-  logical :: checkfaces
-
-  if ( axis == "x" ) then
-    ibox = i
-    do jbox = i, nboxesy - i + 1
-      do kbox = i, nboxesz - i + 1
-        if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
-          accessible(ibox,jbox,kbox) = checkfaces(ibox,jbox,kbox)
-        end if
-      end do
-    end do
-    ibox = nboxesx - i + 1
-    do jbox = i, nboxesy - i + 1
-      do kbox = i, nboxesz - i + 1
-        if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
-          accessible(ibox,jbox,kbox) = checkfaces(ibox,jbox,kbox)
-        end if
-      end do
-    end do
-  end if
-
-  if ( axis == "y" ) then
-    jbox = i
-    do ibox = i, nboxesx - i + 1
-      do kbox = i, nboxesz - i + 1
-        if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
-          accessible(ibox,jbox,kbox) = checkfaces(ibox,jbox,kbox)
-        end if
-      end do
-    end do
-    jbox = nboxesy - i + 1
-    do ibox = i, nboxesx - i + 1
-      do kbox = i, nboxesz - i + 1
-        if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
-          accessible(ibox,jbox,kbox) = checkfaces(ibox,jbox,kbox)
-        end if
-      end do
-    end do
-  end if
-
-  if ( axis == "z" ) then
-    kbox = i
-    do ibox = i, nboxesx - i + 1
-      do jbox = i, nboxesy - i + 1
-        if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
-          accessible(ibox,jbox,kbox) = checkfaces(ibox,jbox,kbox)
-        end if
-      end do
-    end do
-    kbox = nboxesz - i + 1
-    do ibox = i, nboxesx - i + 1
-      do jbox = i, nboxesy - i + 1
-        if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
-          accessible(ibox,jbox,kbox) = checkfaces(ibox,jbox,kbox)
-        end if
-      end do
-    end do
-  end if
-
-end subroutine checkwall
 
 ! 
 ! This function returns .true. if the box shares a face
 ! with an accessible box, and .false. otherwise
 !
 
-logical function checkfaces(ibox,jbox,kbox)
+logical function checkfaces(ibox,jbox,kbox,acc)
   
   use linkedcells
   implicit none
   integer :: ibox, jbox, kbox
+  logical :: acc(nboxesx,nboxesy,nboxesz)
 
-  if ( accessible(ibox-1,jbox,kbox) .or. &
-    accessible(ibox,jbox-1,kbox) .or. &
-    accessible(ibox,jbox,kbox-1) .or. &
-    accessible(ibox+1,jbox,kbox) .or. &
-    accessible(ibox,jbox+1,kbox) .or. &
-    accessible(ibox,jbox,kbox+1) ) then
+  checkfaces = .false.
+  if ( acc(ibox-1,jbox,kbox) .or. &
+       acc(ibox,jbox-1,kbox) .or. &
+       acc(ibox,jbox,kbox-1) .or. &
+       acc(ibox+1,jbox,kbox) .or. &
+       acc(ibox,jbox+1,kbox) .or. &
+       acc(ibox,jbox,kbox+1) &
+     ) then
     checkfaces = .true.
   end if
 
 end function checkfaces
-

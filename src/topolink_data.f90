@@ -12,6 +12,7 @@ module topolink_data
 
     integer :: index, firstatom, lastatom
     character(len=4) :: name, chain
+    logical :: accessible
   
   end type pdbresidue
 
@@ -23,6 +24,7 @@ module topolink_data
      type(pdbresidue) :: residue
      character(len=4) :: name 
      double precision :: x, y, z
+     logical :: accessible
 
   end type pdbatom
 
