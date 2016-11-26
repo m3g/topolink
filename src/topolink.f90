@@ -1024,6 +1024,10 @@ program topolink
                                  xmin, ymin, zmin, xmax, ymax, zmax
   end if
 
+  ! Check which atoms are solvent accessible
+
+  call solventaccess()
+
   !
   ! Start computation of topological distances
   !

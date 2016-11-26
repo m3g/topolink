@@ -8,5 +8,6 @@ module linkedcells
   integer :: nboxesx, nboxesy, nboxesz
   double precision :: xmin, ymin, zmin, xmax, ymax, zmax
   integer, allocatable :: ifirstbox(:,:,:), inextbox(:)
+  logical, allocatable :: accessible(:,:,:)
 
 end module linkedcells
