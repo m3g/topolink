@@ -19,10 +19,10 @@ module topolink_data
 
   type pdbatom
 
-     integer :: index 
-     type(pdbresidue) :: residue
-     character(len=4) :: name 
-     double precision :: x, y, z
+    integer :: index 
+    type(pdbresidue) :: residue
+    character(len=4) :: name 
+    double precision :: x, y, z
 
   end type pdbatom
 
@@ -30,15 +30,15 @@ module topolink_data
 
   type experiment_in_link
 
-     ! observed: The atom pair was observed to link in this experiment
-     ! type_reactive: The atom pair is reactive, according to the link types of this experiment
-     ! obs_reactive: The atom pair is reactive, according to the observed reactivity in this experiment
-     ! type_consistent: The topological distance of this atom pair is consistent with 
-     !                  the observed reactivity of this atom pair, according to atom types
-     ! obs_reactivity: The topological distance is consistent with the observed reactivity of this
-     !                 atom pair, acoording to the observed atom reactivities
-      
-     logical :: observed, type_reactive, obs_reactive, type_consistent, obs_consistent
+    ! observed: The atom pair was observed to link in this experiment
+    ! type_reactive: The atom pair is reactive, according to the link types of this experiment
+    ! obs_reactive: The atom pair is reactive, according to the observed reactivity in this experiment
+    ! type_consistent: The topological distance of this atom pair is consistent with 
+    !                  the observed reactivity of this atom pair, according to atom types
+    ! obs_reactivity: The topological distance is consistent with the observed reactivity of this
+    !                 atom pair, acoording to the observed atom reactivities
+     
+    logical :: observed, type_reactive, obs_reactive, type_consistent, obs_consistent
 
   end type experiment_in_link
 
