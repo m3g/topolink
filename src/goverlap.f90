@@ -29,42 +29,42 @@ subroutine goverlap(n,x,g)
 
     ! Interactions of boxes that share faces
 
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox,kbox,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox+1,kbox,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox+1,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox,kbox+1,g)
 
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox,kbox,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox-1,kbox,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox-1,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox,kbox-1,g)
 
     ! Interactions of boxes that share axes
 
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox+1,kbox,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox,kbox+1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox-1,kbox,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox+1,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox-1,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox,kbox-1,g)
 
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox+1,kbox+1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox+1,kbox-1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox-1,kbox+1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox-1,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox+1,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox+1,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox-1,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox-1,kbox-1,g)
 
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox+1,kbox,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox,kbox+1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox-1,kbox,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox+1,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox-1,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox,kbox-1,g)
 
     ! Interactions of boxes that share vertices
 
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox+1,kbox+1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox+1,kbox-1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox-1,kbox+1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox+1,jbox-1,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox+1,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox+1,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox-1,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox+1,jbox-1,kbox-1,g)
 
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox+1,kbox+1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox+1,kbox-1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox-1,kbox+1,g)
-    call goverlapcell(n,ix,iy,iz,x,ibox-1,jbox-1,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox+1,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox+1,kbox-1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox-1,kbox+1,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox-1,jbox-1,kbox-1,g)
 
   end do
 

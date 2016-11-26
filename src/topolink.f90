@@ -36,7 +36,7 @@ program topolink
                         readlog
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  logical :: quitgood, printlinks, printnotfound, error, r1, r2, observedscores, inexp
+  logical :: quitgood, printlinks, printnotfound, error, r1, r2, observedscores, inexp, mimicchain
 
   external :: computef, computeg
 
@@ -86,6 +86,7 @@ program topolink
   pbad = -1.d0
   observedscores = .false.
   scorecut = -1.d0
+  mimicchain = .true.
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -107,7 +108,6 @@ program topolink
   ! Parameters for optimization method
 
   dbond2 = dbond**2
-  vdwrad2 = vdwrad**2
   optpars(1) = 500 ! Maximum number of functional evaluations
   optpars(2) = 100 ! Maximum number of CG iterations
   seed = 0
@@ -166,6 +166,9 @@ program topolink
       case ("print")
         record = keyvalue(record,1)
         read(record,*) print
+      case ("mimicchain")
+        if ( keyvalue(record,1) == 'yes' ) mimicchain = .true.
+        if ( keyvalue(record,1) == 'no' ) mimicchain = .false.
       case ("quitgood")
         if ( keyvalue(record,1) == 'yes' ) quitgood = .true.
         if ( keyvalue(record,1) == 'no' ) quitgood = .false.
@@ -283,7 +286,7 @@ program topolink
   write(*,intout) ' Maximum number of function evaluations of CGNewton: ', optpars(1)
   write(*,intout) ' Maximum number of CG iterations in CGNewton: ', optpars(2)
   write(*,intout) ' Seed for random number generator: ', seed
-  
+
   if ( readlog /= "none" ) then
     write(*,*) ' Will read link data from previous run: ', trim(adjustl(readlog))
     open(20,file=readlog,action='read',iostat=ioerr)
@@ -985,7 +988,7 @@ program topolink
     nmax = max(nmax,link(i)%nbeads)
   end do
   nmax = 3*nmax
-  allocate( x(nmax), g(nmax), xbest(nmax) )
+  allocate( x(nmax), g(nmax), xbest(nmax), sigma(nmax) )
 
   ! Compute maximum and minimum distances of links, according to observations
 
@@ -1027,7 +1030,7 @@ program topolink
   ! Check which residues are solvent accessible
 
   call solventaccess(atom)
-
+ 
   !
   ! Start computation of topological distances
   !
@@ -1154,6 +1157,10 @@ program topolink
       ! Define the atoms that must be invisible in this path calculation
 
       call setskip(link(i),atom)
+
+      ! Define the vdw radii of the linker atoms, which changes with mimic chain option
+      
+      call setsigma(link(i),mimicchain)
 
       ! Start iterative procedure of linker length minimization
 

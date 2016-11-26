@@ -5,8 +5,8 @@
 module functionpars
 
   integer :: natoms, atom1, atom2, nlinkatoms
-  double precision :: kbond, dbond, vdwrad, kvdw, vdwrad2, dbond2, dmin
-  double precision, allocatable :: coor(:,:)
+  double precision :: kbond, dbond, vdwrad, kvdw, dbond2, dmin
+  double precision, allocatable :: coor(:,:), sigma(:)
   logical, allocatable :: skip(:)
 
 end module functionpars

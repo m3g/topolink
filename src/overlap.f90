@@ -29,46 +29,46 @@ double precision function overlap(n,x)
 
     ! Inside box
 
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox,kbox,overlap)
 
     ! Interactions of boxes that share faces
 
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox,kbox,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox+1,kbox,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox+1,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox,kbox+1,overlap)
 
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox,kbox,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox-1,kbox,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox-1,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox,kbox-1,overlap)
 
     ! Interactions of boxes that share axes
 
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox+1,kbox,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox,kbox+1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox-1,kbox,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox+1,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox-1,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox,kbox-1,overlap)
 
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox+1,kbox+1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox+1,kbox-1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox-1,kbox+1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox,jbox-1,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox+1,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox+1,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox-1,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox,jbox-1,kbox-1,overlap)
 
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox+1,kbox,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox,kbox+1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox-1,kbox,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox+1,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox-1,kbox,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox,kbox-1,overlap)
 
     ! Interactions of boxes that share vertices
 
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox+1,kbox+1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox+1,kbox-1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox-1,kbox+1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox+1,jbox-1,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox+1,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox+1,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox-1,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox+1,jbox-1,kbox-1,overlap)
 
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox+1,kbox+1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox+1,kbox-1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox-1,kbox+1,overlap)
-    call overlapcell(x(ix),x(iy),x(iz),ibox-1,jbox-1,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox+1,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox+1,kbox-1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox-1,kbox+1,overlap)
+    call overlapcell(i,x(ix),x(iy),x(iz),ibox-1,jbox-1,kbox-1,overlap)
 
   end do
 

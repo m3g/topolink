@@ -2,17 +2,18 @@
 ! Subroutine that computes the overlap in a cell
 !
 
-subroutine overlapcell(x,y,z,ibox,jbox,kbox,overlap)
+subroutine overlapcell(i,x,y,z,ibox,jbox,kbox,overlap)
 
   use functionpars
   use linkedcells
   implicit none
-  integer :: ibox, jbox, kbox, iatom
-  double precision :: x, y, z, overlap, d
+  integer :: ibox, jbox, kbox, iatom, i
+  double precision :: x, y, z, overlap, d, vdwrad2
 
   if ( ibox < 1 .or. jbox < 1 .or. kbox < 1 ) return
   if ( ibox > nboxesx .or. jbox > nboxesy .or. kbox > nboxesz ) return
   
+  vdwrad2 = sigma(i)**2
   iatom = ifirstbox(ibox,jbox,kbox) 
   do while( iatom /= 0 )
     
@@ -28,7 +29,7 @@ subroutine overlapcell(x,y,z,ibox,jbox,kbox,overlap)
     if ( d < vdwrad2 ) then
       d = dsqrt(d)
       dmin = dmin1(d,dmin)
-      overlap = overlap + kvdw*( vdwrad - d )**2
+      overlap = overlap + kvdw*( sigma(i) - d )**2
     end if
 
     iatom = inextbox(iatom)
