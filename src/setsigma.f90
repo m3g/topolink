@@ -46,11 +46,11 @@ subroutine setsigma(link,mimicchain)
 
   ! Mimic atomic radii at begining of linker
   do i = 1, length1
-    sigma(i) = 2.d0
+    sigma(i) = 1.5d0
   end do
   ! Mimic atomic radii at end of linker
   do i = nlinkatoms, nlinkatoms - length2, -1
-    sigma(i) = 2.d0
+    sigma(i) = 1.5d0
   end do
 
 end subroutine setsigma
