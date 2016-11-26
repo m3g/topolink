@@ -1127,7 +1127,9 @@ program topolink
 
       ! If some of the residues involved are not accessible to solvent, cycle
 
+      link(i)%atom1%accessible = atom(atom1)%accessible
       link(i)%atom1%residue%accessible = atom(atom1)%residue%accessible
+      link(i)%atom2%accessible = atom(atom2)%accessible
       link(i)%atom2%residue%accessible = atom(atom2)%residue%accessible
       if ( .not. link(i)%atom1%residue%accessible .or. &
            .not. link(i)%atom2%residue%accessible ) then
