@@ -4,8 +4,8 @@
 
 module ioformat
 
-  character(len=*), parameter :: dashes = "( tr2,118('-') )"
-  character(len=*), parameter :: hashes = "( tr2,118('#') )"
+  character(len=*), parameter :: dashes = "( tr2,121('-') )"
+  character(len=*), parameter :: hashes = "( tr2,121('#') )"
 
   contains
 

@@ -1124,10 +1124,10 @@ program topolink
 
       ! If some of the residues involved are not accessible to solvent, cycle
 
-      link(i)%atom1%accessible = atom(atom1)%residue%accessible
-      link(i)%atom2%accessible = atom(atom2)%residue%accessible
-      if ( .not. link(i)%atom1%accessible .or. &
-           .not. link(i)%atom2%accessible ) then
+      link(i)%atom1%residue%accessible = atom(atom1)%residue%accessible
+      link(i)%atom2%residue%accessible = atom(atom2)%residue%accessible
+      if ( .not. link(i)%atom1%residue%accessible .or. &
+           .not. link(i)%atom2%residue%accessible ) then
         if ( printnotfound ) then
           link(i)%status = linkstatus(link(i))
           call linkconsistency(link(i),nexp,experiment)
@@ -1142,6 +1142,10 @@ program topolink
     
       if ( print > 0 ) then
         write(*,intout2) ' Reference atoms: ', atom1, atom2
+        write(*,*) ' Solvent accessibility of these atoms: ', atom(atom1)%accessible, &
+                                                              atom(atom2)%accessible
+        write(*,*) ' Solvent accessibility of the residues: ', atom(atom1)%residue%accessible, &
+                                                               atom(atom2)%residue%accessible
         write(*,intout) ' Number of atoms of the linker: ', nlinkatoms
         write(*,intout) ' Number of variables of the optimization problem: ', n
         write(*,floatout) ' Force constante for link bonds: ', kbond

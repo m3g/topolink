@@ -19,7 +19,7 @@ subroutine solventaccess(atom)
   use functionpars
   use linkedcells
   implicit none
-  integer :: ibox, jbox, kbox, n, nlast, i
+  integer :: ibox, jbox, kbox, n, nlast, i, j
   logical :: checkfaces
   logical, allocatable :: acc(:,:,:), aux(:,:,:)
   type(pdbatom) :: atom(natoms)
@@ -138,7 +138,11 @@ subroutine solventaccess(atom)
     kbox = int( (coor(i,3)-zmin)/vdwrad ) + 1 
     if ( acc(ibox,jbox,kbox) ) then
       atom(i)%accessible = .true.
-      atom(i)%residue%accessible = .true.
+      if ( .not. atom(i)%residue%accessible ) then
+        do j = atom(i)%residue%firstatom, atom(i)%residue%lastatom
+          atom(j)%residue%accessible = .true.
+        end do
+      end if
       n = n + 1
     end if
   end do
