@@ -1122,6 +1122,20 @@ program topolink
         cycle allpairs
       end if
 
+      ! If some of the residues involved are not accessible to solvent, cycle
+
+      link(i)%atom1%accessible = atom(atom1)%residue%accessible
+      link(i)%atom2%accessible = atom(atom2)%residue%accessible
+      if ( .not. link(i)%atom1%accessible .or. &
+           .not. link(i)%atom2%accessible ) then
+        if ( printnotfound ) then
+          link(i)%status = linkstatus(link(i))
+          call linkconsistency(link(i),nexp,experiment)
+          call printdata(print,link(i))
+        end if
+        cycle allpairs
+      end if
+
       ! Number of variables of the optimization problem
     
       n = nlinkatoms*3

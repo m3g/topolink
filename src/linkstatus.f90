@@ -18,7 +18,7 @@
 !                           |                        |             of dmaxlink        |     (BAD: EUCL)
 !  The link was observed -- |                        --NO-----------------------------|
 !   (experimentally)        |                                                         |
-!                           |                                                         --NO: Status: 4
+!                           |                                                         --NO: Status: 4 
 !                           |                                                              (BAD: NOTFOUND)
 !                           |
 !                           |                                                                         

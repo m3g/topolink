@@ -20,18 +20,11 @@ module topolink_data
 
   type pdbatom
 
-<<<<<<< HEAD
-     integer :: index 
-     type(pdbresidue) :: residue
-     character(len=4) :: name 
-     double precision :: x, y, z
-     logical :: accessible
-=======
     integer :: index 
     type(pdbresidue) :: residue
     character(len=4) :: name 
     double precision :: x, y, z
->>>>>>> master
+    logical :: accessible
 
   end type pdbatom
 

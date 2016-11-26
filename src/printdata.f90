@@ -9,6 +9,7 @@ subroutine printdata(print,link)
   implicit none
   integer :: print, ib
   type(specific_link) :: link
+  character(len=1) :: sa1, sa2
   character(len=3) :: charobs
   character(len=9) :: charmax, chardist
   character(len=13) :: charresult
@@ -19,15 +20,15 @@ subroutine printdata(print,link)
   if ( print == -1 ) then
     write(*,dashes) 
     write(*,"( '        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED&
-               &    DMIN      DMAX        RESULT  OBSRES REACRES')")
+               &    DMIN      DMAX        RESULT  OBSRES REACRES SA')")
     write(*,dashes)
     return
   end if
 
   ! Output line format for each link
-  !  -------------------------------------------------------------------------------------------------------------------
-  !        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED    DMIN      DMAX        RESULT  OBSRES REACRES
-  !  LINK: LYSX A 1000 XXCB LYSX A 1008 XXCB 0014.000 >0013.756   YES   0000.000 >0034.000 NOTFOUND GOOD   00/00   11/11
+  !  ----------------------------------------------------------------------------------------------------------------------
+  !        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED    DMIN      DMAX        RESULT  OBSRES REACRES SA
+  !  LINK: LYSX A 1000 XXCB LYSX A 1008 XXCB 0014.000 >0013.756   YES   0000.000 >0034.000 NOTFOUND GOOD   00/00   11/11 YN
 
   lineformat = "( t3,"//&
                  &"'LINK:',"//&           ! LINK:
@@ -47,6 +48,7 @@ subroutine printdata(print,link)
                  &"t89,a13,"//&           ! FOUND GOOD
                  &"t105,i2,'/',i2,"//&    ! 00/00
                  &"t113,i2,'/',i2,"//&    ! 11/11
+                 &"t119,a1,a1,"//&        ! YN
                  &")" 
 
   if ( link%observed ) then
@@ -96,6 +98,9 @@ subroutine printdata(print,link)
   if ( link%status == 7 ) charresult ="     OK: EUCL"
   if ( link%status == 8 ) charresult =" OK: NOTFOUND"
 
+  sa1 = "Y" ; if ( .not. link%atom1%residue%accessible ) sa1 = "N"
+  sa2 = "Y" ; if ( .not. link%atom2%residue%accessible ) sa2 = "N"
+
   write(*,lineformat) link%atom1%residue%name, link%atom1%residue%chain, &
                       link%atom1%residue%index, link%atom1%name, &
                       link%atom2%residue%name, link%atom2%residue%chain, &
@@ -103,7 +108,8 @@ subroutine printdata(print,link)
                       link%euclidean, chardist, charobs, &
                       link%dmin, charmax, charresult, &
                       link%n_obs_consistent, link%n_obs_expected, &
-                      link%n_type_consistent, link%n_type_expected
+                      link%n_type_consistent, link%n_type_expected, &
+                      sa1, sa2
 
 end subroutine printdata
 
