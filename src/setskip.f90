@@ -73,6 +73,11 @@ logical function skipatom(refname,name)
     if ( name == "C"  ) skipatom = .false.
     if ( name == "O"  ) skipatom = .false.
 
+  ! If the refrence atom is a backbone atom, just skip everything
+
+  else if ( refname == "N" .or. refname == "C" .or. refname == "O" ) then
+    continue
+
   ! If the reference is some atom from the side chain, skip the 
   ! backbone and CB atoms
 
