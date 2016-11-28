@@ -38,6 +38,7 @@ MODULES = functionpars.o \
           topolink_data.o \
           topolink_operations.o \
           ioformat.o \
+          inputoptions.o \
           string_operations.o
 
 all : bindir $(BINARIES)
@@ -155,6 +156,9 @@ topolink_operations.o : topolink_operations.f90
 
 ioformat.o : ioformat.f90
 	$(FORTRAN) -c ioformat.f90 $(FLAGS)
+
+inputoptions.o : inputoptions.f90
+	$(FORTRAN) -c inputoptions.f90 $(FLAGS)
 
 string_operations.o : string_operations.f90
 	$(FORTRAN) -c string_operations.f90 $(FLAGS)

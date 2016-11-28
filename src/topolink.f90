@@ -22,21 +22,19 @@ program topolink
   use topolink_data
   use topolink_operations
   use string_operations
-
+  use inputoptions
   implicit none
-  integer :: nargs, iargc, ioerr, i, j, k, print, ii, n, seed, ix, iy, iz, ntrial, itrial, &
+  integer :: nargs, iargc, ioerr, i, j, k, ii, n, seed, ix, iy, iz, ntrial, itrial, &
              iguess, optpars(10), best_repeat, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
-             i1, i2, compute,  ndeadends, readatoms, nexp, iexp, ntypes, npairs, &
+             i1, i2, ndeadends, nexp, iexp, ntypes, npairs, &
              ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2)
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
-                     kpath, likelyhood, userlikelyhood, lnf, nlnp, pgood, pbad, totscore, scorecut, &
-                     readscore
+                     kpath, likelyhood, userlikelyhood, lnf, nlnp, totscore, readscore
   character(len=4) :: char1, char2 
-  character(len=200) :: pdbfile, record, linkdir, linkfile, inputfile, endread, &
-                        readlog
+  character(len=200) :: record, linkfile, inputfile, endread
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  logical :: quitgood, printlinks, printnotfound, error, r1, r2, observedscores, inexp, mimicchain
+  logical :: error, r1, r2, inexp
 
   external :: computef, computeg
 
@@ -87,6 +85,7 @@ program topolink
   observedscores = .false.
   scorecut = -1.d0
   mimicchain = .true.
+  printaccessible = .false.
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -178,6 +177,9 @@ program topolink
       case ("printnotfound")
         if ( keyvalue(record,1) == 'yes' ) printnotfound = .true.
         if ( keyvalue(record,1) == 'no' ) printnotfound = .false.
+      case ("printaccessible")
+        if ( keyvalue(record,1) == 'yes' ) printaccessible = .true.
+        if ( keyvalue(record,1) == 'no' ) printaccessible = .false.
       case ("compute")
         if ( keyvalue(record,1) == 'observed' ) compute = 1
         if ( keyvalue(record,1) == 'reactive' ) compute = 2
@@ -1056,6 +1058,13 @@ program topolink
     last(2) = link(i)%atom2%residue%lastatom
     nlinkatoms = link(i)%nbeads
 
+    ! Solvent accessibility of atoms and residues
+
+    link(i)%atom1%accessible = atom(atom1)%accessible
+    link(i)%atom1%residue%accessible = atom(atom1)%residue%accessible
+    link(i)%atom2%accessible = atom(atom2)%accessible
+    link(i)%atom2%residue%accessible = atom(atom2)%residue%accessible
+
     if ( print > 0 ) then
       write(*,"( a, a, 3(tr2,f8.3) )") ' Reference atom 1: ', &
                     print_atom(link(i)%atom1), &
@@ -1127,10 +1136,6 @@ program topolink
 
       ! If some of the residues involved are not accessible to solvent, cycle
 
-      link(i)%atom1%accessible = atom(atom1)%accessible
-      link(i)%atom1%residue%accessible = atom(atom1)%residue%accessible
-      link(i)%atom2%accessible = atom(atom2)%accessible
-      link(i)%atom2%residue%accessible = atom(atom2)%residue%accessible
       if ( .not. link(i)%atom1%residue%accessible .or. &
            .not. link(i)%atom2%residue%accessible ) then
         if ( printnotfound ) then

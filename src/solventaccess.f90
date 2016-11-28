@@ -18,11 +18,12 @@ subroutine solventaccess(atom)
   use topolink_data
   use functionpars
   use linkedcells
+  use inputoptions, only : printaccessible
   implicit none
-  integer :: ibox, jbox, kbox, n, nlast, i, j
+  integer :: ibox, jbox, kbox, n, i, j
   logical :: checkfaces
   logical, allocatable :: acc(:,:,:), aux(:,:,:)
-  type(pdbatom) :: atom(natoms)
+  type(pdbatom) :: atom(natoms), writeatom
 
   ! Allocate logical accessible arrays
 
@@ -83,29 +84,30 @@ subroutine solventaccess(atom)
     end do
   end do
 
-  ! Empty cells sharing faces with accessible boxes are also accessible (iterate)
+  ! Empty cells sharing faces with accessible boxes are also accessible (iterate
+  ! until convergence)
 
-  n = 0
-  nlast = -1
-  do while( n /= nlast ) 
-    nlast = n
+  n = 1
+  do while( n > 0 ) 
     n = 0
     do ibox = 2, nboxesx - 1 
       do jbox = 2, nboxesy - 1
         do kbox = 2, nboxesz - 1
-          if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
-            if ( checkfaces(ibox,jbox,kbox,acc) ) acc(ibox,jbox,kbox) = .true.
-          end if
-          if( .not. acc(ibox,jbox,kbox) ) then
-            n = n + 1
+          if ( .not. acc(ibox,jbox,kbox ) ) then
+            if ( ifirstbox(ibox,jbox,kbox) == 0 ) then
+              if ( checkfaces(ibox,jbox,kbox,acc) ) then 
+                acc(ibox,jbox,kbox) = .true.
+                n = n + 1
+              end if
+            end if
           end if
         end do
       end do
     end do
   end do
 
-  ! Finally, the boxes containing atoms and are vicinal to
-  ! accessible boxes are accessible
+  ! Finally, the cells containing atoms and sharing faces with 
+  ! accessible cells are the important accessible cells
 
   do ibox = 2, nboxesx - 1 
     do jbox = 2, nboxesy - 1
@@ -160,6 +162,36 @@ subroutine solventaccess(atom)
     i = i + 1
   end do
   write(*,*) ' Number of residues accessible to solvent: ', n
+
+  ! Print residue accessibility to solvent
+
+  if ( printaccessible ) then
+    open(10,file="accessibility.pdb")
+    do i = 1, natoms
+      atom(i)%b = 1.
+      if ( .not. atom(i)%accessible ) atom(i)%b = 0.
+      write(10,"(a)") trim(adjustl(print_pdbatom(atom(i))))
+    end do
+    n = natoms
+    do ibox = 1, nboxesx
+      do jbox = 1, nboxesy
+        do kbox = 1, nboxesz
+          if ( .not. acc(ibox,jbox,kbox) ) then
+            n = n + 1
+            writeatom%index = n
+            writeatom%name = "O"
+            writeatom%residue%name = "WAT"
+            writeatom%residue%index = n
+            writeatom%x = xmin + (ibox-1)*vdwrad + vdwrad/2.
+            writeatom%y = ymin + (jbox-1)*vdwrad + vdwrad/2.
+            writeatom%z = zmin + (kbox-1)*vdwrad + vdwrad/2.
+            write(10,"(a)") trim(adjustl(print_pdbhetatm(writeatom)))
+          end if
+        end do
+      end do
+    end do
+    close(10)
+  end if
 
   deallocate(acc)
 

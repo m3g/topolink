@@ -11,7 +11,7 @@ module topolink_data
   type pdbresidue
 
     integer :: index, firstatom, lastatom
-    character(len=4) :: name, chain
+    character(len=4) :: name, chain = "    "
     logical :: accessible
   
   end type pdbresidue
@@ -24,6 +24,7 @@ module topolink_data
     type(pdbresidue) :: residue
     character(len=4) :: name 
     double precision :: x, y, z
+    real :: b = 0., occup = 0.
     logical :: accessible
 
   end type pdbatom
@@ -395,13 +396,28 @@ module topolink_data
        type(pdbatom) :: atom
        character(len=200) :: pdbformat, print_pdbatom
 
-       pdbformat = "('ATOM',t7,i5,t12,a4,t17,a4,t22,a1,t23,i4,t31,f8.3,t39,f8.3,t47,f8.3)"
+       pdbformat = "('ATOM',t7,i5,t12,a4,t17,a4,t22,a1,t23,i4,t31,f8.3,t39,f8.3,t47,f8.3,t55,f6.2,t61,f6.2)"
        write(print_pdbatom,pdbformat) &
                            atom%index, trim(adjustl(atom%name)), &
                            trim(adjustl(atom%residue%name)), atom%residue%chain, &
-                           atom%residue%index, atom%x, atom%y, atom%z
+                           atom%residue%index, atom%x, atom%y, atom%z, atom%occup, atom%b
 
      end function print_pdbatom
+
+     ! Prints a PDB hetero-atom line with coordinates
+     
+     function print_pdbhetatm(atom)
+
+       type(pdbatom) :: atom
+       character(len=200) :: pdbformat, print_pdbhetatm
+
+       pdbformat = "('HETATM',t7,i5,t12,a4,t17,a4,t22,a1,t23,i4,t31,f8.3,t39,f8.3,t47,f8.3,t55,f6.2,t61,f6.2)"
+       write(print_pdbhetatm,pdbformat) &
+                             atom%index, trim(adjustl(atom%name)), &
+                             trim(adjustl(atom%residue%name)), atom%residue%chain, &
+                             atom%residue%index, atom%x, atom%y, atom%z
+
+     end function print_pdbhetatm
 
 end module topolink_data
 
