@@ -169,27 +169,28 @@ subroutine solventaccess(atom)
     open(10,file="accessibility.pdb")
     do i = 1, natoms
       atom(i)%b = 1.
-      if ( .not. atom(i)%accessible ) atom(i)%b = 0.
+      if ( .not. atom(i)%residue%accessible ) atom(i)%b = 0.
       write(10,"(a)") trim(adjustl(print_pdbatom(atom(i))))
     end do
-    n = natoms
-    do ibox = 1, nboxesx
-      do jbox = 1, nboxesy
-        do kbox = 1, nboxesz
-          if ( .not. acc(ibox,jbox,kbox) ) then
-            n = n + 1
-            writeatom%index = n
-            writeatom%name = "O"
-            writeatom%residue%name = "WAT"
-            writeatom%residue%index = n
-            writeatom%x = xmin + (ibox-1)*vdwrad + vdwrad/2.
-            writeatom%y = ymin + (jbox-1)*vdwrad + vdwrad/2.
-            writeatom%z = zmin + (kbox-1)*vdwrad + vdwrad/2.
-            write(10,"(a)") trim(adjustl(print_pdbhetatm(writeatom)))
-          end if
-        end do
-      end do
-    end do
+    ! Prints region protected from solvent
+    !n = natoms
+    !do ibox = 1, nboxesx
+    !  do jbox = 1, nboxesy
+    !    do kbox = 1, nboxesz
+    !      if ( .not. acc(ibox,jbox,kbox) ) then
+    !        n = n + 1
+    !        writeatom%index = n
+    !        writeatom%name = "O"
+    !        writeatom%residue%name = "WAT"
+    !        writeatom%residue%index = n
+    !        writeatom%x = xmin + (ibox-1)*vdwrad + vdwrad/2.
+    !        writeatom%y = ymin + (jbox-1)*vdwrad + vdwrad/2.
+    !        writeatom%z = zmin + (kbox-1)*vdwrad + vdwrad/2.
+    !        write(10,"(a)") trim(adjustl(print_pdbhetatm(writeatom)))
+    !      end if
+    !    end do
+    !  end do
+    !end do
     close(10)
   end if
 
