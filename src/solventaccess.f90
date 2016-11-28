@@ -23,7 +23,7 @@ subroutine solventaccess(atom)
   integer :: ibox, jbox, kbox, n, i, j
   logical :: checkfaces
   logical, allocatable :: acc(:,:,:), aux(:,:,:)
-  type(pdbatom) :: atom(natoms), writeatom
+  type(pdbatom) :: atom(natoms)
 
   ! Allocate logical accessible arrays
 

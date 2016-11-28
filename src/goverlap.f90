@@ -25,7 +25,7 @@ subroutine goverlap(n,x,g)
 
     ! Inside box
 
-    call goverlapcell(n,ix,iy,iz,x,ibox,jbox,kbox,g)
+    call goverlapcell(n,i,ix,iy,iz,x,ibox,jbox,kbox,g)
 
     ! Interactions of boxes that share faces
 

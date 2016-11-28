@@ -9,7 +9,7 @@ subroutine computeg(n,x,g)
   double precision :: x(*), g(*)
 
   do i = 1, n
-    g(i) = 0.
+    g(i) = 0.d0
   end do
   call goverlap(n,x,g)
   call gstretch(n,x,g)

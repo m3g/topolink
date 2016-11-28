@@ -8,7 +8,7 @@ subroutine computef(n,x,f)
   integer :: n
   double precision :: x(*), f, overlap, stretch
   
-  f = 0.
+  f = 0.d0
   f = f + overlap(n,x)
   f = f + stretch(n,x)
 

@@ -50,39 +50,38 @@ end subroutine setskip
 
 logical function skipatom(refname,name)
 
+  implicit none
   character(len=4) :: refname, name
+ 
+  ! First, set to skip any atom
+
+  skipatom = .true.
 
   ! If the reference atom is the CA atom, skip all except the backbone
   ! atoms remaining
 
   if ( refname == "CA" ) then
-    if ( name /= "N" .or. &
-         name /= "C" .or. &
-         name /= "O" ) then
-      skipatom = .true.
-    end if
+    if ( name == "N" ) skipatom = .false.
+    if ( name == "C" ) skipatom = .false.
+    if ( name == "O" ) skipatom = .false.
 
   ! If the reference atom is the CB atom, skip CB and side chain 
 
   else if ( refname == "CB" ) then
-    if ( name /= "N" .or. &
-         name /= "CA" .or. &
-         name /= "C" .or. &
-         name /= "O" ) then
-      skipatom = .true.
-    end if
+    if ( name == "N"  ) skipatom = .false.
+    if ( name == "CA" ) skipatom = .false.
+    if ( name == "C"  ) skipatom = .false.
+    if ( name == "O"  ) skipatom = .false.
 
   ! If the reference is some atom from the side chain, skip the 
   ! backbone and CB atoms
 
   else
-    if ( name /= "N" .or. &
-         name /= "CA" .or. &
-         name /= "C" .or. &
-         name /= "O" .or. &
-         name /= "CB" ) then
-      skipatom = .true.
-    end if
+    if ( name == "N"  ) skipatom = .false.
+    if ( name == "CA" ) skipatom = .false.
+    if ( name == "C"  ) skipatom = .false.
+    if ( name == "O"  ) skipatom = .false.
+    if ( name == "CB" ) skipatom = .false.
   end if
 
 end function skipatom
