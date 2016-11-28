@@ -1192,7 +1192,7 @@ program topolink
         dpath = computedpath(n,x)
         overviol = overlap(n,x)/nlinkatoms
         if ( dmin_maxviol < 1.d-1*vdwrad .and. &
-             dbond_maxviol < 1.d-1*dbond ) then
+             dbond_maxviol < 1.d-2*dbond ) then
 
           link(i)%found = .true.
           if ( abs(dpath_best-dpath)/dpath_best < 1.d-2 ) then
