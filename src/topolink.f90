@@ -65,11 +65,6 @@ program topolink
     stop
   end if
 
-  ! Random number initialization
-  
-  if ( seed == 0 ) call seed_from_time(seed)
-  call init_random_number(seed)
- 
   ! Default input parametes
 
   pdbfile = 'none'
@@ -241,6 +236,11 @@ program topolink
   end if
   rewind(10)
 
+  ! Random number initialization
+  
+  if ( seed == 0 ) call seed_from_time(seed)
+  call init_random_number(seed)
+ 
   ! Print input parameters
 
   write(*,"(a,a)") '  PDB input file: ', trim(adjustl(pdbfile))
