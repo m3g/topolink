@@ -10,6 +10,7 @@ double precision function stretch(n,x)
   double precision :: x(n), d, d2
 
   stretch = 0.d0
+  dbond_maxviol = 0.d0
 
   ! First bond, to fixed atom1
 
@@ -20,6 +21,7 @@ double precision function stretch(n,x)
     stretch = stretch + d2
   else
     d = dsqrt(d2)
+    dbond_maxviol = max(dbond_maxviol,d-dbond)
     stretch = stretch + d2 + kbond*(d-dbond)**2
   end if
 
@@ -39,6 +41,7 @@ double precision function stretch(n,x)
       stretch = stretch + d2
     else
       d = dsqrt(d2)
+      dbond_maxviol = max(dbond_maxviol,d-dbond)
       stretch = stretch + d2 + kbond*(d-dbond)**2
     end if
   end do
@@ -55,6 +58,7 @@ double precision function stretch(n,x)
     stretch = stretch + d2
   else
     d = dsqrt(d2)
+    dbond_maxviol = max(dbond_maxviol,d-dbond)
     stretch = stretch + d2 + kbond*(d-dbond)**2
   end if
 

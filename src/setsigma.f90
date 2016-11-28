@@ -33,14 +33,35 @@ subroutine setsigma(link,mimicchain)
   if ( link%atom1%name == "CB" ) length1 = length1 - 1
   if ( link%atom2%name == "CB" ) length2 = length2 - 1
 
+  ! For N atoms
+
+  if ( link%atom1%name == "N" ) length1 = length1 + 1
+  if ( link%atom2%name == "N" ) length2 = length2 + 1
+
+  ! For C atoms
+
+  if ( link%atom1%name == "C" ) length1 = length1 + 1
+  if ( link%atom2%name == "C" ) length2 = length2 + 1
+
+  ! For O atoms
+
+  if ( link%atom1%name == "O" ) length1 = length1 + 2
+  if ( link%atom2%name == "O" ) length2 = length2 + 2
+
   ! For side chain atoms
 
   if ( link%atom1%name /= "CA" .and. &
-       link%atom1%name /= "CB" ) then
+       link%atom1%name /= "CB" .and. &
+       link%atom1%name /= "N"  .and. &
+       link%atom1%name /= "C"  .and. &
+       link%atom1%name /= "O" ) then
     length1 = 0
   end if
   if ( link%atom2%name /= "CA" .and. &
-       link%atom2%name /= "CB" ) then
+       link%atom2%name /= "CB" .and. &
+       link%atom2%name /= "N"  .and. &
+       link%atom2%name /= "C"  .and. &
+       link%atom2%name /= "O"  ) then
     length2 = 0
   end if
 

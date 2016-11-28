@@ -13,7 +13,7 @@ double precision function overlap(n,x)
 
   ! Compute distances
 
-  dmin = vdwrad
+  dmin_maxviol = vdwrad
   overlap = 0.d0
   do i = 1, nlinkatoms
 

@@ -1191,7 +1191,8 @@ program topolink
     
         dpath = computedpath(n,x)
         overviol = overlap(n,x)/nlinkatoms
-        if ( vdwrad-dmin < 1.d-1*vdwrad ) then
+        if ( dmin_maxviol < 1.d-1*vdwrad .and. &
+             dbond_maxviol < 1.d-1*dbond ) then
 
           link(i)%found = .true.
           if ( abs(dpath_best-dpath)/dpath_best < 1.d-2 ) then
@@ -1207,15 +1208,15 @@ program topolink
           end if
           if ( print > 0 ) then
             write(*,"(' Trial ', i5, ' Valid path with length = ', &
-                  &f8.3, '( overlap = ', f12.5, ' dmin = ', f8.3,' )', i5)") &
-                  itrial, dpath, overviol, dmin, best_repeat
+                  &f8.3, '( overlap = ', f12.5, ' dmin_maxviol = ', f8.3,' )', i5)") &
+                  itrial, dpath, overviol, dmin_maxviol, best_repeat
           end if
           if ( quitgood .and. dpath <= link(i)%dmaxlink ) exit
         else
           if ( print > 0 ) then
             write(*,"( ' Trial ', i5, ' Invalid path with length = ', &
-                       &f8.3, '( overlap = ', f12.5, ' dmin = ', f8.3,' )' )")&
-                    itrial, dpath, overviol, dmin
+                       &f8.3, '( overlap = ', f12.5, ' dmin_maxviol = ', f8.3,' )' )")&
+                    itrial, dpath, overviol, dmin_maxviol
           end if
         end if
       end do

@@ -28,7 +28,7 @@ subroutine overlapcell(i,x,y,z,ibox,jbox,kbox,overlap)
 
     if ( d < vdwrad2 ) then
       d = dsqrt(d)
-      dmin = dmin1(d,dmin)
+      dmin_maxviol = min(dmin_maxviol,sigma(i)-d)
       overlap = overlap + kvdw*( sigma(i) - d )**2
     end if
 
