@@ -27,10 +27,9 @@ program topolink
   integer :: nargs, iargc, ioerr, i, j, k, ii, n, seed, ix, iy, iz, ntrial, itrial, &
              iguess, optpars(10), best_repeat, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
              i1, i2, ndeadends, nexp, iexp, ntypes, npairs, &
-             ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2), &
-             jx, jy, jz
+             ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2)
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
-                     kpath, likelyhood, userlikelyhood, lnf, nlnp, totscore, readscore, d
+                     kpath, likelyhood, userlikelyhood, lnf, nlnp, totscore, readscore
   character(len=4) :: char1, char2 
   character(len=200) :: record, linkfile, inputfile, endread
   character(len=200), allocatable :: logline(:)
