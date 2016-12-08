@@ -46,7 +46,7 @@ git commit -m "Changed version file to $version"
 git tag -a $version -m "Release $version"
 git push origin master tag $version
 
-newline="<tr><td width=190px valign=top><a href=$giturl/archive/$version.tar.gz> $file </a></td><td> Release $version </td></tr>"
+newline="<tr><td width=190px valign=top><a href=$giturl/archive/$version.tar.gz> $file </a></td><td><a href=https://github.com/leandromartinez98/topolink/releases/tag/$version> Change log </a></td></tr>"
 htmlfile=$downloads
 
 writeline=yes
