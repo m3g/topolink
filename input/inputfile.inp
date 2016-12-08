@@ -21,6 +21,9 @@ compute observed
 #compute reactive
 #compute all
 
+# If only inter-domain (inter-chain) links are of interested, uncomment the following line
+#interdomain
+
 # Only consider observed links with score greater than scorecut
 
 scorecut 0.d0

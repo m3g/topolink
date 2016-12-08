@@ -34,7 +34,7 @@ program topolink
   character(len=200) :: record, linkfile, inputfile, endread
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  logical :: error, r1, r2, inexp, warning
+  logical :: error, r1, r2, inexp, warning, interdomain
 
   external :: computef, computeg
 
@@ -82,6 +82,7 @@ program topolink
   mimicchain = .true.
   printaccessible = .false.
   warning = .false.
+  interdomain = .false.
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -164,6 +165,8 @@ program topolink
       case ("mimicchain")
         if ( keyvalue(record,1) == 'yes' ) mimicchain = .true.
         if ( keyvalue(record,1) == 'no' ) mimicchain = .false.
+      case ("interdomain")
+        interdomain = .true.
       case ("quitgood")
         if ( keyvalue(record,1) == 'yes' ) quitgood = .true.
         if ( keyvalue(record,1) == 'no' ) quitgood = .false.
@@ -349,15 +352,17 @@ program topolink
       cycle
     end if
 
-    if ( keyword(record) == 'end' .and. keyvalue(record,1) == 'experiment' ) then
-      experiment(iexp)%nobs = nobs
-      experiment(iexp)%ntypes = ntypes
-      experiment(iexp)%ndeadends = ndeadends
-      allocate( experiment(iexp)%observed(nobs) )
-      allocate( experiment(iexp)%linktype(ntypes) )
-      allocate( experiment(iexp)%deadend(ndeadends) )
-      inexp = .false.
-      cycle
+    if ( keyword(record) == 'end' ) then
+      if ( keyvalue(record,1) == 'experiment' ) then
+        experiment(iexp)%nobs = nobs
+        experiment(iexp)%ntypes = ntypes
+        experiment(iexp)%ndeadends = ndeadends
+        allocate( experiment(iexp)%observed(nobs) )
+        allocate( experiment(iexp)%linktype(ntypes) )
+        allocate( experiment(iexp)%deadend(ndeadends) )
+        inexp = .false.
+        cycle
+      end if
     end if
 
     if ( keyword(record) == 'observed' ) then
@@ -465,7 +470,9 @@ program topolink
       read(char1,*) experiment(iexp)%deadend(ndeadends)%residue%index
     end if
 
-    if ( keyword(record) == 'end' .and. keyvalue(record,1) == 'experiment' ) cycle
+    if ( keyword(record) == 'end' ) then
+      if( keyvalue(record,1) == 'experiment' ) cycle
+    end if
     if ( keyword(record) == 'exit' ) exit
 
   end do
@@ -986,6 +993,8 @@ program topolink
     link(i)%observed = .false.
     link(i)%obs_reactive = .false.
     link(i)%type_reactive = .false.
+    if ( interdomain .and. &
+         ( link(i)%atom1%residue%chain == link(i)%atom2%residue%chain ) ) cycle
     do iexp = 1, nexp
       if ( link(i)%exp(iexp)%type_reactive ) then
         link(i)%dmaxlink = max(link(i)%dmaxlink,dlink(i,iexp))
@@ -1058,6 +1067,10 @@ program topolink
     if ( compute == 1 .and. .not. link(i)%observed ) cycle
     if ( compute == 2 .and. .not. link(i)%obs_reactive ) cycle
     if ( .not. link(i)%type_reactive ) cycle
+
+    ! If only interdomain links are to be computed
+    if ( interdomain .and. &
+         ( link(i)%atom1%residue%chain == link(i)%atom2%residue%chain ) ) cycle
 
     atom1 = link(i)%atom1%index
     atom2 = link(i)%atom2%index
