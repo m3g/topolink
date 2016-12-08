@@ -34,7 +34,7 @@ program topolink
   character(len=200) :: record, linkfile, inputfile, endread
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  logical :: error, r1, r2, inexp
+  logical :: error, r1, r2, inexp, warning
 
   external :: computef, computeg
 
@@ -81,6 +81,7 @@ program topolink
   scorecut = -1.d0
   mimicchain = .true.
   printaccessible = .false.
+  warning = .false.
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -554,6 +555,7 @@ program topolink
       if ( j == 0 ) then
         j = 1
         write(*,*) " WARNING: Some atoms do not have a chain specifier. Will attribute chain = '0' "
+        warning = .true.
       end if
     end if
     atom(i)%index = i
@@ -633,10 +635,10 @@ program topolink
         if ( atom(j) .in. experiment(iexp)%linktype(i)%atom1%residue ) cycle checktypes1
       end do
       write(*,*)
-      write(*,*) ' ERROR: First atom of link type does not correspond to any atom of the structure. '
-      write(*,*) '        Experiment: ', trim(experiment(iexp)%name)
-      write(*,*) '        Link type: ', trim(print_linktype(experiment(iexp)%linktype(i)))
-      error = .true.
+      write(*,*) ' WARNING: First atom of link type does not correspond to any atom of the structure. '
+      write(*,*) '          Experiment: ', trim(experiment(iexp)%name)
+      write(*,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i)))
+      warning = .true.
     end do checktypes1
  
     checktypes2 : do i = 1, experiment(iexp)%ntypes
@@ -644,10 +646,10 @@ program topolink
         if ( atom(j) .in. experiment(iexp)%linktype(i)%atom2%residue ) cycle checktypes2
       end do
       write(*,*)
-      write(*,*) ' ERROR: Second atom of link type does not correspond to any atom of the structure. '
-      write(*,*) '        Experiment: ', trim(experiment(iexp)%name)
-      write(*,*) '        Link type: ', trim(print_linktype(experiment(iexp)%linktype(i)))
-      error = .true.
+      write(*,*) ' WARNING: Second atom of link type does not correspond to any atom of the structure. '
+      write(*,*) '          Experiment: ', trim(experiment(iexp)%name)
+      write(*,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i)))
+      warning = .true.
     end do checktypes2
 
     checkobstype : do i = 1, experiment(iexp)%nobs
@@ -1543,6 +1545,14 @@ program topolink
     end if
   end if
 
+  if ( warning ) then
+    write(*,*)
+    write(*,dashes)
+    write(*,*) ' ATTENTION: There are WARNINGS of input file parsing. Please check the output carefully. '
+    write(*,dashes)
+    write(*,*)
+  end if
+   
   write(*,*)
   write(*,hashes)
 
