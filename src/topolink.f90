@@ -526,6 +526,7 @@ program topolink
   allocate(atom(natoms),skip(natoms))
 
   i = 0
+  j = 0
   do
     read(10,"( a200 )",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
@@ -549,6 +550,12 @@ program topolink
     end if
     i = i + 1
     atom(i) = readatom
+    if ( trim(atom(i)%residue%chain) == "0" ) then
+      if ( j == 0 ) then
+        j = 1
+        write(*,*) " WARNING: Some atoms do not have a chain specifier. Will attribute chain = '0' "
+      end if
+    end if
     atom(i)%index = i
   end do
   close(10)

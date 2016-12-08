@@ -174,9 +174,13 @@ module topolink_data
          read_atom%residue%name = trim(adjustl(read_atom%residue%name))
          if ( ioerr /= 0 ) error = .true.
 
-         read(record(22:22),*,iostat=ioerr) read_atom%residue%chain
-         read_atom%residue%chain = trim(adjustl(read_atom%residue%chain))
-         if ( ioerr /= 0 ) error = .true.
+         if ( record(22:22) /= " " ) then
+           read(record(22:22),*,iostat=ioerr) read_atom%residue%chain
+           if ( ioerr /= 0 ) error = .true.
+           read_atom%residue%chain = trim(adjustl(read_atom%residue%chain))
+         else
+           read_atom%residue%chain = "0"
+         end if
 
          read(record(23:26),*,iostat=ioerr) read_atom%residue%index
          if ( ioerr /= 0 ) error = .true.
