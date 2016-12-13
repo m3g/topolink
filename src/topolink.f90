@@ -512,6 +512,7 @@ program topolink
     if ( keyword(record) == endread ) exit
     readatom=read_atom(record,error)
     if ( error ) cycle
+    if ( .not. isprotein(readatom) ) cycle
     if ( readatoms == 1 ) then
       if ( ishydrogen(readatom) ) cycle
     else if ( readatoms == 2 ) then
