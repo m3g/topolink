@@ -100,6 +100,7 @@ integer function chainlength(name)
     case ( "PHE" ) ; chainlength = 4
     case ( "PRO" ) ; chainlength = 2
     case ( "SER" ) ; chainlength = 2
+    case ( "THR" ) ; chainlength = 2
     case ( "TRP" ) ; chainlength = 5
     case ( "TYR" ) ; chainlength = 6
     case ( "VAL" ) ; chainlength = 2
