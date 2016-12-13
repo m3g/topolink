@@ -18,9 +18,11 @@ logical function isprotein(atom)
     case ( "ARG" ) ; isprotein = .true. ; return
     case ( "ASN" ) ; isprotein = .true. ; return
     case ( "ASP" ) ; isprotein = .true. ; return
+    case ( "ASX" ) ; isprotein = .true. ; return
     case ( "CYS" ) ; isprotein = .true. ; return
     case ( "GLU" ) ; isprotein = .true. ; return
     case ( "GLN" ) ; isprotein = .true. ; return
+    case ( "GLX" ) ; isprotein = .true. ; return
     case ( "GLY" ) ; isprotein = .true. ; return
     case ( "HIS" ) ; isprotein = .true. ; return
     case ( "HSE" ) ; isprotein = .true. ; return
@@ -32,6 +34,7 @@ logical function isprotein(atom)
     case ( "PHE" ) ; isprotein = .true. ; return
     case ( "PRO" ) ; isprotein = .true. ; return
     case ( "SER" ) ; isprotein = .true. ; return
+    case ( "THR" ) ; isprotein = .true. ; return
     case ( "TRP" ) ; isprotein = .true. ; return
     case ( "TYR" ) ; isprotein = .true. ; return
     case ( "VAL" ) ; isprotein = .true. ; return

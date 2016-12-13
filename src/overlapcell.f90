@@ -16,7 +16,7 @@ subroutine overlapcell(i,x,y,z,ibox,jbox,kbox,overlap)
   vdwrad2 = sigma(i)**2
   iatom = ifirstbox(ibox,jbox,kbox) 
   do while( iatom /= 0 )
-    
+
     if ( skip(iatom) ) then
       iatom = inextbox(iatom)
       cycle
@@ -28,7 +28,7 @@ subroutine overlapcell(i,x,y,z,ibox,jbox,kbox,overlap)
 
     if ( d < vdwrad2 ) then
       d = dsqrt(d)
-      dmin_maxviol = min(dmin_maxviol,sigma(i)-d)
+      dmin_maxviol = max(dmin_maxviol,sigma(i)-d)
       overlap = overlap + kvdw*( sigma(i) - d )**2
     end if
 
