@@ -27,14 +27,14 @@ program topolink
   integer :: nargs, iargc, ioerr, i, j, k, ii, n, seed, ix, iy, iz, ntrial, itrial, &
              iguess, optpars(10), best_repeat, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
              i1, i2, ndeadends, nexp, iexp, ntypes, npairs, &
-             ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2)
+             ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2), nchains
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
                      kpath, likelyhood, userlikelyhood, lnf, nlnp, totscore, readscore
   character(len=4) :: char1, char2 
   character(len=200) :: record, linkfile, inputfile, endread
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  logical :: error, r1, r2, inexp, warning, interchain
+  logical :: error, r1, r2, inexp, warning, interchain, isprotein
 
   external :: computef, computeg
 
@@ -535,6 +535,7 @@ program topolink
 
   i = 0
   j = 0
+  nchains = 1
   do
     read(10,"( a200 )",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
@@ -542,6 +543,7 @@ program topolink
     if ( keyword(record) == endread ) exit
     readatom=read_atom(record,error)
     if ( error ) cycle
+    if ( .not. isprotein(readatom) ) cycle
     if ( readatoms == 1 ) then
       if ( ishydrogen(readatom) ) cycle
     else if ( readatoms == 2 ) then
@@ -566,8 +568,21 @@ program topolink
       end if
     end if
     atom(i)%index = i
+    if ( i > 1 ) then
+      if ( atom(i)%residue%chain /= atom(i-1)%residue%chain ) nchains = nchains + 1
+    end if
   end do
   close(10)
+
+  ! If interchain and there is only one chain, report error and stop
+
+  write(*,*) ' Number of chains found in PDB file: ', nchains
+  if ( interchain ) then
+    if ( nchains == 1 ) then
+      write(*,*) ' ERROR: Only one chain was found in PDB file, and the interchain keyword was used. '
+      stop
+    end if
+  end if
 
   ! For each residue of each atom, finds the first at last atoms
 
