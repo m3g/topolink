@@ -16,7 +16,7 @@ module comparecols_data
 
   type data
     character(len=200) :: name
-    double precision :: score1, score2
+    double precision :: score(2)
     logical :: foundpair
   end type data
 
@@ -30,7 +30,7 @@ program comparecols
   implicit none
   integer :: imodel, i, ioerr, npairs
   integer :: nargs, nmodels, scol1, scol2, ncol1, ncol2, sort
-  double precision :: score
+  double precision :: score, scoremax(2), scoremin(2)
   character(len=200) :: file1, file2, output, record, string, name
   integer :: model_index
   logical :: error
@@ -56,8 +56,10 @@ program comparecols
     write(*,*) ' [score col] is an integer number indicating the column of the score in each file. ' 
     write(*,*) ' [name col] is an integer number indicating the column of the model name in each file. ' 
     write(*,*) ' -s0: The output will be sorted by model name. ' 
-    write(*,*) ' -s1: The output will be sorted according to the score of the first file. ' 
-    write(*,*) ' -s2: The output will be sorted according to the score of the second file. ' 
+    write(*,*) ' -s1: The output will be sorted according to the score of the first file, ascending order. ' 
+    write(*,*) ' -s2: The output will be sorted according to the score of the second file, ascending order. ' 
+    write(*,*) ' -s3: The output will be sorted according to the score of the first file, descending order. ' 
+    write(*,*) ' -s4: The output will be sorted according to the score of the second file, descending order. ' 
     write(*,*)
     write(*,*) ' output.dat is the output file. '
     write(*,*)
@@ -111,7 +113,7 @@ program comparecols
   call getarg(7,record)
   read(record(3:length(record)),*,iostat=ioerr) sort
   if ( ioerr /= 0 ) then
-    write(*,*) ' ERROR: Could not read sort parameter -s0, -s1, -s2 '
+    write(*,*) ' ERROR: Could not read sort parameter -s0, -s1, -s2, -s3, -s4'
     stop
   end if
 
@@ -158,7 +160,7 @@ program comparecols
     if ( ioerr /= 0 ) cycle
     imodel = imodel + 1
     model(imodel)%name = basename(name)
-    model(imodel)%score1 = score
+    model(imodel)%score(1) = score
   end do
   close(10)
 
@@ -191,7 +193,7 @@ program comparecols
     imodel = model_index(name,model,nmodels,error)
     if ( .not. error ) then
       model(imodel)%foundpair = .true.
-      model(imodel)%score2 = score
+      model(imodel)%score(2) = score
       npairs = npairs + 1
     end if
   end do
@@ -203,11 +205,52 @@ program comparecols
     stop
   end if
 
+  ! Sorting models according to the user choice
+
+  if ( sort == 1 .or. sort == 2 .or. sort == 3 .or. sort == 4 ) then
+    call sort_by_score(nmodels,model,sort)
+  end if
+
   open(10,file=output)
+  write(10,"(a,a)") "# File 1: ", trim(file1)
+  write(10,"(a,i5)") "# Score column 1: ", scol1
+  write(10,"(a,i5)") "# Name column 1: ", ncol1
+  write(10,"(a,a)") "# File 2: ", trim(file2)
+  write(10,"(a,i5)") "# Score column 2: ", scol2
+  write(10,"(a,i5)") "# Name column 2: ", ncol2 
+  write(10,"(a)") "#"
+  if ( sort == 0 ) then
+    write(10,"(a)") "# Models sorted by name."
+  else
+    if ( sort == 1 ) write(10,"(a,i2)") "# Models sorted by score 1 in ascending order. "
+    if ( sort == 2 ) write(10,"(a,i2)") "# Models sorted by score 2 in ascending order. "
+    if ( sort == 3 ) write(10,"(a,i2)") "# Models sorted by score 1 in descending order. "
+    if ( sort == 4 ) write(10,"(a,i2)") "# Models sorted by score 2 in descending order. "
+  end if
+  write(10,"(a)") "#"
+  write(10,"(a)") "# SCORE1: Score read from file 1."
+  write(10,"(a)") "# SCORE2: Score read from file 2."
+  write(10,"(a)") "#"
+  write(10,"(a)") "# MIN1: Minimum score 1 found up to this model."
+  write(10,"(a)") "# MAX1: Maximum score 1 found up to this model."
+  write(10,"(a)") "# MIN2: Minimum score 2 found up to this model."
+  write(10,"(a)") "# MAX2: Maximum score 2 found up to this model."
+  write(10,"(a)") "#"
+  write(10,"('#     SCORE1        SCORE2          MIN1          MAX1          MIN2          MAX2        NAME')")
+  scoremax(1) = -1.d30
+  scoremin(1) =  1.d30
+  scoremax(2) = -1.d30
+  scoremin(2) =  1.d30
   do imodel = 1, nmodels
     if ( model(imodel)%foundpair ) then
-      write(10,"( f12.5, tr2, f12.5, tr2, a )") model(imodel)%score1, model(imodel)%score2,&
-                                                trim(adjustl(model(imodel)%name))
+      scoremax(1) = max(scoremax(1),model(imodel)%score(1))
+      scoremin(1) = min(scoremin(1),model(imodel)%score(1))
+      scoremax(2) = max(scoremax(2),model(imodel)%score(2))
+      scoremin(2) = min(scoremin(2),model(imodel)%score(2))
+      write(10,"( f12.5, 5(tr2, f12.5), tr2, a )") &
+               model(imodel)%score(1), model(imodel)%score(2),&
+               scoremin(1), scoremax(1), scoremin(2), scoremax(2),&      
+               trim(adjustl(model(imodel)%name))
     end if
   end do
   close(10)
@@ -290,3 +333,42 @@ subroutine sort_by_name(n,model)
 
 end subroutine sort_by_name
 
+!
+! Sort by score
+!
+
+subroutine sort_by_score(n,model,sort)
+
+  use comparecols_data
+  implicit none
+  integer :: i, j, n, iscore, sort
+  type(data) :: model(n), modeltemp
+
+  if ( sort == 1 .or. sort == 2 ) then
+    iscore = sort
+    do i = 1, n-1
+      j = i + 1
+      do while( model(j-1)%score(iscore) > model(j)%score(iscore) )
+        modeltemp = model(j-1)
+        model(j-1) = model(j) 
+        model(j) = modeltemp
+        j = j - 1
+        if ( j == 1 ) exit
+      end do
+    end do
+  else
+    if ( sort == 3 ) iscore = 1
+    if ( sort == 4 ) iscore = 2
+    do i = 1, n-1
+      j = i + 1
+      do while( model(j-1)%score(iscore) < model(j)%score(iscore) )
+        modeltemp = model(j-1)
+        model(j-1) = model(j) 
+        model(j) = modeltemp
+        j = j - 1
+        if ( j == 1 ) exit
+      end do
+    end do
+  end if
+
+end subroutine sort_by_score
