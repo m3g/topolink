@@ -150,14 +150,14 @@ program comparecols
     read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
-    read(record,*,iostat=ioerr) (string, i = 1, scol1)
+    backspace(10) ; read(10,*,iostat=ioerr) (string, i = 1, scol1)
     if ( ioerr /= 0 ) cycle
     read(string,*,iostat=ioerr) score
     if ( ioerr /= 0 ) cycle
-    read(record,*,iostat=ioerr) (name, i = 1, ncol1)
+    backspace(10) ; read(10,*,iostat=ioerr) (name, i = 1, ncol1)
     if ( ioerr /= 0 ) cycle
     imodel = imodel + 1
-    model(imodel)%name = name
+    model(imodel)%name = basename(name)
     model(imodel)%score1 = score
   end do
   close(10)
@@ -181,11 +181,11 @@ program comparecols
     read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
-    read(record,*,iostat=ioerr) (string, i = 1, scol2)
+    backspace(10) ; read(10,*,iostat=ioerr) (string, i = 1, scol2)
     if ( ioerr /= 0 ) cycle
     read(string,*,iostat=ioerr) score
     if ( ioerr /= 0 ) cycle
-    read(record,*,iostat=ioerr) (name, i = 1, ncol2)
+    backspace(10) ; read(10,*,iostat=ioerr) (name, i = 1, ncol2)
     if ( ioerr /= 0 ) cycle
     name = basename(name)
     imodel = model_index(name,model,nmodels,error)
@@ -197,6 +197,11 @@ program comparecols
   end do
   close(10)
   write(*,*) ' Number of pairs found: ', npairs
+  if ( npairs == 0 ) then
+    write(*,*) ' ERROR: Not corresponding names were found in the two files. '
+    write(*,*) '        Probably the name column set for one of the files is not correct. '
+    stop
+  end if
 
   open(10,file=output)
   do imodel = 1, nmodels
