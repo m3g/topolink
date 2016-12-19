@@ -46,6 +46,7 @@ program linkcorrelation
 
   nargs = iargc()
   if ( nargs /= 1 .and. nargs /= 3 ) then
+    write(*,*)
     write(*,*) ' Run with: linkcorrelation loglist.txt [-type type]'
     write(*,*)
     write(*,*) ' type 1 : Print the fraction of structures that satisfy '
