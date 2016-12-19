@@ -12,6 +12,10 @@
 !
 ! For each link pair, the correlations output will be:
 !
+! type 0 : Print the fraction of structures that satisfy  
+!          both links minus the fraction of structures that   
+!          satisfy one link or the other.                 
+!                                                        
 ! type 1 : Print the fraction of structures that satisfy
 !          both links 
 !
@@ -49,6 +53,10 @@ program linkcorrelation
     write(*,*)
     write(*,*) ' Run with: linkcorrelation loglist.txt [-type type]'
     write(*,*)
+    write(*,*) ' type 0 : Print the fraction of structures that satisfy '
+    write(*,*) '          both links minus the fraction of structures that  '
+    write(*,*) '          satisfy one link or the other.                '
+    write(*,*) '                                                        '
     write(*,*) ' type 1 : Print the fraction of structures that satisfy '
     write(*,*) '          both links                                    '
     write(*,*) '                                                        '
@@ -208,7 +216,7 @@ program linkcorrelation
              ( model(imodel)%link(j)%status == 0 .or. &
                model(imodel)%link(j)%status == 1 .or. &
                model(imodel)%link(j)%status == 5 ) ) then
-          if ( type == 1 .or. type == 4 ) then
+          if ( type == 0 .or. type == 1 .or. type == 4 ) then
             correlation(i,j) = correlation(i,j) + 1.d0
           end if
           cycle
@@ -217,11 +225,11 @@ program linkcorrelation
         ! Not satisfied at the same time
         !
         if ( ( model(imodel)%link(i)%status /= 0 .and. &
-              model(imodel)%link(i)%status /= 1 .and. &
-              model(imodel)%link(i)%status /= 5 ) .and. &
-            ( model(imodel)%link(j)%status /= 0 .and. &
-              model(imodel)%link(j)%status /= 1 .and. &
-              model(imodel)%link(j)%status /= 5 ) ) then
+               model(imodel)%link(i)%status /= 1 .and. &
+               model(imodel)%link(i)%status /= 5 ) .and. &
+             ( model(imodel)%link(j)%status /= 0 .and. &
+               model(imodel)%link(j)%status /= 1 .and. &
+               model(imodel)%link(j)%status /= 5 ) ) then
           if ( type == 2 .or. type == 4 ) then 
             correlation(i,j) = correlation(i,j) + 1.d0
           end if
@@ -230,7 +238,7 @@ program linkcorrelation
         !
         ! One is satified, the other is not (if got here)
         !
-        if ( type == 3 .or. type == 4 ) then
+        if ( type == 0 .or. type == 3 .or. type == 4 ) then
           correlation(i,j) = correlation(i,j) - 1.d0
         end if
       end do
