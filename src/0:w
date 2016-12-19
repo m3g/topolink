@@ -185,6 +185,12 @@ program linkcorrelation
     end do 
   end do
 
+  ! Writting the links
+
+  do i = 1, nlinks
+    write(*,"(a,i5,a,a,i5,a)") "#",i, trim(print_link(model(1)%link(i))), " (",i-1,")"
+  end do
+
   ! Computing link satisfaction correlations
 
   write(*,"(a)") '# Computing link correlations: '
@@ -245,14 +251,7 @@ program linkcorrelation
     end do
   end do
 
-  ! Writting the links
-
-  do i = 1, nlinks
-    fraction(i) = fraction(i) / dble(nmodels)
-    write(*,"(a,i5,a,a,i5,a,f8.3)") &
-          "#",i, trim(print_link(model(1)%link(i))), " (",i-1,") ", fraction(i) 
-  end do
-
+  write(*,"(a)") '# Normalizing correlatinons ... '
   do i = 1, nlinks
     do j = i, nlinks
       correlation(i,j) = correlation(i,j) / dble(nmodels)
