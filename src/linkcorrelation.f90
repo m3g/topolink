@@ -47,6 +47,21 @@ program linkcorrelation
   nargs = iargc()
   if ( nargs /= 1 .and. nargs /= 3 ) then
     write(*,*) ' Run with: linkcorrelation loglist.txt [-type type]'
+    write(*,*)
+    write(*,*) ' type 1 : Print the fraction of structures that satisfy '
+    write(*,*) '          both links                                    '
+    write(*,*) '                                                        '
+    write(*,*) ' type 2 : Print the fraction of structures that fail to '
+    write(*,*) '          satisfy both links                            '
+    write(*,*) '                                                        '
+    write(*,*) ' type 3 : Print the fraction of structures that satisfy '
+    write(*,*) '          one OR the other link                         '
+    write(*,*) '                                                        '
+    write(*,*) ' type 4 : Print the overall correlation, that is, the sum of the fraction'
+    write(*,*) '          of structures that satify both links or fail to satisfy        '
+    write(*,*) '          both links, minus the fraction of structures that satisfy      '
+    write(*,*) '          one link OR the other.                                         '
+    write(*,*)
     stop
   end if
   call getarg(1,loglist)
