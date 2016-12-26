@@ -26,7 +26,7 @@ subroutine setsigma(link,mimicchain)
   ! For CA atoms
 
   length1 = chainlength(link%atom1%residue%name )
-  length2 = chainlength(link%atom1%residue%name )
+  length2 = chainlength(link%atom2%residue%name )
 
   ! For CB atoms
 
