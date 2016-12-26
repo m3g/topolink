@@ -96,6 +96,7 @@ program linkensemble
     imodel = imodel + 1
     model(imodel)%name = basename(name)
     model(imodel)%score = gscore
+    model(imodel)%degree = degree
   end do 
   close(10)
 
@@ -177,8 +178,7 @@ program linkensemble
   ! Order all models by gscore, maybe they are not already sorted
 
   write(*,*) ' Sorting models by G-score value ... '
-  call sort_by_value(nmodels,model,1)
-  call invert_sort(nmodels,model)
+  call sort_by_value(nmodels,model,9)
 
   ! Indexing the links
 
@@ -267,8 +267,8 @@ program linkensemble
                 imodel, &
                 trim(adjustl(model(imodel)%name)),&
                 model(imodel)%nobsgood,&
-                model(imodel)%score / model(1)%score, & 
-                -1.987*0.298*dlog(model(imodel)%score / model(1)%score), & 
+                model(imodel)%degree / model(1)%degree, & 
+                model(imodel)%gscore - model(1)%gscore, & 
                 nsatisfied, &
                 (satisfied(j),j=1,nobserved)
   end do

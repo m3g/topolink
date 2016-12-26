@@ -127,8 +127,10 @@ module topolink_data
     character(len=200) :: name
     ! Number of links in this file
     integer :: nlinks
-    ! Score (rosetta?, TM-score?, GDT?) 
+    ! Score (rosetta?, TM-score?, GDT?, G-score) 
     double precision :: score
+    ! Degree (P-value of G-score)
+    double precision :: degree
     ! Link results for this model
     type(specific_link), allocatable :: link(:)
     ! Results

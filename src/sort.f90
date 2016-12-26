@@ -70,6 +70,7 @@ double precision function sortvalue(model,sortcol)
   if ( sortcol == 6 ) sortvalue = dble(model%nminmax)
   if ( sortcol == 7 ) sortvalue = model%sumscores
   if ( sortcol == 8 ) sortvalue = model%likely
+  if ( sortcol == 9 ) sortvalue = model%degree
 
 end function sortvalue
 
