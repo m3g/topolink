@@ -14,6 +14,7 @@
 ! September 17, 2016
 ! http://leandro.iqm.unicamp.br/topolink
 !
+
 program linkensemble
 
   use ioformat 
@@ -25,7 +26,7 @@ program linkensemble
   integer :: i, j, ilink, imodel, nobserved
   integer :: nargs, nmodels, ioerr, nlinks, nsatisfied
   integer, allocatable :: satisfied(:)
-  double precision :: gscore
+  double precision :: gscore, degree
   character(len=200) :: loglist, gscorefile, record, name, output, line
   logical :: error
   type(specific_link) :: linktemp
@@ -74,7 +75,7 @@ program linkensemble
     read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
-    read(record,*,iostat=ioerr) gscore, name
+    read(record,*,iostat=ioerr) gscore, degree, name
     if ( ioerr /= 0 ) then
       write(*,*) ' ERROR: Error reading gscore and name from: ', trim(adjustl(gscorefile))
       stop
@@ -91,7 +92,7 @@ program linkensemble
     read(10,"(a200)",iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
-    read(record,*,iostat=ioerr) gscore, name
+    read(record,*,iostat=ioerr) gscore, degree, name
     imodel = imodel + 1
     model(imodel)%name = basename(name)
     model(imodel)%score = gscore
@@ -134,6 +135,7 @@ program linkensemble
     !
     ! Check the number of links reported in this file
     !
+
     nlinks = 0
     do 
       read(20,"(a200)",iostat=ioerr) line
@@ -146,6 +148,7 @@ program linkensemble
     !
     ! Read model data
     ! 
+
     rewind(20)
     ilink = 0
     do 
@@ -193,6 +196,7 @@ program linkensemble
   end do
 
   ! Checking the number of observed links
+
   imodel = 1
   nobserved = 0
   do i = 1, model(imodel)%nlinks
@@ -206,10 +210,10 @@ program linkensemble
     satisfied(i) = 0
   end do
 
-
   !
   ! Write output file
   ! 
+
   write(*,*) ' Writing output file ... '
   open(10,file=output,iostat=ioerr)
   if ( ioerr /= 0 ) then 
