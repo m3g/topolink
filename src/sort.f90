@@ -73,9 +73,25 @@ double precision function sortvalue(model,sortcol)
 
 end function sortvalue
 
+! Subroutine that inverts the sorting
 
+subroutine invert_sort(n,model)
 
+  use topolink_data
+  integer :: n
+  type(modeldata) :: model(n), modeltemp
 
+  i = 1
+  j = n
+  do while(i-j >= 1)
+    modeltemp = model(i)
+    model(i) = model(j)
+    model(j) = modeltemp
+    i = i + 1
+    j = j - 1
+  end do
+
+end subroutine invert_sort
 
 
 

@@ -175,8 +175,10 @@ program linkensemble
   close(10)
 
   ! Order all models by gscore, maybe they are not already sorted
+
   write(*,*) ' Sorting models by G-score value ... '
   call sort_by_value(nmodels,model,1)
+  call invert_sort(nmodels,model)
 
   ! Indexing the links
 
