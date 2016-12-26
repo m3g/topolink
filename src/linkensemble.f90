@@ -268,7 +268,7 @@ program linkensemble
                 trim(adjustl(model(imodel)%name)),&
                 model(imodel)%nobsgood,&
                 model(imodel)%degree / model(1)%degree, & 
-                model(imodel)%gscore - model(1)%gscore, & 
+                model(imodel)%score - model(1)%score, & 
                 nsatisfied, &
                 (satisfied(j),j=1,nobserved)
   end do
