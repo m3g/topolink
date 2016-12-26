@@ -84,7 +84,7 @@ subroutine invert_sort(n,model)
 
   i = 1
   j = n
-  do while(i-j >= 1)
+  do while(j-i >= 1)
     modeltemp = model(i)
     model(i) = model(j)
     model(j) = modeltemp
