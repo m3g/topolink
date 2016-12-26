@@ -78,7 +78,8 @@ end function sortvalue
 subroutine invert_sort(n,model)
 
   use topolink_data
-  integer :: n
+  implicit none
+  integer :: n, i, j
   type(modeldata) :: model(n), modeltemp
 
   i = 1
