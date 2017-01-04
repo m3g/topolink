@@ -8,6 +8,7 @@
 ! L. Martinez, Institute of Chemistry, University of Campinas
 ! Nov 25, 2016
 !
+
 subroutine setskip(link,atom)
 
   use topolink_data
@@ -65,6 +66,11 @@ logical function skipatom(refname,name)
     if ( name == "C" ) skipatom = .false.
     if ( name == "O" ) skipatom = .false.
 
+  ! If the refrence atom is a backbone atom other than CA, just skip everything
+
+  else if ( refname == "N" .or. refname == "C" .or. refname == "O" ) then
+    continue
+
   ! If the reference atom is the CB atom, skip CB and side chain 
 
   else if ( refname == "CB" ) then
@@ -73,12 +79,7 @@ logical function skipatom(refname,name)
     if ( name == "C"  ) skipatom = .false.
     if ( name == "O"  ) skipatom = .false.
 
-  ! If the refrence atom is a backbone atom, just skip everything
-
-  else if ( refname == "N" .or. refname == "C" .or. refname == "O" ) then
-    continue
-
-  ! If the reference is some atom from the side chain, skip the 
+  ! If the reference is some atom from the side chain, do not skip the 
   ! backbone and CB atoms
 
   else
