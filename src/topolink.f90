@@ -92,7 +92,7 @@ program topolink
   ! Default function parameters
 
   dbond = 1.5
-  kvdw = 10.
+  kvdw = 2.
   kbond = 10.
   vdwrad = 3.
   ntrial = 100
@@ -1226,7 +1226,13 @@ program topolink
         ! Minimize the energy of the linker
     
         call callcgnewton(n,x,f,0,computef,computeg,optpars)
+
+        ! Remove any possible remaning overlap
     
+        kvdw=100.
+        call callcgnewton(n,x,f,0,computef,computeg,optpars)
+        kvdw=2.
+
         dpath = computedpath(n,x)
         overviol = overlap(n,x)/nlinkatoms
         if ( dmin_maxviol < 1.d-1*vdwrad .and. &
