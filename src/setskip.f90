@@ -87,7 +87,7 @@ logical function skipatom(refname,name)
     if ( name == "CA" ) skipatom = .false.
     if ( name == "C"  ) skipatom = .false.
     if ( name == "O"  ) skipatom = .false.
-    if ( name == "CB" ) skipatom = .false.
+    !if ( name == "CB" ) skipatom = .false.
   end if
 
 end function skipatom

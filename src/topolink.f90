@@ -92,7 +92,7 @@ program topolink
   ! Default function parameters
 
   dbond = 1.5
-  kvdw = 2.
+  kvdw = 10.
   kbond = 10.
   vdwrad = 3.
   ntrial = 100
@@ -694,55 +694,55 @@ program topolink
 
   ! Checking whether atoms that define observed links are missing in the structure
 
-  error = .false.
-  do iexp = 1, nexp
-    do k = 1, experiment(iexp)%nobs
-      j = experiment(iexp)%observed(k)%type
-      at1 = experiment(iexp)%linktype(j)%atom1
-      at2 = experiment(iexp)%linktype(j)%atom2
-      error = .true.
-      do i = 1, natoms
-        if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue1%chain ) then
-          if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue1%index ) then
-            if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue1%name ) then
-              if ( atom(i)%name == at1%name ) then
-                error = .false.
-                exit
-              end if
-            end if
-          end if
-        end if
-      end do
-      if ( error ) then
-        write(*,*) ' ERROR: Atom missing in the structure is required for observed link: '
-        write(*,*) '        Missing atom: ', at1%residue%name, &
-                   experiment(iexp)%observed(k)%residue1%chain, &
-                   experiment(iexp)%observed(k)%residue1%index, &
-                   at1%name
-        stop
-      end if
-      error = .true.
-      do i = 1, natoms
-        if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue2%chain ) then
-          if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue2%index ) then
-            if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue2%name ) then
-              if ( atom(i)%name == at2%name ) then
-                error = .false.
-                exit
-              end if
-            end if
-          end if
-        end if
-      end do
-      if ( error ) then
-        write(*,*) ' ERROR: Atom missing in the structure is required for observed link: '
-        write(*,*) '        Missing atom: ', at2%residue%name, &
-                   experiment(iexp)%observed(k)%residue2%index, &
-                   at2%name
-        stop
-      end if
-    end do
-  end do
+  !error = .false.
+  !do iexp = 1, nexp
+  !  do k = 1, experiment(iexp)%nobs
+  !    j = experiment(iexp)%observed(k)%type
+  !    at1 = experiment(iexp)%linktype(j)%atom1
+  !    at2 = experiment(iexp)%linktype(j)%atom2
+  !    error = .true.
+  !    do i = 1, natoms
+  !      if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue1%chain ) then
+  !        if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue1%index ) then
+  !          if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue1%name ) then
+  !            if ( atom(i)%name == at1%name ) then
+  !              error = .false.
+  !              exit
+  !            end if
+  !          end if
+  !        end if
+  !      end if
+  !    end do
+  !    if ( error ) then
+  !      write(*,*) ' ERROR: Atom missing in the structure is required for observed link: '
+  !      write(*,*) '        Missing atom: ', at1%residue%name, &
+  !                 experiment(iexp)%observed(k)%residue1%chain, &
+  !                 experiment(iexp)%observed(k)%residue1%index, &
+  !                 at1%name
+  !      stop
+  !    end if
+  !    error = .true.
+  !    do i = 1, natoms
+  !      if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue2%chain ) then
+  !        if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue2%index ) then
+  !          if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue2%name ) then
+  !            if ( atom(i)%name == at2%name ) then
+  !              error = .false.
+  !              exit
+  !            end if
+  !          end if
+  !        end if
+  !      end if
+  !    end do
+  !    if ( error ) then
+  !      write(*,*) ' ERROR: Atom missing in the structure is required for observed link: '
+  !      write(*,*) '        Missing atom: ', at2%residue%name, &
+  !                 experiment(iexp)%observed(k)%residue2%index, &
+  !                 at2%name
+  !      stop
+  !    end if
+  !  end do
+  !end do
  
   ! Writing the observed and deadend data back
 
