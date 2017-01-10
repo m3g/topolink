@@ -44,7 +44,7 @@ program topolink
   double precision, allocatable :: dlink(:,:), x(:), g(:), xbest(:)
 
   type(experiment_data), allocatable :: experiment(:)
-  type(pdbatom) :: readatom, writeatom, at1, at2
+  type(pdbatom) :: readatom, writeatom, testatom
   type(pdbatom), allocatable :: atom(:)
   type(specific_link), allocatable :: link(:)
   type(specific_link) :: linktest
@@ -725,15 +725,24 @@ program topolink
   error = .false.
   do iexp = 1, nexp
     do k = 1, experiment(iexp)%nobs
+
+      ! Type of linker of this observation
+
       j = experiment(iexp)%observed(k)%type
-      at1 = experiment(iexp)%linktype(j)%atom1
-      at2 = experiment(iexp)%linktype(j)%atom2
+
+      ! Checking first residue of observed link (the next question is ok because the 
+      ! observed link was already tested for consistency with some linktype previously)
+
+      testatom = experiment(iexp)%linktype(j)%atom1
+      if ( experiment(iexp)%observed(k)%residue1%name /= testatom%residue%name ) then
+        testatom = experiment(iexp)%linktype(j)%atom2
+      end if
       error = .true.
       do i = 1, natoms
         if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue1%chain ) then
           if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue1%index ) then
             if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue1%name ) then
-              if ( atom(i)%name == at1%name ) then
+              if ( atom(i)%name == testatom%name ) then
                 error = .false.
                 exit
               end if
@@ -743,18 +752,25 @@ program topolink
       end do
       if ( error ) then
         write(*,*) ' ERROR: Atom missing in the structure is required for observed link: '
-        write(*,*) '        Missing atom: ', at1%residue%name, &
+        write(*,*) '        Missing atom: ', testatom%residue%name, &
                    experiment(iexp)%observed(k)%residue1%chain, &
                    experiment(iexp)%observed(k)%residue1%index, &
-                   at1%name
+                   testatom%name
         stop
+      end if
+
+      ! Checking second residue of observed link
+
+      testatom = experiment(iexp)%linktype(j)%atom1
+      if ( experiment(iexp)%observed(k)%residue2%name /= testatom%residue%name ) then
+        testatom = experiment(iexp)%linktype(j)%atom2
       end if
       error = .true.
       do i = 1, natoms
         if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue2%chain ) then
           if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue2%index ) then
             if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue2%name ) then
-              if ( atom(i)%name == at2%name ) then
+              if ( atom(i)%name == testatom%name ) then
                 error = .false.
                 exit
               end if
@@ -764,9 +780,9 @@ program topolink
       end do
       if ( error ) then
         write(*,*) ' ERROR: Atom missing in the structure is required for observed link: '
-        write(*,*) '        Missing atom: ', at2%residue%name, &
+        write(*,*) '        Missing atom: ', testatom%residue%name, &
                    experiment(iexp)%observed(k)%residue2%index, &
-                   at2%name
+                   testatom%name
         stop
       end if
     end do
