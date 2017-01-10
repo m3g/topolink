@@ -27,7 +27,7 @@ program topolink
   integer :: nargs, iargc, ioerr, i, j, k, ii, n, seed, ix, iy, iz, ntrial, itrial, &
              iguess, optpars(10), best_repeat, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
              i1, i2, ndeadends, nexp, iexp, ntypes, npairs, &
-             ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2), nchains
+             ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2), nchains, maxfunc, maxcg
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
                      kpath, likelyhood, userlikelyhood, lnf, nlnp, totscore, readscore,& 
                      kvdwini
@@ -106,8 +106,10 @@ program topolink
   ! Parameters for optimization method
 
   dbond2 = dbond**2
-  optpars(1) = 500 ! Maximum number of functional evaluations
-  optpars(2) = 100 ! Maximum number of CG iterations
+  maxfunc = 50
+  maxcg = 20
+  optpars(1) = maxfunc ! Maximum number of functional evaluations
+  optpars(2) = maxcg   ! Maximum number of CG iterations
   seed = 0
   iguess = 1
 
@@ -218,10 +220,12 @@ program topolink
         read(record,*) nbest
       case ("maxfunc")
         record = keyvalue(record,1)
-        read(record,*) optpars(1)
+        read(record,*) maxfunc
+        optpars(1) = maxfunc
       case ("maxcg")
         record = keyvalue(record,1)
-        read(record,*) optpars(2)
+        read(record,*) maxcg
+        optpars(2) = maxcg
       case ("iguess")
         record = keyvalue(record,1)
         read(record,*) iguess

@@ -113,8 +113,8 @@ kvdw  2.          # For constant of overlap function
 
 ntrial 200  # Maximum number of trials for best link search
 nbest 5     # Number of times the same best link is found until satisfied
-maxfunc 500 # Maximum number of function evaluations of CG-Newton
-maxcg 100   # Maximum number of CG iterations
+maxfunc 50  # Maximum number of function evaluations of CG-Newton
+maxcg 20    # Maximum number of CG iterations
 seed random # Seed for random number generator (random or integer number)
 
 exit # You can add anything after this
