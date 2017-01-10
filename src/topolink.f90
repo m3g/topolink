@@ -29,7 +29,8 @@ program topolink
              i1, i2, ndeadends, nexp, iexp, ntypes, npairs, &
              ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2), nchains
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
-                     kpath, likelyhood, userlikelyhood, lnf, nlnp, totscore, readscore
+                     kpath, likelyhood, userlikelyhood, lnf, nlnp, totscore, readscore,& 
+                     kvdwini
   character(len=4) :: char1, char2 
   character(len=200) :: record, linkfile, inputfile, endread
   character(len=200), allocatable :: logline(:)
@@ -93,6 +94,7 @@ program topolink
 
   dbond = 1.5
   kvdw = 2.
+  kvdwini = kvdw
   kbond = 10.
   vdwrad = 3.
   ntrial = 100
@@ -1229,9 +1231,9 @@ program topolink
 
         ! Remove any possible remaning overlap
     
-        kvdw=100.
+        kvdw=50.d0*kvdw
         call callcgnewton(n,x,f,0,computef,computeg,optpars)
-        kvdw=2.
+        kvdw=kvdwini
 
         dpath = computedpath(n,x)
         overviol = overlap(n,x)/nlinkatoms
