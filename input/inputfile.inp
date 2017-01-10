@@ -101,12 +101,13 @@ pgood 0.70 # Probability of observing a link which is within link reach
 pbad  0.01 # Probability of observing a link which is NOT within linker reach
 
 vdwrad 3.         # Radius to be used for excluded atom volume computation
-print 0          # Extensive or concise printing
+print 0           # Extensive or concise printing
 printnotfound yes # Print data for pairs for which links were not found
-quitgood no      # Quit whenever a valid link is found (stop searching for shortest one)
-dbond 1.5        # Bond distance of link "atoms"
-kbond 10.        # Energy constant for link bonds
-kpath 10.        # Energy constant for the complete path distension, used for computing probability
+quitgood no       # Quit whenever a valid link is found (stop searching for shortest one)
+dbond 1.5         # Bond distance of link "atoms"
+kbond 10.         # Energy constant for link bonds
+kpath 10.         # Energy constant for the complete path distension, used for computing probability
+kvdw  2.          # For constant of overlap function
 
 # Technical parameters for the optimization method
 

@@ -206,6 +206,10 @@ program topolink
       case ("kpath") 
         record = keyvalue(record,1)
         read(record,*) kpath
+      case ("kvdw") 
+        record = keyvalue(record,1)
+        read(record,*) kvdw
+        kvdwini = kvdw
       case ("ntrial") 
         record = keyvalue(record,1)
         read(record,*) ntrial
