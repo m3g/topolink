@@ -200,7 +200,7 @@ program comparecols
   close(10)
   write(*,*) ' Number of pairs found: ', npairs
   if ( npairs == 0 ) then
-    write(*,*) ' ERROR: Not corresponding names were found in the two files. '
+    write(*,*) ' ERROR: No corresponding names were found between the the two files. '
     write(*,*) '        Probably the name column set for one of the files is not correct. '
     stop
   end if
