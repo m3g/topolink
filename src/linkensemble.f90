@@ -143,6 +143,10 @@ program linkensemble
       if ( ioerr /= 0 ) exit
       if ( line(3:7) == "LINK:" ) nlinks = nlinks + 1
     end do
+    if ( nlinks == 0 ) then
+      write(*,*) ' ERROR: No LINK line reported for model: ', model(imodel)%name
+      stop
+    end if
     model(imodel)%nlinks = nlinks
     allocate(model(imodel)%link(nlinks),model(imodel)%linkindex(nlinks))
 
@@ -174,6 +178,11 @@ program linkensemble
     close(20)
   end do
   close(10)
+  if ( i == 0 ) then  
+    write(*,*) ' ERROR: No corresponding data was found between files. '
+    write(*,*) '        Are you sure the correct files were used? '
+    stop
+  end if
 
   ! Order all models by gscore, maybe they are not already sorted
 
