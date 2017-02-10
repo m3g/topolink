@@ -191,11 +191,14 @@ program linkensemble
 
   ! Indexing the links
 
+  write(*,*) ' Indexing the links ... '
   imodel = 1
   do i = 1, model(imodel)%nlinks
     model(imodel)%linkindex(i) = i
+    call progress(imodel,1,nmodels)
   end do
   do imodel = 2, nmodels 
+    call progress(imodel,1,nmodels)
     do i = 1, model(imodel)%nlinks
       jdo : do j = 1, model(1)%nlinks 
         if ( model(imodel)%link(i) .eq. model(1)%link(j) ) then
