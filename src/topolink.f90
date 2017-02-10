@@ -1542,7 +1542,11 @@ program topolink
       write(*,*)
       write(*,floatout) '   Sum of scores of observed links: ', experiment(iexp)%score
       write(*,*)
-      write(*,floatout) '   Sensitivity of the cross-linking reaction: ', dble(experiment(iexp)%ngood)/experiment(iexp)%nreach_obs
+      if ( experiment(iexp)%nreach_obs > 0 ) then 
+        write(*,floatout) '   Sensitivity of the cross-linking reaction: ', dble(experiment(iexp)%ngood)/experiment(iexp)%nreach_obs
+      else
+        write(*,floatout) '   Sensitivity of the cross-linking reaction: ', 1.
+      end if
       write(*,floatout) '   False-assignment probability: ', dble(experiment(iexp)%nbad)/experiment(iexp)%nreactive_type
       write(*,*)
       write(*,floatout) '   Likelyhood of the experimental result: ', experiment(iexp)%likelyhood
