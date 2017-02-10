@@ -207,6 +207,10 @@ program linkensemble
     end if
   end do
   write(*,"(a,i8)") "  Number of observed crosslinks: ", nobserved
+  if ( nobserved == 0 ) then
+    write(*,*) " ERROR: Cannot run if number of observed crosslinks is zero. "
+    stop
+  end if
   allocate( satisfied(nobserved) )
   do i = 1, nobserved
     satisfied(i) = 0
