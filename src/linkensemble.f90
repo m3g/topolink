@@ -23,7 +23,7 @@ program linkensemble
   use string_operations
 
   implicit none
-  integer :: i, j, ilink, imodel, nobserved
+  integer :: i, j, ilink, imodel, nobserved, iobs
   integer :: nargs, nmodels, ioerr, nlinks, nsatisfied
   integer, allocatable :: satisfied(:)
   double precision :: gscore, degree
@@ -254,9 +254,11 @@ program linkensemble
   write(10,"(a,i8)") "# Number of observed crosslinks: ", nobserved
   write(10,"(a)") "#"
   imodel = 1
+  iobs = 0
   do i = 1, model(imodel)%nlinks
     if ( model(imodel)%link(i)%observed ) then
-      write(10,"(a,i3,tr1,a)") "# ", i, trim(adjustl(print_link(model(imodel)%link(i))))
+      iobs = iobs + 1
+      write(10,"(a,i3,tr1,a)") "# ", iobs, trim(adjustl(print_link(model(imodel)%link(i))))
     end if
   end do
   write(10,"(a)") "#"
