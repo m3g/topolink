@@ -183,6 +183,11 @@ program linkensemble
     write(*,*) '        Are you sure the correct files were used? '
     stop
   end if
+  if ( i < nmodels ) then
+    write(*,*)
+    write(*,*) ' ERROR: Some models listed in score file were not found in topolink log list. '
+    stop
+  end if
 
   ! Order all models by gscore, maybe they are not already sorted
 
@@ -193,9 +198,9 @@ program linkensemble
 
   write(*,*) ' Indexing the links ... '
   imodel = 1
+  call progress(imodel,1,nmodels)
   do i = 1, model(imodel)%nlinks
     model(imodel)%linkindex(i) = i
-    call progress(imodel,1,nmodels)
   end do
   do imodel = 2, nmodels 
     call progress(imodel,1,nmodels)
@@ -223,8 +228,8 @@ program linkensemble
     write(*,*) " ERROR: Cannot run if number of observed crosslinks is zero. "
     stop
   end if
-  allocate( satisfied(nobserved) )
-  do i = 1, nobserved
+  allocate( satisfied(nlinks) )
+  do i = 1, nlinks
     satisfied(i) = 0
   end do
 
@@ -264,7 +269,7 @@ program linkensemble
   write(record,*) "(a,",nobserved,"(tr1,i3))"
   write(10,record) "#             Model  Nmodel     RelatP       DeltaG  Ntot",(i,i=1,nobserved)
   nsatisfied = 0
-  write(record,*) "(i8,tr1,a,tr1,i5,2(tr1,f12.5),tr1,i5,",nobserved,"(tr1,i3))"
+  write(record,*) "(i8,tr1,a,tr1,i5,2(tr1,f12.5),tr1,i5,$)"
   do imodel = 1, nmodels
     model(imodel)%nobsgood = 0
     do i = 1, model(imodel)%nlinks
@@ -285,8 +290,14 @@ program linkensemble
                 model(imodel)%nobsgood,&
                 model(imodel)%degree / model(1)%degree, & 
                 model(imodel)%score - model(1)%score, & 
-                nsatisfied, &
-                (satisfied(j),j=1,nobserved)
+                nsatisfied
+    do i = 1, model(imodel)%nlinks
+      ilink = model(imodel)%linkindex(i)
+      if ( model(imodel)%link(ilink)%observed ) then
+        write(10,"(tr1,i3,$)") satisfied(ilink)
+      end if
+    end do
+    write(10,*)
   end do
  
   write(*,*) ' Wrote output file: ', trim(adjustl(output))
