@@ -115,7 +115,7 @@ module topolink_data
     type(observed_deadend), allocatable :: deadend(:)
     type(observed_link), allocatable :: observed(:)
     type(link_type), allocatable :: linktype(:)
-    double precision :: likelyhood, userlikelyhood, pgood, pbad, score
+    double precision :: likelihood, userlikelihood, pgood, pbad, score
 
   end type experiment_data
 
@@ -141,10 +141,10 @@ module topolink_data
     integer :: nminmax   ! Number of links with min and max data that are consistent
     integer :: nobsgood  ! Number of observed links that are consistent with observations
     double precision :: sumscores  ! RESULT4: Sum of scores of observed links of all experiments.
-    double precision :: likely     ! RESULT5: Likelyhood of the set of experimental results.
-    double precision :: loglikely  ! RESULT6: Log-likelyhood of the set of experimental results.
-    double precision :: usrlike    ! RESULT7: Likelyhood of the set of experimental results. (with user pgood and pbad)
-    double precision :: usrloglike ! RESULT8: Log-likelyhood of the set of experimental results. (with user pgood and pbad)
+    double precision :: likeli     ! RESULT5: Likelihood of the set of experimental results.
+    double precision :: loglikeli  ! RESULT6: Log-likelihood of the set of experimental results.
+    double precision :: usrlike    ! RESULT7: Likelihood of the set of experimental results. (with user pgood and pbad)
+    double precision :: usrloglike ! RESULT8: Log-likelihood of the set of experimental results. (with user pgood and pbad)
     ! Index of link in overall model links lists
     integer, allocatable :: linkindex(:)
 

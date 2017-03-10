@@ -95,8 +95,8 @@ program filtermodels
       if ( line(4:11) == "RESULT2:") read(line(12:200),*) model(imodel)%ntopnot
       if ( line(4:11) == "RESULT3:") read(line(12:200),*) model(imodel)%nmiss
       if ( line(4:11) == "RESULT4:") read(line(12:200),*) model(imodel)%sumscores
-      if ( line(4:11) == "RESULT5:") read(line(12:200),*) model(imodel)%likely
-      if ( line(4:11) == "RESULT6:") read(line(12:200),*) model(imodel)%loglikely
+      if ( line(4:11) == "RESULT5:") read(line(12:200),*) model(imodel)%likeli
+      if ( line(4:11) == "RESULT6:") read(line(12:200),*) model(imodel)%loglikeli
       if ( line(4:11) == "RESULT7:") read(line(12:200),*) model(imodel)%usrlike
       if ( line(4:11) == "RESULT8:") read(line(12:200),*) model(imodel)%usrloglike
     end do

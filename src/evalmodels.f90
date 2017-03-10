@@ -213,8 +213,8 @@ program evalmodels
       if ( line(4:11) == "RESULT2:") read(line(12:200),*) model(imodel)%ntopnot
       if ( line(4:11) == "RESULT3:") read(line(12:200),*) model(imodel)%nmiss
       if ( line(4:11) == "RESULT4:") read(line(12:200),*) model(imodel)%sumscores
-      if ( line(4:11) == "RESULT5:") read(line(12:200),*) model(imodel)%likely
-      if ( line(4:11) == "RESULT6:") read(line(12:200),*) model(imodel)%loglikely
+      if ( line(4:11) == "RESULT5:") read(line(12:200),*) model(imodel)%likeli
+      if ( line(4:11) == "RESULT6:") read(line(12:200),*) model(imodel)%loglikeli
       if ( line(4:11) == "RESULT7:") read(line(12:200),*) model(imodel)%usrlike
       if ( line(4:11) == "RESULT8:") read(line(12:200),*) model(imodel)%usrloglike
     end do
@@ -278,7 +278,7 @@ program evalmodels
   write(10,"(a)") "# RESULT3: Number of missing links in observations. "
   write(10,"(a)") "# RESULT4: Number of distances with min and max bounds that are consistent."
   write(10,"(a)") "# RESULT5: Sum of the scores of observed links in all observations. "
-  write(10,"(a)") "# RESULT6: Likelyhood of the structural model, based on observations. "
+  write(10,"(a)") "# RESULT6: Likelihood of the structural model, based on observations. "
   write(10,"(a)") "#"
   write(10,"(a)") "# More details at: http://leandro.iqm.unicamp.br/topolink"
   write(10,"(a)") "#"
@@ -293,7 +293,7 @@ program evalmodels
                 model(imodel)%nmiss, &
                 model(imodel)%nminmax, &
                 model(imodel)%sumscores, &
-                model(imodel)%likely,&
+                model(imodel)%likeli,&
                 trim(adjustl(model(imodel)%name))
   end do
 

@@ -9,7 +9,7 @@
 ! Reference:
 !
 ! L. Martinez, A. Ferrari, F. C. Gozzo,
-! TopoLink: A package to compute the likelyhood of structural models
+! TopoLink: A package to compute the likelihood of structural models
 ! based on surface accessible topological distances
 ! 2015
 !

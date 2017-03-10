@@ -9,7 +9,7 @@
 ! Reference:
 !
 ! L. Martinez, A. Ferrari, F. C. Gozzo,
-! TopoLink: A package to compute the likelyhood of structural models
+! TopoLink: A package to compute the likelihood of structural models
 ! based on surface accessible topological distances
 ! 2015
 !
@@ -29,7 +29,7 @@ program topolink
              i1, i2, ndeadends, nexp, iexp, ntypes, npairs, &
              ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2), nchains, maxfunc, maxcg
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
-                     kpath, likelyhood, userlikelyhood, lnf, nlnp, totscore, readscore,& 
+                     kpath, likelihood, userlikelihood, lnf, nlnp, totscore, readscore,& 
                      kvdwini
   character(len=4) :: char1, char2 
   character(len=200) :: record, linkfile, inputfile, endread
@@ -1488,31 +1488,31 @@ program topolink
     experiment(iexp)%noutreach_obs = experiment(iexp)%nreactive_obs - experiment(iexp)%nreach_obs
 
     !
-    ! Likelyhood of the observed result
+    ! Likelihood of the observed result
     !
 
     experiment(iexp)%pgood = dble(experiment(iexp)%nreach_obs)/experiment(iexp)%nreactive_type
     experiment(iexp)%pbad = dble(experiment(iexp)%nreactive_type - experiment(iexp)%nreach_obs)/&
                             experiment(iexp)%nreactive_type
-    experiment(iexp)%likelyhood = lnf(experiment(iexp)%nobs) - &
+    experiment(iexp)%likelihood = lnf(experiment(iexp)%nobs) - &
                                   lnf(experiment(iexp)%ngood) - &
                                   lnf(experiment(iexp)%nbad) + &
                                   nlnp(experiment(iexp)%ngood,experiment(iexp)%pgood) + &
                                   nlnp(experiment(iexp)%nbad,experiment(iexp)%pbad)
-    experiment(iexp)%likelyhood = 1.d0 - dexp(experiment(iexp)%likelyhood) 
+    experiment(iexp)%likelihood = 1.d0 - dexp(experiment(iexp)%likelihood) 
    
     !
-    ! User-Likelyhood: same thing, but using pgood and pbad from user input, if provided
+    ! User-Likelihood: same thing, but using pgood and pbad from user input, if provided
     !
 
     if ( pbad > 0.d0 .and. pgood > 0.d0 ) then
 
-      experiment(iexp)%userlikelyhood = lnf(experiment(iexp)%nobs) - &
+      experiment(iexp)%userlikelihood = lnf(experiment(iexp)%nobs) - &
                                         lnf(experiment(iexp)%ngood) - &
                                         lnf(experiment(iexp)%nbad) + &
                                         nlnp(experiment(iexp)%ngood,pgood) + &
                                         nlnp(experiment(iexp)%nbad,pbad)
-      experiment(iexp)%userlikelyhood = 1.d0 - dexp(experiment(iexp)%userlikelyhood) 
+      experiment(iexp)%userlikelihood = 1.d0 - dexp(experiment(iexp)%userlikelihood) 
 
     end if
    
@@ -1549,12 +1549,12 @@ program topolink
       end if
       write(*,floatout) '   False-assignment probability: ', dble(experiment(iexp)%nbad)/experiment(iexp)%nreactive_type
       write(*,*)
-      write(*,floatout) '   Likelyhood of the experimental result: ', experiment(iexp)%likelyhood
-      write(*,floatout) '   Log-likelyhood of the experimental result: ', dlog(experiment(iexp)%likelyhood)
+      write(*,floatout) '   Likelihood of the experimental result: ', experiment(iexp)%likelihood
+      write(*,floatout) '   Log-likelihood of the experimental result: ', dlog(experiment(iexp)%likelihood)
       if ( pbad > 0.d0 .and. pgood > 0.d0 ) then
         write(*,*)
-        write(*,floatout) '   Likelyhood using user-defined pbad and pgood: ', experiment(iexp)%userlikelyhood
-        write(*,floatout) '   Log-likelyhood using user-defined pbad and pgood: ', dlog(experiment(iexp)%userlikelyhood)
+        write(*,floatout) '   Likelihood using user-defined pbad and pgood: ', experiment(iexp)%userlikelihood
+        write(*,floatout) '   Log-likelihood using user-defined pbad and pgood: ', dlog(experiment(iexp)%userlikelihood)
         write(*,"( t4, 3(a,f8.3))") ' Using: pgood = ', pgood, '; pbad = ', pbad
       end if
    end if
@@ -1611,24 +1611,24 @@ program topolink
   write(*,"( t3, a, i5, a )") ' RESULT3: ', nmisslinks, ' : Number of links with missing observations.  ' 
 
   if ( nobs > 0 ) then
-    likelyhood = 1.d0
-    userlikelyhood = 1.d0
+    likelihood = 1.d0
+    userlikelihood = 1.d0
     do iexp = 1, nexp
-      likelyhood = likelyhood*experiment(iexp)%likelyhood 
+      likelihood = likelihood*experiment(iexp)%likelihood 
       if ( pbad > 0.d0 .and. pgood > 0.d0 ) then
-        userlikelyhood = userlikelyhood*experiment(iexp)%userlikelyhood
+        userlikelihood = userlikelihood*experiment(iexp)%userlikelihood
       end if
     end do
     write(*,*)
     write(*,"( t3, a, f12.5, a )") ' RESULT4: ', totscore, ' : Sum of scores of observed links of all experiments. '
     write(*,*)
-    write(*,"( t3, a, f12.5, a )") ' RESULT5: ', likelyhood, ' : Likelyhood of the set of experimental results. '
-    write(*,"( t3, a, f12.5, a )") ' RESULT6: ', dlog(likelyhood), ' : Log-likelyhood of the set of experimental results. '
+    write(*,"( t3, a, f12.5, a )") ' RESULT5: ', likelihood, ' : Likelihood of the set of experimental results. '
+    write(*,"( t3, a, f12.5, a )") ' RESULT6: ', dlog(likelihood), ' : Log-likelihood of the set of experimental results. '
     if ( pbad > 0.d0 .and. pgood > 0.d0 ) then
       write(*,*)
       write(*,"( t3, 3(a,f8.3))") ' Using: pgood = ', pgood, '; pbad = ', pbad
-      write(*,"( t3, a, f12.5, a )") ' RESULT7: ', userlikelyhood, ' : Likelyhood of the set of experimental results. '
-      write(*,"( t3, a, f12.5, a )") ' RESULT8: ', dlog(userlikelyhood), ' : Log-likelyhood of the set of experimental results. '
+      write(*,"( t3, a, f12.5, a )") ' RESULT7: ', userlikelihood, ' : Likelihood of the set of experimental results. '
+      write(*,"( t3, a, f12.5, a )") ' RESULT8: ', dlog(userlikelihood), ' : Log-likelihood of the set of experimental results. '
     end if
   end if
 
