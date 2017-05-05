@@ -1,17 +1,4 @@
 !
-! Subroutine that returns a random number given a the seed
-!
-
-subroutine init_random_number(iseed)
-  integer :: i, seed(12), iseed
-  do i = 1, 12
-    seed(i) = i*iseed
-  end do
-  call random_seed(put=seed)
-  return
-end subroutine init_random_number
-
-!
 ! Subroutine that uses the date to create a random seed
 ! 
 
@@ -25,4 +12,23 @@ subroutine seed_from_time(seed)
   seed = seed + value(1)+value(2)+value(3)+value(4)+value(5)/100+value(6)*100+value(7)/10+value(8)*10
 
 end subroutine seed_from_time
+
+!
+! Subroutine that initializes the random number generator given a seed
+!
+
+subroutine init_random_number(iseed)
+  integer :: size
+  integer :: i, iseed
+  integer, allocatable :: seed(:)
+  call random_seed(size=size)
+  allocate(seed(size))
+  do i = 1, size
+    seed(i) = i*iseed
+  end do
+  call random_seed(put=seed)
+  deallocate(seed)
+  return
+end subroutine init_random_number
+
 
