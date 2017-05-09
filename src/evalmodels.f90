@@ -208,15 +208,24 @@ program evalmodels
           end if
         end if
       end if
-      if ( line(4:11) == "RESULT0:") read(line(12:200),*) model(imodel)%nobscons
-      if ( line(4:11) == "RESULT1:") read(line(12:200),*) model(imodel)%ntopcons
-      if ( line(4:11) == "RESULT2:") read(line(12:200),*) model(imodel)%ntopnot
-      if ( line(4:11) == "RESULT3:") read(line(12:200),*) model(imodel)%nmiss
-      if ( line(4:11) == "RESULT4:") read(line(12:200),*) model(imodel)%sumscores
-      if ( line(4:11) == "RESULT5:") read(line(12:200),*) model(imodel)%likeli
-      if ( line(4:11) == "RESULT6:") read(line(12:200),*) model(imodel)%loglikeli
-      if ( line(4:11) == "RESULT7:") read(line(12:200),*) model(imodel)%usrlike
-      if ( line(4:11) == "RESULT8:") read(line(12:200),*) model(imodel)%usrloglike
+      if ( line(4:11) == "RESULT0:") read(line(12:200),*,iostat=ioerr) model(imodel)%nobscons
+      if ( ioerr /= 0 ) model(imodel)%nobscons = 0
+      if ( line(4:11) == "RESULT1:") read(line(12:200),*,iostat=ioerr) model(imodel)%ntopcons
+      if ( ioerr /= 0 ) model(imodel)%ntopcons = 0
+      if ( line(4:11) == "RESULT2:") read(line(12:200),*,iostat=ioerr) model(imodel)%ntopnot
+      if ( ioerr /= 0 ) model(imodel)%ntopnot = 0
+      if ( line(4:11) == "RESULT3:") read(line(12:200),*,iostat=ioerr) model(imodel)%nmiss
+      if ( ioerr /= 0 ) model(imodel)%nmiss = 0
+      if ( line(4:11) == "RESULT4:") read(line(12:200),*,iostat=ioerr) model(imodel)%sumscores
+      if ( ioerr /= 0 ) model(imodel)%sumscores = 0.
+      if ( line(4:11) == "RESULT5:") read(line(12:200),*,iostat=ioerr) model(imodel)%likeli
+      if ( ioerr /= 0 ) model(imodel)%likeli = 0.
+      if ( line(4:11) == "RESULT6:") read(line(12:200),*,iostat=ioerr) model(imodel)%loglikeli
+      if ( ioerr /= 0 ) model(imodel)%loglikeli = 0.
+      if ( line(4:11) == "RESULT7:") read(line(12:200),*,iostat=ioerr) model(imodel)%usrlike
+      if ( ioerr /= 0 ) model(imodel)%usrlike = 0.
+      if ( line(4:11) == "RESULT8:") read(line(12:200),*,iostat=ioerr) model(imodel)%usrloglike
+      if ( ioerr /= 0 ) model(imodel)%usrloglike = 0.
     end do
     model(imodel)%nminmax = nminmax
 
