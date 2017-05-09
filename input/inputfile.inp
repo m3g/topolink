@@ -107,7 +107,7 @@ quitgood no       # Quit whenever a valid link is found (stop searching for shor
 dbond 1.5         # Bond distance of link "atoms"
 kbond 10.         # Energy constant for link bonds
 kpath 10.         # Energy constant for the complete path distension, used for computing probability
-kvdw  2.          # For constant of overlap function
+kvdw  2.          # Force constant of overlap function
 
 # Technical parameters for the optimization method
 
