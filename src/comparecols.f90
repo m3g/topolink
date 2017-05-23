@@ -172,7 +172,7 @@ program comparecols
 
   open(10,file=file2,action='read',status='old',iostat=ioerr)
   if ( ioerr /= 0 ) then
-    write(*,*) ' ERROR: Could not open file: ', trim(adjustl(file1))
+    write(*,*) ' ERROR: Could not open file: ', trim(adjustl(file2))
     stop
   end if
   do imodel = 1, nmodels
