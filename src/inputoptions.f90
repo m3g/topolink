@@ -24,6 +24,7 @@ module inputoptions
 
   logical :: quitgood
   logical :: printlinks
+  logical :: printallfound
   logical :: printnotfound
   logical :: observedscores
   logical :: mimicchain

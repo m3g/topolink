@@ -75,6 +75,7 @@ program topolink
   linkdir = 'none'
   printlinks = .false.
   printnotfound = .false.
+  printallfound = .false.
   compute = 2
   pgood = -1.d0
   pbad = -1.d0
@@ -177,6 +178,9 @@ program topolink
       case ("printlinks")
         if ( keyvalue(record,1) == 'yes' ) printlinks = .true.
         if ( keyvalue(record,1) == 'no' ) printlinks = .false.
+      case ("printallfound")
+        if ( keyvalue(record,1) == 'yes' ) printallfound = .true.
+        if ( keyvalue(record,1) == 'no' ) printallfound = .false.
       case ("printnotfound")
         if ( keyvalue(record,1) == 'yes' ) printnotfound = .true.
         if ( keyvalue(record,1) == 'no' ) printnotfound = .false.
@@ -1330,50 +1334,57 @@ program topolink
       ! Write the best link obtained to output file
    
       if ( printlinks ) then
-        linkfile = pdbfile
-        call cleanname(linkfile)
-        write(char1,"( i4 )") link(i)%atom1%residue%index
-        write(char2,"( i4 )") link(i)%atom2%residue%index
-        linkfile=trim(adjustl(linkdir(1:length(linkdir))))//linkfile(1:length(linkfile)-4)//&
-          '_'//trim(adjustl(link(i)%atom1%residue%name))//trim(adjustl(link(i)%atom1%residue%chain))//&
-          trim(adjustl(char1))//trim(adjustl(link(i)%atom1%name))//&
-          '-'//trim(adjustl(link(i)%atom2%residue%name))//trim(adjustl(link(i)%atom2%residue%chain))//&
-          trim(adjustl(char2))//trim(adjustl(link(i)%atom2%name))//'.pdb'
-        open(10,file=linkfile,iostat=ioerr)
-        if ( ioerr /= 0 ) then
-          write(*,*) ' ERROR: Could not create link PDB file: ', trim(adjustl(linkfile))
-          write(*,*) '        Perhaps the output directory does not exist.'
-          write(*,*) '        Output directory: ', trim(adjustl(linkdir))
-          stop
-        end if
-        write(10,"( 'REMARK F: ', 3(tr2,f12.5) )") f, overlap(n,x), stretch(n,x)
-        writeatom = atom(atom1)
-        writeatom%residue%name = "LINK"
-        writeatom%residue%chain = "A"
-        writeatom%residue%index = 1
-        writeatom%index = 1
-        write(10,"(a)") trim(print_pdbhetatm(writeatom))
-        do j = 1, nlinkatoms
-          ix = (j-1)*3 + 1
-          iy = ix + 1
-          iz = ix + 2
-          writeatom%index = j + 1 
-          writeatom%name = "O"
+
+        if ( printallfound .or. &
+             ( link(i)%status == 0 .or. link(i)%status == 5 ) ) then
+       
+          linkfile = pdbfile
+          call cleanname(linkfile)
+          write(char1,"( i4 )") link(i)%atom1%residue%index
+          write(char2,"( i4 )") link(i)%atom2%residue%index
+          linkfile=trim(adjustl(linkdir(1:length(linkdir))))//linkfile(1:length(linkfile)-4)//&
+            '_'//trim(adjustl(link(i)%atom1%residue%name))//trim(adjustl(link(i)%atom1%residue%chain))//&
+            trim(adjustl(char1))//trim(adjustl(link(i)%atom1%name))//&
+            '-'//trim(adjustl(link(i)%atom2%residue%name))//trim(adjustl(link(i)%atom2%residue%chain))//&
+            trim(adjustl(char2))//trim(adjustl(link(i)%atom2%name))//'.pdb'
+          open(10,file=linkfile,iostat=ioerr)
+          if ( ioerr /= 0 ) then
+            write(*,*) ' ERROR: Could not create link PDB file: ', trim(adjustl(linkfile))
+            write(*,*) '        Perhaps the output directory does not exist.'
+            write(*,*) '        Output directory: ', trim(adjustl(linkdir))
+            stop
+          end if
+          write(10,"( 'REMARK F: ', 3(tr2,f12.5) )") f, overlap(n,x), stretch(n,x)
+          writeatom = atom(atom1)
           writeatom%residue%name = "LINK"
           writeatom%residue%chain = "A"
           writeatom%residue%index = 1
-          writeatom%x = xbest(ix)
-          writeatom%y = xbest(iy)
-          writeatom%z = xbest(iz)
+          writeatom%index = 1
           write(10,"(a)") trim(print_pdbhetatm(writeatom))
-        end do
-        writeatom = atom(atom2)
-        writeatom%residue%name = "LINK"
-        writeatom%residue%chain = "A"
-        writeatom%residue%index = 1
-        writeatom%index = nlinkatoms + 2
-        write(10,"(a)") trim(print_pdbhetatm(writeatom))
-        close(10)
+          do j = 1, nlinkatoms
+            ix = (j-1)*3 + 1
+            iy = ix + 1
+            iz = ix + 2
+            writeatom%index = j + 1 
+            writeatom%name = "O"
+            writeatom%residue%name = "LINK"
+            writeatom%residue%chain = "A"
+            writeatom%residue%index = 1
+            writeatom%x = xbest(ix)
+            writeatom%y = xbest(iy)
+            writeatom%z = xbest(iz)
+            write(10,"(a)") trim(print_pdbhetatm(writeatom))
+          end do
+          writeatom = atom(atom2)
+          writeatom%residue%name = "LINK"
+          writeatom%residue%chain = "A"
+          writeatom%residue%index = 1
+          writeatom%index = nlinkatoms + 2
+          write(10,"(a)") trim(print_pdbhetatm(writeatom))
+          close(10)
+
+        end if
+
       end if
 
     else
