@@ -35,6 +35,7 @@ program topolink
   character(len=200) :: record, linkfile, inputfile, endread
   character(len=200), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
+  character(len=13) :: statuschar
   logical :: error, r1, r2, inexp, warning, interchain, isprotein
 
   external :: computef, computeg
@@ -1355,6 +1356,7 @@ program topolink
             stop
           end if
           write(10,"( 'REMARK F: ', 3(tr2,f12.5) )") f, overlap(n,x), stretch(n,x)
+          write(10,"( 'REMARK LINK STATUS: ', a13 )") statuschar(link(i)%status)
           writeatom = atom(atom1)
           writeatom%residue%name = "LINK"
           writeatom%residue%chain = "A"

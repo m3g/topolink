@@ -12,7 +12,7 @@ subroutine printdata(print,link)
   character(len=1) :: ra1, ra2, aa1, aa2
   character(len=3) :: charobs
   character(len=9) :: charmax, chardist
-  character(len=13) :: statuschar
+  character(len=13) :: charresult
   character(len=800) :: lineformat
 
   ! Print title
@@ -89,6 +89,16 @@ subroutine printdata(print,link)
     end if
   end if
 
+  if ( link%status == 0 ) charresult ="    OK: FOUND"
+  if ( link%status == 1 ) charresult ="   BAD: SHORT"
+  if ( link%status == 2 ) charresult ="    BAD: LONG"
+  if ( link%status == 3 ) charresult ="    BAD: EUCL"
+  if ( link%status == 4 ) charresult ="BAD: NOTFOUND"
+  if ( link%status == 5 ) charresult =" BAD: MISSING"
+  if ( link%status == 6 ) charresult ="     OK: LONG"
+  if ( link%status == 7 ) charresult ="     OK: EUCL"
+  if ( link%status == 8 ) charresult =" OK: NOTFOUND"
+
   ra1 = "Y" ; if ( .not. link%atom1%residue%accessible ) ra1 = "N"
   ra2 = "Y" ; if ( .not. link%atom2%residue%accessible ) ra2 = "N"
   aa1 = "Y" ; if ( .not. link%atom1%accessible ) aa1 = "N"
@@ -99,34 +109,12 @@ subroutine printdata(print,link)
                       link%atom2%residue%name, link%atom2%residue%chain, &
                       link%atom2%residue%index, link%atom2%name, &
                       link%euclidean, chardist, charobs, &
-                      link%dmin, charmax, statuschar(link%status), &
+                      link%dmin, charmax, charresult, &
                       link%n_obs_consistent, link%n_obs_expected, &
                       link%n_type_consistent, link%n_type_expected, &
                       ra1, ra2, aa1, aa2
 
 end subroutine printdata
-
-function statuschar(status)
-
-  implicit none
-  integer :: status
-  character(len=13) :: statuschar
-
-  if ( status == 0 ) statuschar ="    OK: FOUND"
-  if ( status == 1 ) statuschar ="   BAD: SHORT"
-  if ( status == 2 ) statuschar ="    BAD: LONG"
-  if ( status == 3 ) statuschar ="    BAD: EUCL"
-  if ( status == 4 ) statuschar ="BAD: NOTFOUND"
-  if ( status == 5 ) statuschar =" BAD: MISSING"
-  if ( status == 6 ) statuschar ="     OK: LONG"
-  if ( status == 7 ) statuschar ="     OK: EUCL"
-  if ( status == 8 ) statuschar =" OK: NOTFOUND"
-
-end function statuschar
-
-
-
-
 
 
 
