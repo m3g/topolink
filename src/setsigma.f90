@@ -66,6 +66,7 @@ subroutine setsigma(link,mimicchain)
   end if
 
   ! Mimic atomic radii at begining of linker
+write(*,*) length1, length2
   do i = 1, length1
     sigma(i) = 2.d0
   end do
@@ -89,7 +90,7 @@ integer function chainlength(name)
     case ( "CYS" ) ; chainlength = 2
     case ( "GLU" ) ; chainlength = 4
     case ( "GLN" ) ; chainlength = 4
-    case ( "GLY" ) ; chainlength = 0
+    case ( "GLY" ) ; chainlength = 1 ! Obs: needed for linker to not overlap with C and N atoms
     case ( "HIS" ) ; chainlength = 3
     case ( "HSE" ) ; chainlength = 3
     case ( "HSD" ) ; chainlength = 3
