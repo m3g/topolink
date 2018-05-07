@@ -267,7 +267,7 @@ program linkcorrelation
       correlation(i,j) = correlation(i,j) / dble(nmodels)
       correlation(j,i) = correlation(i,j)
     end do
-    write(*,"( 100(tr1,f5.2) )") (correlation(i,j),j=1,nlinks)
+    write(*,"( 1000(tr1,f5.2) )") (correlation(i,j),j=1,nlinks)
   end do
 
 end program linkcorrelation
