@@ -41,7 +41,7 @@ program linkcorrelation
   implicit none
   integer :: i, j, ilink, imodel, type
   integer :: nargs, nmodels, ioerr, maxlinks, nlinks
-  character(len=200) :: loglist, record, line
+  character(len=200) :: loglist, record, line, format
   double precision, allocatable :: correlation(:,:), fraction(:)
   type(specific_link) :: linktemp
   type(modeldata), allocatable :: model(:)
@@ -262,12 +262,13 @@ program linkcorrelation
           "#",i, trim(print_link(model(1)%link(i))), " (",i-1,") ", fraction(i) 
   end do
 
+  write(format,*) "(",nlinks,"(tr1,f5.2))"
   do i = 1, nlinks
     do j = i, nlinks
       correlation(i,j) = correlation(i,j) / dble(nmodels)
       correlation(j,i) = correlation(i,j)
     end do
-    write(*,"( 1000(tr1,f5.2) )") (correlation(i,j),j=1,nlinks)
+    write(*,format) (correlation(i,j),j=1,nlinks)
   end do
 
 end program linkcorrelation
