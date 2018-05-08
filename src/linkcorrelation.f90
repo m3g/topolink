@@ -262,7 +262,7 @@ program linkcorrelation
           "#",i, trim(print_link(model(1)%link(i))), " (",i-1,") ", fraction(i) 
   end do
 
-  write(format,*) "(",nlinks,"(tr1,f5.2))"
+  write(format,*) "(",nlinks,"(tr1,f5.3))"
   do i = 1, nlinks
     do j = i, nlinks
       correlation(i,j) = correlation(i,j) / dble(nmodels)
