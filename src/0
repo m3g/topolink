@@ -212,7 +212,7 @@ module string_operations
     character(len=200) function filename(string)
     
       implicit none
-      integer :: if, il, i
+      integer :: if, il, ivalue, i
       character(len=200) :: string
     
       ! Jump keyword 
@@ -228,47 +228,20 @@ module string_operations
     
       ! The keyword ended, now reading the file name (with spaces)
     
-      il = il - 1
-      if = il + 1
-      do while( empty_char(string(if:if)) .and. if < 200 )
-        if = if + 1
-      end do
-
-      ! If the first character is a quote, read until the next quote
-      if ( string(if:if) == '"' ) then
-        if = if + 1
-        il = if + 1
-        do while( string(il:il) /= '"' .and. il < 200 )
-          il = il + 1
-        end do
-        if ( il == 200 ) then
-          write(*,*) ' ERROR: file name defined starting with quote but end of name not found. '
-          write(*,*) '        Names with paths of up to 200 characters are accepted. Too long? '
-          stop
-        end if
+      do i = 1, ivalue
         il = il - 1
-
-      ! If the name does not start with a quote, read until next blank character
-
-      else
-        il = if
-        do while( .not. empty_char(string(il:il)) .and. il < 200  )
-          il = il + 1
+        if = il + 1
+        do while( empty_char(string(if:if)) .and. if < 200 )
+          if = if + 1
         end do
-        il = il - 1
-      end if
-
-      ! Check if there was a comment on this line
-
-      do i = if, il
-        if ( string(i:i) == "#" ) then
-          il = i - 1
-          exit
-        end if
+        il = 200
+        do while( empty_char(string(il:il)) .and. il > if  )
+          il = il - 1
+        end do
       end do
     
       filename = string(if:il)
-      if(length(filename) == 0) then
+      if(length(keyvalue) == 0) then
         write(*,*) ' ERROR: Could not read file name: '
         write(*,*) string(1:length(string))
         stop

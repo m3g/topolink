@@ -140,11 +140,11 @@ program topolink
     select case ( keyword(record) )
       case ("pdbfile")
         if ( pdbfile == 'none' ) then
-          pdbfile = keyvalue(record,1)
+          pdbfile = filename(record)
         end if
       case ("readlog")
         if ( readlog == 'none' ) then
-          readlog = keyvalue(record,1)
+          readlog = filename(record)
         end if
       case ("endread")
         endread = keyvalue(record,1)
@@ -154,7 +154,7 @@ program topolink
         if ( keyvalue(record,1) == 'backbone' ) readatoms = 2
         if ( keyvalue(record,1) == 'backplusCB' ) readatoms = 3
       case ("linkdir")
-        linkdir = keyvalue(record,1)
+        linkdir = filename(record)
       case ("observed")
         cycle
       case ("deadend")
