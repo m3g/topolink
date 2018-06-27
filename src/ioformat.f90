@@ -4,6 +4,9 @@
 
 module ioformat
    
+  integer, parameter :: max_string_length = 200
+  character(len=*), parameter :: string_read = "( a200 )"
+
   character(len=*), parameter :: dashes = "( tr2,121('-') )"
   character(len=*), parameter :: hashes = "( tr2,121('#') )"
 

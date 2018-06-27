@@ -9,6 +9,7 @@
 
 module inputoptions
 
+  use ioformat, only : max_string_length
 
   integer :: print
   integer :: compute
@@ -18,9 +19,9 @@ module inputoptions
   double precision :: pbad
   double precision :: scorecut
 
-  character(len=200) :: pdbfile
-  character(len=200) :: readlog
-  character(len=200) :: linkdir
+  character(len=max_string_length) :: pdbfile
+  character(len=max_string_length) :: readlog
+  character(len=max_string_length) :: linkdir
 
   logical :: quitgood
   logical :: printlinks

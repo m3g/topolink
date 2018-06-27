@@ -4,6 +4,8 @@
 
 module file_operations
 
+  use ioformat, only : max_string_length 
+
   contains
 
     !
@@ -11,10 +13,11 @@ module file_operations
     ! removing the path and the extension
     !
     
-    character(len=200) function basename(filename)
+    character(len=max_string_length) function basename(filename)
      
+      use ioformat, only : max_string_length 
       implicit none
-      character(len=200) :: filename
+      character(len=max_string_length) :: filename
     
       basename = remove_path(filename)
       basename = remove_extension(basename)
@@ -25,11 +28,12 @@ module file_operations
     ! Function that removes the extension of a file name
     !
     
-    character(len=200) function remove_extension(filename)
+    character(len=max_string_length) function remove_extension(filename)
      
+      use ioformat, only : max_string_length 
       implicit none
       integer :: i, idot
-      character(len=200) :: filename
+      character(len=max_string_length) :: filename
     
       remove_extension = filename
       i = length(remove_extension)
@@ -42,7 +46,7 @@ module file_operations
       end do
       i = i + 1
       remove_extension = remove_extension(1:idot-1)
-      do i = idot, 200
+      do i = idot, max_string_length
         remove_extension(i:i) = achar(32)
       end do
     
@@ -52,11 +56,12 @@ module file_operations
     ! Function that removes the path from a file name
     !
     
-    character(len=200) function remove_path(filename)
+    character(len=max_string_length) function remove_path(filename)
     
+      use ioformat, only : max_string_length 
       implicit none
       integer :: i, ilength
-      character(len=200) :: filename
+      character(len=max_string_length) :: filename
     
       remove_path = trim(adjustl(filename))
       ilength = length(remove_path)
@@ -67,7 +72,7 @@ module file_operations
       end do
       i = i + 1
       remove_path(1:ilength-i+1) = remove_path(i:ilength)
-      do i = ilength-i+2, 200
+      do i = ilength-i+2, max_string_length
         remove_path(i:i) = achar(32)
       end do
     
@@ -79,9 +84,10 @@ module file_operations
     
     integer function length(string)
     
+      use ioformat, only : max_string_length 
       implicit none
-      character(len=200) :: string
-      length = 200
+      character(len=max_string_length) :: string
+      length = max_string_length
       do while( empty_char(string(length:length)) ) 
         length = length - 1
       end do
@@ -111,15 +117,16 @@ module file_operations
     
     logical function comment(string)
       
+      use ioformat, only : max_string_length 
       implicit none
       integer :: i
-      character(len=200) :: string
+      character(len=max_string_length) :: string
       i = 1
-      do while( empty_char(string(i:i)) .and. i < 200 ) 
+      do while( empty_char(string(i:i)) .and. i < max_string_length ) 
         i = i + 1
       end do
       comment = .false.
-      if ( string(i:i) == "#" .or. i == 200 ) comment = .true.
+      if ( string(i:i) == "#" .or. i == max_string_length ) comment = .true.
     
     end function comment
 
@@ -130,9 +137,10 @@ module file_operations
 
     subroutine checkfile(file)
     
+      use ioformat, only : max_string_length 
       implicit none
       integer :: ioerr
-      character(len=200) :: file
+      character(len=max_string_length ) :: file
       character(len=1) :: char
     
       open(10,file=file,status='new',action='write',iostat=ioerr)

@@ -4,10 +4,11 @@
 
 function model_index(name,model,n,error)
  
+  use ioformat, only : max_string_length
   use topolink_data
   implicit none
   integer :: model_index, n, imax, imin, iavg
-  character(len=200) :: name
+  character(len=max_string_length) :: name
   logical :: error
   type(modeldata) :: model(n)
 

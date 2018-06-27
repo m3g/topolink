@@ -4,6 +4,8 @@
 
 module string_operations
 
+  use ioformat, only : max_string_length
+
   contains
 
     !
@@ -11,10 +13,11 @@ module string_operations
     ! removing the path and the extension
     !
     
-    character(len=200) function basename(filename)
+    character(len=max_string_length) function basename(filename)
     
+      use ioformat, only : max_string_length
       integer :: i
-      character(len=200) :: filename
+      character(len=max_string_length) :: filename
     
       basename = trim(adjustl(filename))
       i = length(basename)
@@ -28,7 +31,7 @@ module string_operations
       end do
       i = i + 1
       basename = basename(i:idot-1)
-      do i = idot, 200
+      do i = idot, max_string_length
         basename(i:i) = achar(32)
       end do
     
@@ -40,8 +43,9 @@ module string_operations
     
     subroutine cleanname(string)
     
+      use ioformat, only : max_string_length
       integer :: i, j
-      character(len=200) :: string
+      character(len=max_string_length) :: string
     
       ! find last '/' character
     
@@ -60,9 +64,10 @@ module string_operations
     
     integer function length(string)
     
+      use ioformat, only : max_string_length
       implicit none
-      character(len=200) :: string
-      length = 200
+      character(len=max_string_length) :: string
+      length = max_string_length
       do while( empty_char(string(length:length)) ) 
         length = length - 1
         if ( length == 0 ) exit
@@ -93,15 +98,16 @@ module string_operations
     
     logical function comment(string)
       
+      use ioformat, only : max_string_length
       implicit none
       integer :: i
-      character(len=200) :: string
+      character(len=max_string_length) :: string
       i = 1
-      do while( empty_char(string(i:i)) .and. i < 200 ) 
+      do while( empty_char(string(i:i)) .and. i < max_string_length ) 
         i = i + 1
       end do
       comment = .false.
-      if ( string(i:i) == "#" .or. i == 200 ) comment = .true.
+      if ( string(i:i) == "#" .or. i == max_string_length ) comment = .true.
     
     end function comment
 
@@ -112,9 +118,10 @@ module string_operations
 
     subroutine checkfile(file)
     
+      use ioformat, only : max_string_length
       implicit none
       integer :: ioerr
-      character(len=200) :: file
+      character(len=max_string_length) :: file
       character(len=1) :: char
     
       open(10,file=file,status='new',action='write',iostat=ioerr)
@@ -142,18 +149,19 @@ module string_operations
     ! Gets keyword from input file
     !
     
-    character(len=200) function keyword(string)
+    character(len=max_string_length) function keyword(string)
     
+      use ioformat, only : max_string_length
       implicit none
       integer :: if, il
-      character(len=200) :: string
+      character(len=max_string_length) :: string
     
       if = 1
-      do while( empty_char(string(if:if)) .and. if < 200)
+      do while( empty_char(string(if:if)) .and. if < max_string_length)
         if = if + 1
       end do
       il = if
-      do while( .not. empty_char(string(il:il)) .and. il < 200)
+      do while( .not. empty_char(string(il:il)) .and. il < max_string_length)
         il = il + 1
       end do
       il = il - 1
@@ -165,20 +173,21 @@ module string_operations
     ! Gets keyword value from input file
     !
     
-    character(len=200) function keyvalue(string,ivalue)
+    character(len=max_string_length) function keyvalue(string,ivalue)
     
+      use ioformat, only : max_string_length
       implicit none
       integer :: if, il, ivalue, i
-      character(len=200) :: string
+      character(len=max_string_length) :: string
     
       ! Jump keyword 
     
       if = 1
-      do while( empty_char(string(if:if)) .and. if < 200 )
+      do while( empty_char(string(if:if)) .and. if < max_string_length )
         if = if + 1
       end do
       il = if
-      do while( .not. empty_char(string(il:il)) .and. il < 200 )
+      do while( .not. empty_char(string(il:il)) .and. il < max_string_length )
         il = il + 1
       end do
     
@@ -187,11 +196,11 @@ module string_operations
       do i = 1, ivalue
         il = il - 1
         if = il + 1
-        do while( empty_char(string(if:if)) .and. if < 200 )
+        do while( empty_char(string(if:if)) .and. if < max_string_length )
           if = if + 1
         end do
         il = if
-        do while( .not. empty_char(string(il:il)) .and. il < 200 )
+        do while( .not. empty_char(string(il:il)) .and. il < max_string_length )
           il = il + 1
         end do
       end do
@@ -209,20 +218,21 @@ module string_operations
     ! Gets file name value from keyword value
     !
     
-    character(len=200) function filename(string)
+    character(len=max_string_length) function filename(string)
     
+      use ioformat, only : max_string_length
       implicit none
       integer :: if, il, i
-      character(len=200) :: string
+      character(len=max_string_length) :: string
     
       ! Jump keyword 
     
       if = 1
-      do while( empty_char(string(if:if)) .and. if < 200 )
+      do while( empty_char(string(if:if)) .and. if < max_string_length )
         if = if + 1
       end do
       il = if
-      do while( .not. empty_char(string(il:il)) .and. il < 200 )
+      do while( .not. empty_char(string(il:il)) .and. il < max_string_length )
         il = il + 1
       end do
     
@@ -230,7 +240,7 @@ module string_operations
     
       il = il - 1
       if = il + 1
-      do while( empty_char(string(if:if)) .and. if < 200 )
+      do while( empty_char(string(if:if)) .and. if < max_string_length )
         if = if + 1
       end do
 
@@ -238,12 +248,13 @@ module string_operations
       if ( string(if:if) == '"' ) then
         if = if + 1
         il = if + 1
-        do while( string(il:il) /= '"' .and. il < 200 )
+        do while( string(il:il) /= '"' .and. il < max_string_length )
           il = il + 1
         end do
-        if ( il == 200 ) then
+        if ( il == max_string_length ) then
           write(*,*) ' ERROR: file name defined starting with quote but end of name not found. '
-          write(*,*) '        Names with paths of up to 200 characters are accepted. Too long? '
+          write(*,*) '        Names with paths of up to ',max_string_length,' characters are accepted. Too long? '
+          write(*,*) '        If this length is a problem, change max_string_length in ioformat.f90 and recompile. '
           stop
         end if
         il = il - 1
@@ -252,7 +263,7 @@ module string_operations
 
       else
         il = if
-        do while( .not. empty_char(string(il:il)) .and. il < 200  )
+        do while( .not. empty_char(string(il:il)) .and. il < max_string_length  )
           il = il + 1
         end do
         il = il - 1
@@ -282,9 +293,10 @@ module string_operations
     
     integer function countwords(record)
     
+      use ioformat, only : max_string_length
       implicit none
       integer :: ioerr, i
-      character(len=200) :: record
+      character(len=max_string_length) :: record
       character(len=1) :: string
     
       countwords = 0
@@ -305,9 +317,10 @@ module string_operations
     
     subroutine strclean(record)
     
-      character(len=200) :: record
+      use ioformat, only : max_string_length
+      character(len=max_string_length) :: record
       record = trim(adjustl(record))
-      do i = 1, 200
+      do i = 1, max_string_length
         if ( record(i:i) == achar(9) ) record(i:i) = achar(32)
       end do
     

@@ -14,8 +14,9 @@
 
 module comparecols_data
 
+  use ioformat, only : max_string_length
   type data
-    character(len=200) :: name
+    character(len=max_string_length) :: name
     double precision :: score(2)
     logical :: foundpair
   end type data
@@ -31,7 +32,7 @@ program comparecols
   integer :: imodel, i, ioerr, npairs
   integer :: nargs, nmodels, scol1, scol2, ncol1, ncol2, sort
   double precision :: score, scoremax(2), scoremin(2)
-  character(len=200) :: file1, file2, output, record, string, name
+  character(len=max_string_length) :: file1, file2, output, record, string, name
   integer :: model_index
   logical :: error
   type(data), allocatable :: model(:)
@@ -130,7 +131,7 @@ program comparecols
   end if
   nmodels = 0
   do
-    read(10,"(a200)",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     read(record,*,iostat=ioerr) (string, i = 1, scol1)
     if ( ioerr /= 0 ) cycle
@@ -149,7 +150,7 @@ program comparecols
   rewind(10)
   imodel = 0
   do
-    read(10,"(a200)",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
     backspace(10) ; read(10,*,iostat=ioerr) (string, i = 1, scol1)
@@ -180,7 +181,7 @@ program comparecols
   end do
   npairs = 0
   do
-    read(10,"(a200)",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
     backspace(10) ; read(10,*,iostat=ioerr) (string, i = 1, scol2)
@@ -267,11 +268,12 @@ end program comparecols
 
 function model_index(name,model,n,error)
  
+  use ioformat, only : max_string_length
   use comparecols_data
   implicit none
   integer :: model_index
   integer :: n, imax, imin, iavg
-  character(len=200) :: name
+  character(len=max_string_length) :: name
   logical :: error
   type(data) :: model(n)
 

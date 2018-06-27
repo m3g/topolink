@@ -1,5 +1,6 @@
 module topolink_data
 
+  use ioformat, only : max_string_length
   implicit none
 
   !
@@ -38,7 +39,7 @@ module topolink_data
     ! obs_reactive: The atom pair is reactive, according to the observed reactivity in this experiment
     ! type_consistent: The topological distance of this atom pair is consistent with 
     !                  the observed reactivity of this atom pair, according to atom types
-    ! obs_reactivity: The topological distance is consistent with the observed reactivity of this
+    ! obs_consistent: The topological distance is consistent with the observed reactivity of this
     !                 atom pair, acoording to the observed atom reactivities
      
     logical :: observed, type_reactive, obs_reactive, type_consistent, obs_consistent
@@ -111,7 +112,7 @@ module topolink_data
     integer :: nreach_type, nreach_obs
     integer :: noutreach_type, noutreach_obs
     integer :: nmiss_type, nmiss_obs
-    character(len=200) :: name
+    character(len=max_string_length) :: name
     type(observed_deadend), allocatable :: deadend(:)
     type(observed_link), allocatable :: observed(:)
     type(link_type), allocatable :: linktype(:)
@@ -124,7 +125,7 @@ module topolink_data
   type modeldata
 
     ! Model log file name
-    character(len=200) :: name
+    character(len=max_string_length) :: name
     ! Number of links in this file
     integer :: nlinks
     ! Score (rosetta?, TM-score?, GDT?, G-score) 
@@ -160,10 +161,11 @@ module topolink_data
 
      function read_atom(record,error)
 
+       use ioformat, only : max_string_length
        integer :: ioerr
        logical :: error
        type(pdbatom) :: read_atom
-       character(len=200) :: record
+       character(len=max_string_length) :: record
        
        error = .false.
        if ( record(1:4) == "ATOM" .or. record(1:6) == "HETATM" ) then
@@ -244,9 +246,10 @@ module topolink_data
 
      function read_link(record)
 
+        use ioformat, only : max_string_length
         implicit none
         integer :: i
-        character(len=200) :: record
+        character(len=max_string_length) :: record
         character(len=13) :: charstat
         character(len=3) :: charobs
         character(len=9) :: chardmax
@@ -399,8 +402,9 @@ module topolink_data
      
      function print_pdbatom(atom)
 
+       use ioformat, only : max_string_length
        type(pdbatom) :: atom
-       character(len=200) :: pdbformat, print_pdbatom
+       character(len=max_string_length) :: pdbformat, print_pdbatom
 
        pdbformat = "('ATOM',t7,i5,t13,a4,t18,a4,t22,a1,t23,i4,t31,f8.3,t39,f8.3,t47,f8.3,t55,f6.2,t61,f6.2)"
        write(print_pdbatom,pdbformat) &
@@ -413,8 +417,9 @@ module topolink_data
      
      function print_pdbhetatm(atom)
 
+       use ioformat, only : max_string_length
        type(pdbatom) :: atom
-       character(len=200) :: pdbformat, print_pdbhetatm
+       character(len=max_string_length) :: pdbformat, print_pdbhetatm
 
        pdbformat = "('HETATM',t7,i5,t13,a4,t18,a4,t22,a1,t23,i4,t31,f8.3,t39,f8.3,t47,f8.3,t55,f6.2,t61,f6.2)"
        write(print_pdbhetatm,pdbformat) &

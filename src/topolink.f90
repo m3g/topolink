@@ -32,8 +32,8 @@ program topolink
                      kpath, likelihood, userlikelihood, lnf, nlnp, totscore, readscore,& 
                      kvdwini
   character(len=4) :: char1, char2 
-  character(len=200) :: record, linkfile, inputfile, endread
-  character(len=200), allocatable :: logline(:)
+  character(len=max_string_length) :: record, linkfile, inputfile, endread
+  character(len=max_string_length), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
   character(len=13) :: statuschar
   logical :: error, r1, r2, inexp, warning, interchain, isprotein
@@ -132,7 +132,7 @@ program topolink
   nexp = 0
   error = .false.
   input : do 
-    read(10,"( a200 )",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     call strclean(record) 
     if ( length(record) < 1 .or. record(1:1) == "#" ) cycle
@@ -313,7 +313,7 @@ program topolink
     open(20,file=readlog,action='read',iostat=ioerr)
     nloglines = 0
     do      
-      read(20,"( a200 )",iostat=ioerr) record
+      read(20,string_read,iostat=ioerr) record
       if ( ioerr /= 0 ) exit
       call strclean(record)
       if ( record(3:7) == "LINK:" ) then
@@ -324,7 +324,7 @@ program topolink
     allocate(logline(nloglines))
     i1 = 0
     do
-      read(20,"( a200 )",iostat=ioerr) record
+      read(20,string_read,iostat=ioerr) record
       if ( ioerr /= 0 ) exit
       call strclean(record)
       if ( record(3:7) == "LINK:" ) then
@@ -347,7 +347,7 @@ program topolink
   inexp = .false.
   iexp = 0
   do 
-    read(10,"( a200 )",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     call strclean(record)
     if ( length(record) < 1 .or. record(1:1) == "#" ) cycle
@@ -414,7 +414,7 @@ program topolink
 
   iexp = 0
   do 
-    read(10,"( a200 )",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     call strclean(record)
     if ( length(record) < 1 .or. record(1:1) == "#" ) cycle
@@ -521,7 +521,7 @@ program topolink
   end if
   natoms = 0
   do
-    read(10,"( a200 )",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     call strclean(record)
     if ( keyword(record) == endread ) exit
@@ -553,7 +553,7 @@ program topolink
   j = 0
   nchains = 1
   do
-    read(10,"( a200 )",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     call strclean(record)
     if ( keyword(record) == endread ) exit

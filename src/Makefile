@@ -34,10 +34,10 @@ BINARIES = $(BIN)/topolink \
            $(BIN)/filtermodels
 
 MODULES = functionpars.o \
+          ioformat.o \
           linkedcells.o \
           topolink_data.o \
           topolink_operations.o \
-          ioformat.o \
           inputoptions.o \
           string_operations.o
 
