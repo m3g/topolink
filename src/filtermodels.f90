@@ -1,13 +1,14 @@
 
 program filtermodels
 
+  use ioformat, only : max_string_length, string_read
   use topolink_data
   use topolink_operations
 
   implicit none
   integer :: i, j, ilink, imodel
   integer :: nargs, nmodels, ioerr, maxlinks, nlinks, ncut, ngood
-  character(len=200) :: loglist, linklist, record, line
+  character(len=max_string_length) :: loglist, linklist, record, line
   type(specific_link) :: linktemp
   type(observed_link), allocatable :: link(:)
   type(modeldata), allocatable :: model(:)
@@ -45,7 +46,7 @@ program filtermodels
     ! Check the number of links reported in this file
     nlinks = 0
     do 
-      read(20,"(a200)",iostat=ioerr) line
+      read(20,string_read,iostat=ioerr) line
       if ( ioerr /= 0 ) exit
       if ( line(3:7) == "LINK:" ) then
         linktemp = read_link(line)
@@ -81,7 +82,7 @@ program filtermodels
     model(imodel)%name = record
     ilink = 0
     do 
-      read(20,"(a200)",iostat=ioerr) line
+      read(20,string_read,iostat=ioerr) line
       if ( ioerr /= 0 ) exit
       if ( line(3:7) == "LINK:" ) then
         linktemp = read_link(line)
@@ -90,23 +91,23 @@ program filtermodels
           model(imodel)%link(ilink) = linktemp
         end if
       end if
-      if ( line(4:11) == "RESULT0:") read(line(12:200),*,iostat=ioerr) model(imodel)%nobscons
+      if ( line(4:11) == "RESULT0:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%nobscons
       if ( ioerr /= 0 ) model(imodel)%nobscons = 0
-      if ( line(4:11) == "RESULT1:") read(line(12:200),*,iostat=ioerr) model(imodel)%ntopcons
+      if ( line(4:11) == "RESULT1:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%ntopcons
       if ( ioerr /= 0 ) model(imodel)%ntopcons = 0
-      if ( line(4:11) == "RESULT2:") read(line(12:200),*,iostat=ioerr) model(imodel)%ntopnot
+      if ( line(4:11) == "RESULT2:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%ntopnot
       if ( ioerr /= 0 ) model(imodel)%ntopnot = 0
-      if ( line(4:11) == "RESULT3:") read(line(12:200),*,iostat=ioerr) model(imodel)%nmiss
+      if ( line(4:11) == "RESULT3:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%nmiss
       if ( ioerr /= 0 ) model(imodel)%nmiss = 0
-      if ( line(4:11) == "RESULT4:") read(line(12:200),*,iostat=ioerr) model(imodel)%sumscores
+      if ( line(4:11) == "RESULT4:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%sumscores
       if ( ioerr /= 0 ) model(imodel)%sumscores = 0.
-      if ( line(4:11) == "RESULT5:") read(line(12:200),*,iostat=ioerr) model(imodel)%likeli
+      if ( line(4:11) == "RESULT5:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%likeli
       if ( ioerr /= 0 ) model(imodel)%likeli = 0.
-      if ( line(4:11) == "RESULT6:") read(line(12:200),*,iostat=ioerr) model(imodel)%loglikeli
+      if ( line(4:11) == "RESULT6:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%loglikeli
       if ( ioerr /= 0 ) model(imodel)%loglikeli = 0.
-      if ( line(4:11) == "RESULT7:") read(line(12:200),*,iostat=ioerr) model(imodel)%usrlike
+      if ( line(4:11) == "RESULT7:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%usrlike
       if ( ioerr /= 0 ) model(imodel)%usrlike = 0.
-      if ( line(4:11) == "RESULT8:") read(line(12:200),*,iostat=ioerr) model(imodel)%usrloglike
+      if ( line(4:11) == "RESULT8:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%usrloglike
       if ( ioerr /= 0 ) model(imodel)%usrloglike = 0.
     end do
     close(20)
@@ -129,7 +130,7 @@ program filtermodels
   end if
   nlinks = 0
   do
-    read(10,"(a200)",iostat=ioerr) line
+    read(10,string_read,iostat=ioerr) line
     if( ioerr /= 0 ) exit
     nlinks = nlinks + 1
   end do
@@ -143,7 +144,7 @@ program filtermodels
   nlinks = 0
   write(*,"(a)") '# Links to be considered: '
   do
-    read(10,"(a200)",iostat=ioerr) line
+    read(10,string_read,iostat=ioerr) line
     if( ioerr /= 0 ) exit
     nlinks = nlinks + 1
     read(line,*,iostat=ioerr) link(nlinks)%residue1%name, &

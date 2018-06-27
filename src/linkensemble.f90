@@ -27,7 +27,7 @@ program linkensemble
   integer :: nargs, nmodels, ioerr, nlinks, nsatisfied
   integer, allocatable :: satisfied(:)
   double precision :: gscore, degree
-  character(len=200) :: loglist, gscorefile, record, name, output, line
+  character(len=max_string_length) :: loglist, gscorefile, record, name, output, line
   logical :: error
   type(specific_link) :: linktemp
   type(modeldata), allocatable :: model(:)
@@ -72,7 +72,7 @@ program linkensemble
   ! Read number of models
   nmodels = 0
   do
-    read(10,"(a200)",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
     read(record,*,iostat=ioerr) gscore, degree, name
@@ -89,7 +89,7 @@ program linkensemble
   rewind(10)
   imodel = 0
   do
-    read(10,"(a200)",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
     read(record,*,iostat=ioerr) gscore, degree, name
@@ -111,7 +111,7 @@ program linkensemble
   end if
   i = 0
   do 
-    read(10,"(a200)",iostat=ioerr) record
+    read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
     if ( comment(record) ) cycle
     open(20,file=record,status='old',action='read',iostat=ioerr)
@@ -139,7 +139,7 @@ program linkensemble
 
     nlinks = 0
     do 
-      read(20,"(a200)",iostat=ioerr) line
+      read(20,string_read,iostat=ioerr) line
       if ( ioerr /= 0 ) exit
       if ( line(3:7) == "LINK:" ) nlinks = nlinks + 1
     end do
@@ -157,30 +157,30 @@ program linkensemble
     rewind(20)
     ilink = 0
     do 
-      read(20,"(a200)",iostat=ioerr) line
+      read(20,string_read,iostat=ioerr) line
       if ( ioerr /= 0 ) exit
       if ( line(3:7) == "LINK:" ) then
         linktemp = read_link(line)
         ilink = ilink + 1
         model(imodel)%link(ilink) = linktemp
       end if
-      if ( line(4:11) == "RESULT0:") read(line(12:200),*,iostat=ioerr) model(imodel)%nobscons
+      if ( line(4:11) == "RESULT0:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%nobscons
       if ( ioerr /= 0 ) model(imodel)%nobscons = 0
-      if ( line(4:11) == "RESULT1:") read(line(12:200),*,iostat=ioerr) model(imodel)%ntopcons
+      if ( line(4:11) == "RESULT1:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%ntopcons
       if ( ioerr /= 0 ) model(imodel)%ntopcons = 0
-      if ( line(4:11) == "RESULT2:") read(line(12:200),*,iostat=ioerr) model(imodel)%ntopnot
+      if ( line(4:11) == "RESULT2:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%ntopnot
       if ( ioerr /= 0 ) model(imodel)%ntopnot = 0
-      if ( line(4:11) == "RESULT3:") read(line(12:200),*,iostat=ioerr) model(imodel)%nmiss
+      if ( line(4:11) == "RESULT3:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%nmiss
       if ( ioerr /= 0 ) model(imodel)%nmiss = 0
-      if ( line(4:11) == "RESULT4:") read(line(12:200),*,iostat=ioerr) model(imodel)%sumscores
+      if ( line(4:11) == "RESULT4:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%sumscores
       if ( ioerr /= 0 ) model(imodel)%sumscores = 0.
-      if ( line(4:11) == "RESULT5:") read(line(12:200),*,iostat=ioerr) model(imodel)%likeli
+      if ( line(4:11) == "RESULT5:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%likeli
       if ( ioerr /= 0 ) model(imodel)%likeli = 0.
-      if ( line(4:11) == "RESULT6:") read(line(12:200),*,iostat=ioerr) model(imodel)%loglikeli
+      if ( line(4:11) == "RESULT6:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%loglikeli
       if ( ioerr /= 0 ) model(imodel)%loglikeli = 0.
-      if ( line(4:11) == "RESULT7:") read(line(12:200),*,iostat=ioerr) model(imodel)%usrlike
+      if ( line(4:11) == "RESULT7:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%usrlike
       if ( ioerr /= 0 ) model(imodel)%usrlike = 0.
-      if ( line(4:11) == "RESULT8:") read(line(12:200),*,iostat=ioerr) model(imodel)%usrloglike
+      if ( line(4:11) == "RESULT8:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%usrloglike
       if ( ioerr /= 0 ) model(imodel)%usrloglike = 0.
     end do
 
