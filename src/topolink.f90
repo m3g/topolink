@@ -36,7 +36,7 @@ program topolink
   character(len=max_string_length), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
   character(len=13) :: statuschar
-  logical :: error, r1, r2, inexp, warning, interchain, isprotein
+  logical :: error, r1, r2, inexp, warning, interchain
 
   external :: computef, computeg
 
@@ -528,6 +528,14 @@ program topolink
     readatom=read_atom(record,error)
     if ( error ) cycle
     if ( .not. isprotein(readatom) ) cycle
+    if ( readatom%residue%conformation /= " " .and. &
+         readatom%residue%conformation /= "A" ) then
+      write(*,"(3(a,tr1),i8,a)") '  WARNING: Multiple conformations of residue',&
+                                 trim(adjustl(readatom%residue%name)),&
+                                 trim(adjustl(readatom%residue%chain)),&
+                                 readatom%residue%index,&
+                                 ' found. Using only A.'
+    end if
     if ( readatoms == 1 ) then
       if ( ishydrogen(readatom) ) cycle
     else if ( readatoms == 2 ) then

@@ -13,6 +13,7 @@ module topolink_data
 
     integer :: index, firstatom, lastatom
     character(len=4) :: name, chain = "    "
+    character(len=1) :: conformation
     logical :: accessible
   
   end type pdbresidue
@@ -177,6 +178,7 @@ module topolink_data
          read(record(17:21),*,iostat=ioerr) read_atom%residue%name
          read_atom%residue%name = trim(adjustl(read_atom%residue%name))
          if ( ioerr /= 0 ) error = .true.
+         call alternate_conformation(read_atom%residue)
 
          if ( record(22:22) /= " " ) then
            read(record(22:22),*,iostat=ioerr) read_atom%residue%chain
@@ -427,6 +429,88 @@ module topolink_data
                              atom%residue%index, atom%x, atom%y, atom%z
 
      end function print_pdbhetatm
+
+     !
+     ! function isprotein: check if an atom is a protein atom
+     !
+     logical function isprotein(atom)
+     
+       implicit none
+       type(pdbatom) :: atom
+     
+       isprotein = .false.
+       select case ( atom%residue%name ) 
+         case ( "ALA" ) ; isprotein = .true. ; return
+         case ( "ARG" ) ; isprotein = .true. ; return
+         case ( "ASN" ) ; isprotein = .true. ; return
+         case ( "ASP" ) ; isprotein = .true. ; return
+         case ( "ASX" ) ; isprotein = .true. ; return
+         case ( "CYS" ) ; isprotein = .true. ; return
+         case ( "GLU" ) ; isprotein = .true. ; return
+         case ( "GLN" ) ; isprotein = .true. ; return
+         case ( "GLX" ) ; isprotein = .true. ; return
+         case ( "GLY" ) ; isprotein = .true. ; return
+         case ( "HIS" ) ; isprotein = .true. ; return
+         case ( "HSE" ) ; isprotein = .true. ; return
+         case ( "HSD" ) ; isprotein = .true. ; return
+         case ( "ILE" ) ; isprotein = .true. ; return
+         case ( "LEU" ) ; isprotein = .true. ; return
+         case ( "LYS" ) ; isprotein = .true. ; return
+         case ( "MET" ) ; isprotein = .true. ; return
+         case ( "PHE" ) ; isprotein = .true. ; return
+         case ( "PRO" ) ; isprotein = .true. ; return
+         case ( "SER" ) ; isprotein = .true. ; return
+         case ( "THR" ) ; isprotein = .true. ; return
+         case ( "TRP" ) ; isprotein = .true. ; return
+         case ( "TYR" ) ; isprotein = .true. ; return
+         case ( "VAL" ) ; isprotein = .true. ; return
+         case default ; return
+       end select
+     
+     end function isprotein
+
+     !
+     ! subroutine alternate_conformation: check if an atom is from an alternate
+     !                                    conformation, and pick only the "A" conformation
+     !
+     !
+     subroutine alternate_conformation(residue)
+     
+       implicit none
+       type(pdbresidue) :: residue
+     
+       select case ( residue%name(2:4) ) 
+         case ( "ALA" , &
+                "ARG" , & 
+                "ASN" , & 
+                "ASP" , & 
+                "ASX" , & 
+                "CYS" , & 
+                "GLU" , & 
+                "GLN" , & 
+                "GLX" , & 
+                "GLY" , & 
+                "HIS" , & 
+                "HSE" , & 
+                "HSD" , & 
+                "ILE" , & 
+                "LEU" , & 
+                "LYS" , & 
+                "MET" , & 
+                "PHE" , & 
+                "PRO" , & 
+                "SER" , & 
+                "THR" , & 
+                "TRP" , & 
+                "TYR" , & 
+                "VAL" ) 
+           residue%conformation = residue%name(1:1)
+           residue%name = residue%name(2:4)
+         case default 
+           residue%conformation = " "
+       end select
+     
+     end subroutine alternate_conformation
 
 end module topolink_data
 
