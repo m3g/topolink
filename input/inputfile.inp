@@ -110,7 +110,7 @@ dbond 1.5         # Bond distance of link "atoms"
 kbond 10.         # Energy constant for link bonds
 kpath 10.         # Energy constant for the complete path distension, used for computing probability
 kvdw  2.          # Force constant of overlap function
-search_range 3.5  # Search for topological distances of up to search_range*dmaxlink
+search_range 1.5  # Search for topological distances of up to search_range*dmaxlink
 
 # Technical parameters for the optimization method
 

@@ -52,8 +52,12 @@ integer function linkstatus(link)
         if ( link%topodist < link%dmin ) then
           linkstatus = 1 ! BAD: SHORT
         end if
-        if ( link%topodist > link%dmax ) then
+        if ( link%topodist > link%dmax .and. &
+             link%euclidean <= link%dsearch ) then
           linkstatus = 2 ! BAD: LONG
+        end if
+        if ( link%euclidean > link%dsearch ) then
+          linkstatus = 3 ! BAD: EUCL
         end if
       end if
     else

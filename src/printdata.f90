@@ -75,15 +75,16 @@ subroutine printdata(print,link)
     ib = 9 - len(trim(adjustl(chardist)))
     chardist(ib:ib) = " "
 
-  ! Otherwise, report that it is greater than dmaxlink
+  ! Otherwise, report that it is greater than dsearch, or than the 
+  ! the euclidean distance, if this one is greater still
 
   else
-    if ( link%observed ) then
-      write(chardist,"( f9.3 )") link%dmax
+    if ( link%status == 3 ) then 
+      write(chardist,"( f9.3 )") link%euclidean
       ib = 9 - len(trim(adjustl(chardist)))
       chardist(ib:ib) = ">"
     else
-      write(chardist,"( f9.3 )") link%dmin
+      write(chardist,"( f9.3 )") link%dsearch
       ib = 9 - len(trim(adjustl(chardist)))
       chardist(ib:ib) = ">"
     end if
