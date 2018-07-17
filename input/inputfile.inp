@@ -30,13 +30,13 @@ scorecut 0.d0
 
 # Cross-links observed:
 
-experiment Diamina
+experiment 1,6-diaminohexane
 
   # Possible types of cross-links and maximum distances
   #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
-  linktype   GLU     all     all      CB          GLU     all     all       CB        16.9
-  linktype   GLU     all     all      CB          ASP     all     all       CB        15.6
-  linktype   ASP     all     all      CB          ASP     all     all       CB        14.3
+  linktype   GLU     all     all      CB          GLU     all     all       CB        15.1
+  linktype   GLU     all     all      CB          ASP     all     all       CB        14.3
+  linktype   ASP     all     all      CB          ASP     all     all       CB        13.5
 
   observed GLU A 37  GLU A 53
   observed ASP A 22  GLU A 4
@@ -51,14 +51,14 @@ experiment Diamina
 end experiment Diamina
 
 
-experiment zerolength
+experiment Zero-length
 
   # Possible types of cross-links and maximum distances
   #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
-  linktype   ASP     all     all      CB          LYS     all     all       CB        11.4
-  linktype   GLU     all     all      CB          LYS     all     all       CB        12.7
-  linktype   GLU     all     all      CB          SER     all     all       CB         8.8
-  linktype   ASP     all     all      CB          SER     all     all       CB         7.5
+  linktype   ASP     all     all      CB          LYS     all     all       CB         9.7
+  linktype   GLU     all     all      CB          LYS     all     all       CB        10.5
+  linktype   GLU     all     all      CB          SER     all     all       CB         7.7
+  linktype   ASP     all     all      CB          SER     all     all       CB         7.0
 
   observed SER A  71  GLU A 86
   observed SER A 116  GLU A 111
@@ -74,9 +74,9 @@ experiment DSS
   #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
   linktype   MET      A       1       N           LYS     all     all       CB        16.9
   linktype   MET      A       1       N           SER     all     all       CB        13.0
-  linktype   LYS     all     all      CB          LYS     all     all       CB        22.1
-  linktype   LYS     all     all      CB          SER     all     all       CB        18.2
-  linktype   SER     all     all      CB          SER     all     all       CB        14.3
+  linktype   LYS     all     all      CB          LYS     all     all       CB        15.2
+  linktype   LYS     all     all      CB          SER     all     all       CB        12.4
+  linktype   SER     all     all      CB          SER     all     all       CB        10.0
 
   observed LYS A  17  MET A  1
   observed SER A  71  SER A 78
@@ -97,6 +97,8 @@ end experiment DSS
 
 # Optional parameters 
 
+search_range 1.5  # Search for topological distances of up to search_range*dmaxlink
+
 printallfound no  # Prints, or not, the structure of the links that were found but violate the distances
 
 pgood 0.70 # Probability of observing a link which is within link reach
@@ -110,7 +112,6 @@ dbond 1.5         # Bond distance of link "atoms"
 kbond 10.         # Energy constant for link bonds
 kpath 10.         # Energy constant for the complete path distension, used for computing probability
 kvdw  2.          # Force constant of overlap function
-search_range 1.5  # Search for topological distances of up to search_range*dmaxlink
 
 # Technical parameters for the optimization method
 
