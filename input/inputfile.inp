@@ -12,7 +12,7 @@ endread ENDMDL  # Use this to stop reading atoms if this keyword is found (comme
 readatoms heavy # Which atoms to consider (all/heavy(no-H)/backbone/backplusCB)
 
 # Output directory for links (comment if you do not want the PDB files, that may be a lot)
-printlinks no
+printlinks yes
 linkdir ./links
 
 # What cross-links to compute (all/reactive/observed)
