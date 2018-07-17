@@ -62,6 +62,7 @@ module topolink_data
     ! dmaxlink: Maximum length of the linker, according to experimental linkers used
     ! dmax: Maximum distance consistent with observations
     ! dmin: Minimum distance consistent with observations
+    ! dsearch: Maximum distance to search for a topological distance 
     ! observed: Linker was observed to form in some experiment
     ! type_reactive: Both atoms are reactive according to some linker types
     ! obs_reactive: Both atoms are reactive according to some observed reactivity
@@ -71,7 +72,7 @@ module topolink_data
     type(pdbatom) :: atom1, atom2
     integer :: nbeads, status
     integer :: n_type_expected, n_obs_expected, n_type_consistent, n_obs_consistent
-    double precision :: euclidean, topodist, dmaxlink, dmax, dmin
+    double precision :: euclidean, topodist, dmaxlink, dmax, dmin, dsearch
     logical :: observed, type_reactive, obs_reactive, found
     type(experiment_in_link), allocatable :: exp(:)
 

@@ -18,6 +18,7 @@ module inputoptions
   double precision :: pgood
   double precision :: pbad
   double precision :: scorecut
+  double precision :: search_range
 
   character(len=max_string_length) :: pdbfile
   character(len=max_string_length) :: readlog

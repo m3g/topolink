@@ -86,6 +86,7 @@ program topolink
   printaccessible = .false.
   warning = .false.
   interchain = .false.
+  search_range = 1.5
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -192,6 +193,9 @@ program topolink
         if ( keyvalue(record,1) == 'observed' ) compute = 1
         if ( keyvalue(record,1) == 'reactive' ) compute = 2
         if ( keyvalue(record,1) == 'all' ) compute = 3
+      case ("search_range") 
+        record = keyvalue(record,1)
+        read(record,*) search_range
       case ("pgood") 
         record = keyvalue(record,1)
         read(record,*) pgood
@@ -1080,7 +1084,8 @@ program topolink
       if ( link(i)%exp(iexp)%obs_reactive ) link(i)%obs_reactive = .true.
       if ( link(i)%exp(iexp)%type_reactive ) link(i)%type_reactive = .true.
     end do
-    link(i)%nbeads = int(link(i)%dmaxlink/dbond)+1
+    link(i)%dsearch = search_range*link(i)%dmaxlink
+    link(i)%nbeads = int(link(i)%dsearch/dbond)+1
     link(i)%topodist = -1.d0
     nmax = max(nmax,link(i)%nbeads)
   end do
@@ -1224,7 +1229,7 @@ program topolink
                                   (coor(atom2,2) - coor(atom1,2))**2 + & 
                                   (coor(atom2,3) - coor(atom1,3))**2 )
       if ( print > 0 ) write(*,floatout) ' Euclidean distance: ', link(i)%euclidean
-      if ( link(i)%euclidean > link(i)%dmaxlink ) then
+      if ( link(i)%euclidean > link(i)%dsearch ) then
         if ( printnotfound ) then
           link(i)%status = linkstatus(link(i))
           call linkconsistency(link(i),nexp,experiment)

@@ -12,7 +12,7 @@ endread ENDMDL  # Use this to stop reading atoms if this keyword is found (comme
 readatoms heavy # Which atoms to consider (all/heavy(no-H)/backbone/backplusCB)
 
 # Output directory for links (comment if you do not want the PDB files, that may be a lot)
-printlinks yes
+printlinks no
 linkdir ./links
 
 # What cross-links to compute (all/reactive/observed)
@@ -110,6 +110,7 @@ dbond 1.5         # Bond distance of link "atoms"
 kbond 10.         # Energy constant for link bonds
 kpath 10.         # Energy constant for the complete path distension, used for computing probability
 kvdw  2.          # Force constant of overlap function
+search_range 3.5  # Search for topological distances of up to search_range*dmaxlink
 
 # Technical parameters for the optimization method
 
