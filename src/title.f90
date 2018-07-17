@@ -22,7 +22,7 @@ subroutine title()
   write(*,"(t3,56('#'),' TOPOLINK ',55('#'))") 
   write(*,"(t15,a)") 'L. Martinez, Institute of Chemistry - University of Campinas. http://leandro.iqm.unicamp.br'
   write(*,*) 
-  write(*,"(t105,a)") " Version 18.181 "
+  write(*,"(t105,a)") " Version 18.198 "
   write(*,*) 
 
 end subroutine title
