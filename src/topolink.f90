@@ -36,7 +36,7 @@ program topolink
   character(len=max_string_length), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
   character(len=13) :: statuschar
-  logical :: error, r1, r2, inexp, warning, interchain
+  logical :: error, r1, r2, inexp, warning, interchain, expstart
 
   external :: computef, computeg
 
@@ -132,6 +132,7 @@ program topolink
 
   nexp = 0
   error = .false.
+  expstart = .false.
   input : do 
     read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
@@ -163,8 +164,15 @@ program topolink
       case ("linktype") 
         cycle
       case ("experiment")
+        if ( expstart ) then
+          write(*,*) ' ERROR: New experiment defined without ending previous one. '
+          write(*,*) '        At line: ', trim(adjustl(record))
+          stop
+        end if
+        expstart = .true.
         nexp = nexp + 1
       case ("end")
+        expstart = .false.
         cycle
       case ("print")
         record = keyvalue(record,1)

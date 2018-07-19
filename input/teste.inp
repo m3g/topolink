@@ -48,7 +48,6 @@ experiment 1,6-diaminohexane
   observed ASP A 38  GLU A 46
   observed GLU A 20  GLU A 13
 
-end experiment Diamina
 
 
 experiment Zero-length
@@ -68,32 +67,6 @@ experiment Zero-length
 
 end experiment zerolength
 
-experiment DSS
-
-  # Possible types of cross-links and maximum distances
-  #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
-  linktype   MET      A       1       N           LYS     all     all       CB        16.9
-  linktype   MET      A       1       N           SER     all     all       CB        13.0
-  linktype   LYS     all     all      CB          LYS     all     all       CB        15.2
-  linktype   LYS     all     all      CB          SER     all     all       CB        12.4
-  linktype   SER     all     all      CB          SER     all     all       CB        10.0
-
-  observed LYS A  17  MET A  1
-  observed SER A  71  SER A 78
-  observed SER A 116  LYS A  17
-  observed LYS A  17  LYS A  113
-  observed LYS A 113  MET A  1
-  observed LYS A 113  LYS A  6
-
-  # With residues greater than 128
-  #observed SER A 132  LYS A  99
-  #observed SER A 133  LYS A  99
-  #observed SER A 131  LYS A  99
-  #observed SER A 133  LYS A  8
-  #observed SER A 131  SER A 132
-  #observed SER A 132  LYS A  8
-   
-end experiment DSS
 
 # Optional parameters 
 
