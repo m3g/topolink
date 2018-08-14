@@ -86,7 +86,8 @@ program topolink
   printaccessible = .false.
   warning = .false.
   interchain = .false.
-  search_range = 1.5
+  search_limit = 1.5
+  search_limit_type = 1
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -201,9 +202,20 @@ program topolink
         if ( keyvalue(record,1) == 'observed' ) compute = 1
         if ( keyvalue(record,1) == 'reactive' ) compute = 2
         if ( keyvalue(record,1) == 'all' ) compute = 3
-      case ("search_range") 
-        record = keyvalue(record,1)
-        read(record,*) search_range
+      case ("search_limit") 
+        if ( keyvalue(record,1) == 'relative' ) then
+          search_limit_type = 1
+        else if ( keyvalue(record,1) == 'sum' ) then
+          search_limit_type = 2
+        else if ( keyvalue(record,1) == 'fixed' ) then
+          search_limit_type = 3
+        else
+          write(*,*) ' ERROR: search_limit must be relative, sum, or fixed. '
+          write(*,*) '        Default: search_limit relative 1.5 '
+          stop
+        end if
+        record = keyvalue(record,2)
+        read(record,*) search_limit
       case ("pgood") 
         record = keyvalue(record,1)
         read(record,*) pgood
@@ -1092,7 +1104,13 @@ program topolink
       if ( link(i)%exp(iexp)%obs_reactive ) link(i)%obs_reactive = .true.
       if ( link(i)%exp(iexp)%type_reactive ) link(i)%type_reactive = .true.
     end do
-    link(i)%dsearch = search_range*link(i)%dmaxlink
+    if ( search_limit_type == 1 ) then
+      link(i)%dsearch = search_limit*link(i)%dmaxlink
+    else if ( search_limit_type == 2 ) then
+      link(i)%dsearch = search_limit + link(i)%dmaxlink
+    else if ( search_limit_type == 3 ) then
+      link(i)%dsearch = search_limit
+    end if
     link(i)%nbeads = int(link(i)%dsearch/dbond)+1
     link(i)%topodist = -1.d0
     nmax = max(nmax,link(i)%nbeads)
