@@ -17,6 +17,7 @@ subroutine initguess(n,x,iguess)
   ntrial = 100
 
   if ( iguess == 1 ) then
+    best = 1.30
     do j = 1, ntrial
       call random_number(random)
       theta = pi*random
@@ -33,7 +34,16 @@ subroutine initguess(n,x,iguess)
         x(iy) = coor(atom1,2) + vec(2)*i*dbond
         x(iz) = coor(atom1,3) + vec(3)*i*dbond
       end do
+      current = overlap(n,x)
+      if ( current < best ) then
+        do i = 1, n
+          xbest(i) = x(i)
+        end do
+      end if
       if ( overlap(n,x) < 1.d0 ) exit
+    end do
+    do i = 1, n
+      x(i) = xbest(i) 
     end do
   end if
 
@@ -41,7 +51,6 @@ subroutine initguess(n,x,iguess)
   ! each from final and end atoms
 
   if ( iguess == 2 ) then
-    ntrial = 100
     best = 1.d30
     do j = 1, ntrial
       call random_number(random)
@@ -75,13 +84,13 @@ subroutine initguess(n,x,iguess)
         x(iz) = coor(atom2,3) + vec(3)*(nlinkatoms-i+1)*dbond
       end do
       current = overlap(n,x)
-      if ( current < 1.d0 ) exit
       if ( current < best ) then
         best = current
-        do i = 1, nlinkatoms
-          xbest(i) = x(ix)
+        do i = 1, n
+          xbest(i) = x(i)
         end do
       end if
+      if ( current < 1.d0 ) exit
     end do
     do i = 1, n
       x(i) = xbest(i)
