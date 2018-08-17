@@ -24,13 +24,15 @@ program topolink
   use string_operations
   use inputoptions
   implicit none
-  integer :: nargs, iargc, ioerr, i, j, k, ii, n, seed, ix, iy, iz, ntrial, itrial, &
+  integer :: nargs, iargc, ioerr, i, j, k, ii, n, seed, ix, iy, iz, ntrial, itrial, ntrial_each, itrial_tot, &
              iguess, optpars(10), best_repeat, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
              i1, i2, ndeadends, nexp, iexp, ntypes, npairs, &
              ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2), nchains, maxfunc, maxcg
   double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
                      kpath, likelihood, userlikelihood, lnf, nlnp, totscore, readscore,& 
                      kvdwini
+  double precision :: search_dmin, search_dmax, search_step, dsearch
+
   character(len=4) :: char1, char2 
   character(len=max_string_length) :: record, linkfile, inputfile, endread
   character(len=max_string_length), allocatable :: logline(:)
@@ -49,6 +51,7 @@ program topolink
   type(pdbatom), allocatable :: atom(:)
   type(specific_link), allocatable :: link(:)
   type(specific_link) :: linktest
+
 
   ! Print title
 
@@ -88,6 +91,7 @@ program topolink
   interchain = .false.
   search_limit = 1.5
   search_limit_type = 1
+  search_step = 5.
 
   ! Format of output
   floatout="(tr1,a,f12.7)"
@@ -101,7 +105,7 @@ program topolink
   kvdwini = kvdw
   kbond = 10.
   vdwrad = 3.
-  ntrial = 100
+  ntrial = 200
   nbest = 5
   kpath = 10.d0
   endread = "##################"
@@ -216,6 +220,9 @@ program topolink
         end if
         record = keyvalue(record,2)
         read(record,*) search_limit
+      case ("search_step")
+        record = keyvalue(record,1)
+        read(record,*) search_step
       case ("pgood") 
         record = keyvalue(record,1)
         read(record,*) pgood
@@ -1186,7 +1193,6 @@ program topolink
     first(2) = link(i)%atom2%residue%firstatom
     last(1) = link(i)%atom1%residue%lastatom
     last(2) = link(i)%atom2%residue%lastatom
-    nlinkatoms = link(i)%nbeads
 
     ! Solvent accessibility of atoms and residues
 
@@ -1249,7 +1255,7 @@ program topolink
 
       link(i)%found = .false.
 
-      ! Compute the topological distance
+      ! Compute the euclidean distance
 
       link(i)%euclidean =  dsqrt( (coor(atom2,1) - coor(atom1,1))**2 + & 
                                   (coor(atom2,2) - coor(atom1,2))**2 + & 
@@ -1276,86 +1282,114 @@ program topolink
         cycle allpairs
       end if
 
-      ! Number of variables of the optimization problem
-    
-      n = nlinkatoms*3
-    
       if ( print > 0 ) then
         write(*,intout2) ' Reference atoms: ', atom1, atom2
         write(*,*) ' Solvent accessibility of these atoms: ', atom(atom1)%accessible, &
                                                               atom(atom2)%accessible
         write(*,*) ' Solvent accessibility of the residues: ', atom(atom1)%residue%accessible, &
                                                                atom(atom2)%residue%accessible
-        write(*,intout) ' Number of atoms of the linker: ', nlinkatoms
-        write(*,intout) ' Number of variables of the optimization problem: ', n
-        write(*,floatout) ' Force constante for link bonds: ', kbond
       end if
 
       ! Define the atoms that must be invisible in this path calculation
 
       call setskip(link(i),atom)
 
-      ! Define the vdw radii of the linker atoms, which changes with mimic chain option
-      
-      call setsigma(link(i),mimicchain)
+      !
+      ! For optimal efficiency, the search is performed first for smaller paths,
+      ! and if none is found, the length of the path is increased
+      ! 
 
-      ! Start iterative procedure of linker length minimization
+      search_dmin = link(i)%euclidean
+      search_dmax = link(i)%dsearch
 
       dpath_best = 1.d30
       best_repeat = 0
-      itrial = 0
-      do while( best_repeat < nbest .and. itrial < ntrial )
-        itrial = itrial + 1
+      dsearch = search_dmin
+      itrial_tot = 0
+      ntrial_each = min(ntrial,int( ntrial / ( (search_dmax-search_dmin)/search_step ) ))
+      search : do while( .not. link(i)%found .and. &
+                         itrial_tot < ntrial .and. &
+                         dsearch < search_dmax )
 
-        ! Initial link guess
+        dsearch = dsearch + search_step
+        if ( dsearch > search_dmax ) dsearch = search_dmax
 
-        call initguess(n,x,iguess)  
+        ! Number of variables of the optimization problem
 
-        ! Test analytical gradient (debugging purposes only)
-        ! call test_grad(n,x,g,computef,computeg)
-        ! stop
-
-        ! Minimize the energy of the linker
+        nlinkatoms = int(dsearch/dbond)+1
+        n = nlinkatoms*3
     
-        call callcgnewton(n,x,f,0,computef,computeg,optpars)
-
-        ! Remove any possible remaning overlap
-    
-        kvdw=50.d0*kvdw
-        call callcgnewton(n,x,f,0,computef,computeg,optpars)
-        kvdw=kvdwini
-
-        dpath = computedpath(n,x)
-        overviol = overlap(n,x)/nlinkatoms
-        if ( dmin_maxviol < 1.d-1*vdwrad .and. &
-             dbond_maxviol < 1.d-2*dbond ) then
-
-          link(i)%found = .true.
-          if ( abs(dpath_best-dpath)/dpath_best < 1.d-2 ) then
-            best_repeat = best_repeat + 1
-          else
-            if ( (dpath_best-dpath)/dpath_best > 1.d-2 ) best_repeat = 0
-          end if
-          if ( dpath <= dpath_best ) then
-            dpath_best = dpath
-            do j = 1, n
-              xbest(j) = x(j)
-            end do
-          end if
-          if ( print > 0 ) then
-            write(*,"(' Trial ', i5, ' Valid path with length = ', &
-                  &f8.3, '( overlap = ', f12.5, ' dmin_maxviol = ', f8.3,' )', i5)") &
-                  itrial, dpath, overviol, dmin_maxviol, best_repeat
-          end if
-          if ( quitgood .and. dpath <= link(i)%dmaxlink ) exit
-        else
-          if ( print > 0 ) then
-            write(*,"( ' Trial ', i5, ' Invalid path with length = ', &
-                       &f8.3, '( overlap = ', f12.5, ' dmin_maxviol = ', f8.3,' )' )")&
-                    itrial, dpath, overviol, dmin_maxviol
-          end if
+        if ( print > 0 ) then
+          write(*,floatout) ' Using dsearch = ', dsearch
+          write(*,intout) ' Number of atoms of the linker: ', nlinkatoms
+          write(*,intout) ' Number of variables of the optimization problem: ', n
+          write(*,floatout) ' Force constante for link bonds: ', kbond
         end if
-      end do
+
+        ! Define the vdw radii of the linker atoms, which changes with mimic chain option
+      
+        call setsigma(link(i),mimicchain)
+
+        ! Start iterative procedure of linker length minimization
+
+        itrial = 0
+        do while( best_repeat < nbest .and. itrial < ntrial_each )
+          itrial = itrial + 1
+          itrial_tot = itrial_tot + 1
+
+          ! Initial link guess
+
+          call initguess(n,x,iguess)  
+
+          ! Test analytical gradient (debugging purposes only)
+          ! call test_grad(n,x,g,computef,computeg)
+          ! stop
+
+          ! Minimize the energy of the linker
+    
+          call callcgnewton(n,x,f,0,computef,computeg,optpars)
+
+          ! Remove any possible remaning overlap
+    
+          kvdw=50.d0*kvdw
+          call callcgnewton(n,x,f,0,computef,computeg,optpars)
+          kvdw=kvdwini
+
+          dpath = computedpath(n,x)
+          overviol = overlap(n,x)/nlinkatoms
+          if ( dmin_maxviol < 1.d-1*vdwrad .and. &
+               dbond_maxviol < 1.d-2*dbond ) then
+
+            link(i)%found = .true.
+            if ( abs(dpath_best-dpath)/dpath_best < 1.d-2 ) then
+              best_repeat = best_repeat + 1
+            else
+              if ( (dpath_best-dpath)/dpath_best > 1.d-2 ) best_repeat = 0
+            end if
+            if ( dpath <= dpath_best ) then
+              dpath_best = dpath
+              do j = 1, n
+                xbest(j) = x(j)
+              end do
+            end if
+            if ( print > 0 ) then
+              write(*,"(' Trial ', i5, ' Valid path with length = ', &
+                    &f8.3, '( overlap = ', f12.5, ' dmin_maxviol = ', f8.3,' )', i5)") &
+                    itrial, dpath, overviol, dmin_maxviol, best_repeat
+            end if
+            if ( quitgood .and. dpath <= link(i)%dmaxlink ) exit search
+          else
+            if ( print > 0 ) then
+              write(*,"( ' Trial ', i5, ' Invalid path with length = ', &
+                         &f8.3, '( overlap = ', f12.5, ' dmin_maxviol = ', f8.3,' )' )")&
+                      itrial, dpath, overviol, dmin_maxviol
+            end if
+          end if
+        end do
+        if ( best_repeat == nbest ) exit search
+
+      end do search
+
       if ( link(i)%found ) then
         link(i)%topodist = dpath_best
       end if
