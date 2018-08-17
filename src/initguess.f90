@@ -7,7 +7,8 @@ subroutine initguess(n,x,iguess)
   use functionpars
   implicit none
   integer :: n, iguess, ix, iy, iz, i, j, ntrial
-  double precision :: x(*), theta, phi, random, vec(3), overlap
+  double precision :: x(n), theta, phi, random, vec(3), overlap
+  double precision :: current, best, xbest(n)
   double precision, parameter :: pi = 4.d0*datan(1.d0)
 
   ! Initial guesses as straight lines pointing outwards
@@ -36,11 +37,12 @@ subroutine initguess(n,x,iguess)
     end do
   end if
 
-  ! Similar to iguess=1, but the segment is devided into two, pointing
+  ! Similar to iguess=1, but the segment is divided in two, pointing
   ! each from final and end atoms
 
   if ( iguess == 2 ) then
     ntrial = 100
+    best = 1.d30
     do j = 1, ntrial
       call random_number(random)
       theta = pi*random
@@ -72,7 +74,17 @@ subroutine initguess(n,x,iguess)
         x(iy) = coor(atom2,2) + vec(2)*(nlinkatoms-i+1)*dbond
         x(iz) = coor(atom2,3) + vec(3)*(nlinkatoms-i+1)*dbond
       end do
-      if ( overlap(n,x) < 1.d0 ) exit
+      current = overlap(n,x)
+      if ( current < 1.d0 ) exit
+      if ( current < best ) then
+        best = current
+        do i = 1, nlinkatoms
+          xbest(i) = x(ix)
+        end do
+      end if
+    end do
+    do i = 1, n
+      x(i) = xbest(i)
     end do
   end if
 

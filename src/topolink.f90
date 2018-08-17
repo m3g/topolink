@@ -24,20 +24,19 @@ program topolink
   use string_operations
   use inputoptions
   implicit none
-  integer :: nargs, iargc, ioerr, i, j, k, ii, n, seed, ix, iy, iz, ntrial, itrial, ntrial_each, itrial_tot, &
+  integer :: nargs, iargc, ioerr, i, j, k, ii, n, seed, ntrial, itrial, ntrial_each, itrial_tot, &
              iguess, optpars(10), best_repeat, nbest, nobs, ngooddist, nbaddist, nmisslinks, &
              i1, i2, ndeadends, nexp, iexp, ntypes, npairs, &
              ngood, natreactive, nmax, nloglines, linkstatus, first(2), last(2), nchains, maxfunc, maxcg
-  double precision:: f, stretch, overlap, dpath, dpath_best, computedpath, overviol, &
+  double precision:: f, overlap, dpath, dpath_best, computedpath, overviol, &
                      kpath, likelihood, userlikelihood, lnf, nlnp, totscore, readscore,& 
                      kvdwini
   double precision :: search_dmin, search_dmax, search_step, dsearch
 
-  character(len=4) :: char1, char2 
-  character(len=max_string_length) :: record, linkfile, inputfile, endread
+  character(len=4) :: char1
+  character(len=max_string_length) :: record, inputfile, endread
   character(len=max_string_length), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  character(len=13) :: statuschar
   logical :: error, r1, r2, inexp, warning, interchain, expstart
 
   external :: computef, computeg
@@ -47,7 +46,7 @@ program topolink
   double precision, allocatable :: dlink(:,:), x(:), g(:), xbest(:)
 
   type(experiment_data), allocatable :: experiment(:)
-  type(pdbatom) :: readatom, writeatom, testatom
+  type(pdbatom) :: readatom, testatom
   type(pdbatom), allocatable :: atom(:)
   type(specific_link), allocatable :: link(:)
   type(specific_link) :: linktest
@@ -1408,58 +1407,10 @@ program topolink
       ! Write the best link obtained to output file
    
       if ( printlinks ) then
-
         if ( printallfound .or. &
              ( link(i)%status == 0 .or. link(i)%status == 5 ) ) then
-       
-          linkfile = pdbfile
-          call cleanname(linkfile)
-          write(char1,"( i4 )") link(i)%atom1%residue%index
-          write(char2,"( i4 )") link(i)%atom2%residue%index
-          linkfile=trim(adjustl(linkdir(1:length(linkdir))))//linkfile(1:length(linkfile)-4)//&
-            '_'//trim(adjustl(link(i)%atom1%residue%name))//trim(adjustl(link(i)%atom1%residue%chain))//&
-            trim(adjustl(char1))//trim(adjustl(link(i)%atom1%name))//&
-            '-'//trim(adjustl(link(i)%atom2%residue%name))//trim(adjustl(link(i)%atom2%residue%chain))//&
-            trim(adjustl(char2))//trim(adjustl(link(i)%atom2%name))//'.pdb'
-          open(10,file=linkfile,iostat=ioerr)
-          if ( ioerr /= 0 ) then
-            write(*,*) ' ERROR: Could not create link PDB file: ', trim(adjustl(linkfile))
-            write(*,*) '        Perhaps the output directory does not exist.'
-            write(*,*) '        Output directory: ', trim(adjustl(linkdir))
-            stop
-          end if
-          write(10,"( 'REMARK F: ', 3(tr2,f12.5) )") f, overlap(n,x), stretch(n,x)
-          write(10,"( 'REMARK LINK STATUS: ', a13 )") statuschar(link(i)%status)
-          writeatom = atom(atom1)
-          writeatom%residue%name = "LINK"
-          writeatom%residue%chain = "A"
-          writeatom%residue%index = 1
-          writeatom%index = 1
-          write(10,"(a)") trim(print_pdbhetatm(writeatom))
-          do j = 1, nlinkatoms
-            ix = (j-1)*3 + 1
-            iy = ix + 1
-            iz = ix + 2
-            writeatom%index = j + 1 
-            writeatom%name = "O"
-            writeatom%residue%name = "LINK"
-            writeatom%residue%chain = "A"
-            writeatom%residue%index = 1
-            writeatom%x = xbest(ix)
-            writeatom%y = xbest(iy)
-            writeatom%z = xbest(iz)
-            write(10,"(a)") trim(print_pdbhetatm(writeatom))
-          end do
-          writeatom = atom(atom2)
-          writeatom%residue%name = "LINK"
-          writeatom%residue%chain = "A"
-          writeatom%residue%index = 1
-          writeatom%index = nlinkatoms + 2
-          write(10,"(a)") trim(print_pdbhetatm(writeatom))
-          close(10)
-
+          call link_to_pdb(link(i),nlinkatoms,linkdir,pdbfile,natoms,atom,n,xbest)
         end if
-
       end if
 
     else
