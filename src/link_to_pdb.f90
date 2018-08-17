@@ -1,5 +1,5 @@
 !
-! Subroutine that prints the output data of each link search
+! Subroutine that prints the links as PDB files
 !
 
 subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
