@@ -1340,6 +1340,10 @@ program topolink
 
           call initguess(n,x,iguess)  
 
+          ! Print initial guess (debbuging only) 
+          !call link_to_pdb(link(i),nlinkatoms,linkdir,pdbfile,natoms,atom,n,x) 
+          !stop
+
           ! Test analytical gradient (debugging purposes only)
           ! call test_grad(n,x,g,computef,computeg)
           ! stop
