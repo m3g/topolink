@@ -11,7 +11,7 @@ downloads=~/public_html/topolink/download.shtml
 
 # GIT URL:
 
-giturl=https://github.com/leandromartinez98/topolink
+giturl=https://github.com/mcubeg/topolink
 
 # Name of file containing version number
 
