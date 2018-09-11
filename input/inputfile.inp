@@ -74,9 +74,9 @@ experiment DSS
   #        ResType  Chain  ResNum   AtomType    ResType  Chain  ResNum   AtomType  MaxDist 
   linktype   MET      A       1       N           LYS     all     all       CB        16.9
   linktype   MET      A       1       N           SER     all     all       CB        13.0
-  linktype   LYS     all     all      CB          LYS     all     all       CB        15.2
-  linktype   LYS     all     all      CB          SER     all     all       CB        12.4
-  linktype   SER     all     all      CB          SER     all     all       CB        10.0
+  linktype   LYS     all     all      CB          LYS     all     all       CB        17.8
+  linktype   LYS     all     all      CB          SER     all     all       CB        15.8
+  linktype   SER     all     all      CB          SER     all     all       CB        13.4
 
   observed LYS A  17  MET A  1
   observed SER A  71  SER A 78

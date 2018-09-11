@@ -30,7 +30,7 @@ subroutine initguess(n,x,iguess)
 
   ntrial = 100
 
-  iguess = 2
+  iguess = 3
   if ( iguess == 1 ) then
     best = 1.d30
     do j = 1, ntrial
@@ -125,6 +125,33 @@ subroutine initguess(n,x,iguess)
     xright(2) = x(ix+1)
     xright(3) = x(ix+2)
 
+    ! Compute the length of each segment, to know how many points will
+    ! be in the arch
+
+    vleft(1) = xleft(1) - coor(atom1,1)
+    vleft(2) = xleft(2) - coor(atom1,2)
+    vleft(3) = xleft(3) - coor(atom1,3)
+    dleft = vnorm(vleft)
+    vleft(1) = vleft(1) / dleft
+    vleft(2) = vleft(2) / dleft
+    vleft(3) = vleft(3) / dleft
+    dleft = dmin1(dleft,15.d0)
+    xleft(1) = coor(atom1,1) + dleft*vleft(1)
+    xleft(2) = coor(atom1,2) + dleft*vleft(2)
+    xleft(3) = coor(atom1,3) + dleft*vleft(3)
+
+    vright(1) = coor(atom2,1) - xright(1)
+    vright(2) = coor(atom2,2) - xright(2)
+    vright(3) = coor(atom2,3) - xright(3)
+    dright = vnorm(vright)
+    vright(1) = vright(1) / dright
+    vright(2) = vright(2) / dright
+    vright(3) = vright(3) / dright
+    dright = dmin1(dright,15.d0)
+    xright(1) = coor(atom2,1) - dright*vright(1)
+    xright(2) = coor(atom2,2) - dright*vright(2)
+    xright(3) = coor(atom2,3) - dright*vright(3)
+
     ! xp1 is one of the vectors of the plane containing the circle
 
     xp1(1) = (xleft(1) - xright(1))
@@ -205,25 +232,6 @@ subroutine initguess(n,x,iguess)
 
       t_right = t_circle(xright,xcenter,xp1,xp2)
       t_left = t_circle(xleft,xcenter,xp1,xp2)
-
-      ! Compute the length of each segment, to know how many points will
-      ! be in the arch
-
-      vleft(1) = xleft(1) - coor(atom1,1)
-      vleft(2) = xleft(2) - coor(atom1,2)
-      vleft(3) = xleft(3) - coor(atom1,3)
-      dleft = vnorm(vleft)
-      vleft(1) = vleft(1) / dleft
-      vleft(2) = vleft(2) / dleft
-      vleft(3) = vleft(3) / dleft
-
-      vright(1) = coor(atom2,1) - xright(1)
-      vright(2) = coor(atom2,2) - xright(2)
-      vright(3) = coor(atom2,3) - xright(3)
-      dright = vnorm(vright)
-      vright(1) = vright(1) / dright
-      vright(2) = vright(2) / dright
-      vright(3) = vright(3) / dright
 
       darch = radius * abs( t_right - t_left )
       dtot = dleft + dright + darch
