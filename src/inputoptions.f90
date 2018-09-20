@@ -33,4 +33,9 @@ module inputoptions
   logical :: mimicchain
   logical :: printaccessible
 
+  logical :: screen_log
+  logical :: output_log
+  character(len=max_string_length) :: output_log_file
+  integer :: output_log_unit 
+
 end module inputoptions

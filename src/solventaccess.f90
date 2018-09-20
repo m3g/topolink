@@ -18,6 +18,7 @@ subroutine solventaccess(atom)
   use topolink_data
   use functionpars
   use linkedcells
+  use ioformat
   use inputoptions, only : printaccessible
   implicit none
   integer :: ibox, jbox, kbox, n, i, j
@@ -148,8 +149,8 @@ subroutine solventaccess(atom)
       n = n + 1
     end if
   end do
-  write(*,*)
-  write(*,*) ' Number of atoms accessible to solvent: ', n
+  call writelog(blank)
+  write(str,*) ' Number of atoms accessible to solvent: ', n ; call writelog(str)
 
   ! Count number of residues accessible to solvent
 
@@ -161,7 +162,7 @@ subroutine solventaccess(atom)
     if ( i == natoms ) exit  
     i = i + 1
   end do
-  write(*,*) ' Number of residues accessible to solvent: ', n
+  write(str,*) ' Number of residues accessible to solvent: ', n ; call writelog(str)
 
   ! Print residue accessibility to solvent
 

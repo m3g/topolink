@@ -18,10 +18,10 @@ subroutine printdata(print,link)
   ! Print title
 
   if ( print == -1 ) then
-    write(*,dashes) 
-    write(*,"( '        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED&
-               &    DMIN      DMAX        RESULT  OBSRES REACRES RA AA')")
-    write(*,dashes)
+    write(str,dashes) ; call writelog(str)
+    write(str,"( '        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED&
+                 &    DMIN      DMAX        RESULT  OBSRES REACRES RA AA')") ; call writelog(str)
+    write(str,dashes) ; call writelog(str)
     return
   end if
 
@@ -90,15 +90,16 @@ subroutine printdata(print,link)
   aa1 = "Y" ; if ( .not. link%atom1%accessible ) aa1 = "N"
   aa2 = "Y" ; if ( .not. link%atom2%accessible ) aa2 = "N"
 
-  write(*,lineformat) link%atom1%residue%name, link%atom1%residue%chain, &
-                      link%atom1%residue%index, link%atom1%name, &
-                      link%atom2%residue%name, link%atom2%residue%chain, &
-                      link%atom2%residue%index, link%atom2%name, &
-                      link%euclidean, chardist, charobs, &
-                      link%dmin, charmax, statuschar(link%status), &
-                      link%n_obs_consistent, link%n_obs_expected, &
-                      link%n_type_consistent, link%n_type_expected, &
-                      ra1, ra2, aa1, aa2
+  write(str,lineformat) link%atom1%residue%name, link%atom1%residue%chain, &
+                        link%atom1%residue%index, link%atom1%name, &
+                        link%atom2%residue%name, link%atom2%residue%chain, &
+                        link%atom2%residue%index, link%atom2%name, &
+                        link%euclidean, chardist, charobs, &
+                        link%dmin, charmax, statuschar(link%status), &
+                        link%n_obs_consistent, link%n_obs_expected, &
+                        link%n_type_consistent, link%n_type_expected, &
+                        ra1, ra2, aa1, aa2
+  call writelog(str)
 
 end subroutine printdata
 

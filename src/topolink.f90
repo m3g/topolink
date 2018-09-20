@@ -16,6 +16,7 @@
 
 program topolink
 
+  use, intrinsic :: iso_fortran_env, only : stdin => input_unit, stdout => output_unit
   use ioformat
   use functionpars
   use linkedcells
@@ -52,14 +53,14 @@ program topolink
   type(specific_link) :: linktest
 
 
-  ! Print title
+  ! Print title on the screen
 
-  call title()
+  call title(stdout)
 
   ! Check if the number of arguments is correct
 
   nargs = iargc()
-  if ( nargs /= 1 .and. nargs /= 2 .and. nargs /= 3 ) then
+  if ( nargs < 1 ) then
     write(*,*) ' Run with: '
     write(*,*) 
     write(*,*) ' topolink inputfile.inp [pdbfile] '
@@ -123,12 +124,46 @@ program topolink
   ! Read command line parameters
 
   call getarg(1,inputfile)
-  if ( nargs > 1 ) call getarg(2,pdbfile)
-  if ( nargs > 2 ) call getarg(3,readlog)
-  
+  if ( nargs == 2 ) then
+    call getarg(2,pdbfile)
+  end if
+  screen_log = .true.
+  output_log = .false.
+  if ( nargs > 1 ) then
+    i = 2
+    do while( i <= nargs )
+      call getarg(i,record)
+      select case ( record )
+        case ("-screen_log")
+          i=i+1
+          call getarg(i,record)
+          if ( record == "Y" .or. record == "y" ) screen_log = .true.
+          if ( record == "N" .or. record == "n" ) screen_log = .false.
+        case ("-o")
+          i=i+1
+          call getarg(i,output_log_file)
+          output_log = .true.
+          output_log_unit = 20
+          open(output_log_unit,file=output_log_file)
+          call title(output_log_unit)
+        case ("-readlog")
+          i=i+1
+          call getarg(i,readlog)
+        case default
+          if ( i == 2 ) then
+            call getarg(2,pdbfile)
+          else 
+            write(*,*) ' ERROR: command line parameters not correctly set. '
+            stop
+          end if
+      end select
+      i=i+1
+    end do
+  end if
+
   open(10,file=inputfile,status='old',iostat=ioerr)
   if ( ioerr /= 0 ) then
-    write(*,*) ' ERROR: Could not open input file: ', trim(adjustl(inputfile))
+    write(str,*) ' ERROR: Could not open input file: ', trim(adjustl(inputfile)) ; call writelog(str)
     stop
   end if
 
@@ -169,8 +204,8 @@ program topolink
         cycle
       case ("experiment")
         if ( expstart ) then
-          write(*,*) ' ERROR: New experiment defined without ending previous one. '
-          write(*,*) '        At line: ', trim(adjustl(record))
+          write(str,*) ' ERROR: New experiment defined without ending previous one. ' ; call writelog(str)
+          write(str,*) '        At line: ', trim(adjustl(record)) ; call writelog(str)
           stop
         end if
         expstart = .true.
@@ -213,8 +248,8 @@ program topolink
         else if ( keyvalue(record,1) == 'fixed' ) then
           search_limit_type = 3
         else
-          write(*,*) ' ERROR: search_limit must be relative, sum, or fixed. '
-          write(*,*) '        Default: search_limit relative 1.5 '
+          write(str,*) ' ERROR: search_limit must be relative, sum, or fixed. ' ; call writelog(str)
+          write(str,*) '        Default: search_limit relative 1.5 ' ; call writelog(str)
           stop
         end if
         record = keyvalue(record,2)
@@ -275,7 +310,7 @@ program topolink
         exit input
       case default
         error = .true.
-        write(*,*) ' ERROR: Input parameter not recognized: ', keyword(record)
+        write(str,*) ' ERROR: Input parameter not recognized: ', keyword(record) ; call writelog(str)
     end select
     
   end do input
@@ -292,69 +327,69 @@ program topolink
  
   ! Print input parameters
 
-  write(*,"(a,a)") '  PDB input file: ', trim(adjustl(pdbfile))
+  write(str,"(a,a)") '  PDB input file: ', trim(adjustl(pdbfile)) ; call writelog(str)
   if ( endread /= "###" ) then
-    write(*,*) ' Will stop PDB reading when ', trim(endread), ' is found. '
+    write(str,*) ' Will stop PDB reading when ', trim(endread), ' is found. ' ; call writelog(str)
   end if
   if ( readatoms == 0 ) then
-    write(*,*) ' All atoms will be considered, including hydrogens. '
+    write(str,*) ' All atoms will be considered, including hydrogens. ' ; call writelog(str)
   else if ( readatoms == 1 ) then
-    write(*,*) ' Only heavy atoms will be considered. '
+    write(str,*) ' Only heavy atoms will be considered. ' ; call writelog(str)
   else if ( readatoms == 2 ) then
-    write(*,*) ' Only backbone atoms will be considered. '
+    write(str,*) ' Only backbone atoms will be considered. ' ; call writelog(str)
   else if ( readatoms == 3 ) then
-    write(*,*) ' Only backbone plus CB atoms will be considered. '
+    write(str,*) ' Only backbone plus CB atoms will be considered. ' ; call writelog(str)
   else
-    write(*,*) " ERROR: Wrong keyword value for 'readatoms' "
+    write(str,*) " ERROR: Wrong keyword value for 'readatoms' " ; call writelog(str)
     stop
   end if
-  write(*,*)
+  call writelog(blank)
   if ( .not. printlinks ) then
-    write(*,*) ' Links will not be written as PDB files. '
+    write(str,*) ' Links will not be written as PDB files. ' ; call writelog(str)
   else 
     if ( linkdir == 'none' ) then
-      write(*,*) ' ERROR: Need linkdir if printlinks is yes. '
+      write(str,*) ' ERROR: Need linkdir if printlinks is yes. ' ; call writelog(str)
       stop
     else 
       i = length(linkdir)
       if ( linkdir(i:i) /= "/" ) then
         linkdir(i+1:i+1) = "/"
       end if
-      write(*,*) ' Directory to output links as PDB files: ', trim(adjustl(linkdir))
+      write(str,*) ' Directory to output links as PDB files: ', trim(adjustl(linkdir)) ; call writelog(str)
     end if
   end if
 
-  write(*,*) 
-  write(*,intout) ' Printing option: ', print
-  write(*,*) ' Leave when first valid link is found: ', quitgood
-  write(*,floatout) ' Link bond distance: ', dbond
-  write(*,floatout) ' Link bond force-constant: ', kbond
-  write(*,floatout) ' VdW radius for volume exclusion: ', vdwrad
-  write(*,floatout) ' Path energy constant: ', kpath
-  write(*,floatout) ' Cutoff for observed scores: ', scorecut
-  write(*,intout) ' Number of trials for link search: ', ntrial
-  write(*,intout) ' Number of repeated best links to find until quit: ', nbest
-  write(*,intout) ' Maximum number of function evaluations of CGNewton: ', optpars(1)
-  write(*,intout) ' Maximum number of CG iterations in CGNewton: ', optpars(2)
-  write(*,intout) ' Seed for random number generator: ', seed
+  call writelog(blank)
+  write(str,intout) ' Printing option: ', print ; call writelog(str)
+  write(str,*) ' Leave when first valid link is found: ', quitgood ; call writelog(str)
+  write(str,floatout) ' Link bond distance: ', dbond ; call writelog(str)
+  write(str,floatout) ' Link bond force-constant: ', kbond ; call writelog(str)
+  write(str,floatout) ' VdW radius for volume exclusion: ', vdwrad ; call writelog(str)
+  write(str,floatout) ' Path energy constant: ', kpath ; call writelog(str)
+  write(str,floatout) ' Cutoff for observed scores: ', scorecut ; call writelog(str)
+  write(str,intout) ' Number of trials for link search: ', ntrial ; call writelog(str)
+  write(str,intout) ' Number of repeated best links to find until quit: ', nbest ; call writelog(str)
+  write(str,intout) ' Maximum number of function evaluations of CGNewton: ', optpars(1) ; call writelog(str)
+  write(str,intout) ' Maximum number of CG iterations in CGNewton: ', optpars(2) ; call writelog(str)
+  write(str,intout) ' Seed for random number generator: ', seed ; call writelog(str)
 
   if ( readlog /= "none" ) then
-    write(*,*) ' Will read link data from previous run: ', trim(adjustl(readlog))
-    open(20,file=readlog,action='read',iostat=ioerr)
+    write(str,*) ' Will read link data from previous run: ', trim(adjustl(readlog)) ; call writelog(str)
+    open(30,file=readlog,action='read',iostat=ioerr)
     nloglines = 0
     do      
-      read(20,string_read,iostat=ioerr) record
+      read(30,string_read,iostat=ioerr) record
       if ( ioerr /= 0 ) exit
       call strclean(record)
       if ( record(3:7) == "LINK:" ) then
         nloglines = nloglines + 1
       end if
     end do
-    rewind(20)
+    rewind(30)
     allocate(logline(nloglines))
     i1 = 0
     do
-      read(20,string_read,iostat=ioerr) record
+      read(30,string_read,iostat=ioerr) record
       if ( ioerr /= 0 ) exit
       call strclean(record)
       if ( record(3:7) == "LINK:" ) then
@@ -362,12 +397,12 @@ program topolink
         logline(i1) = record
       end if
     end do
-    write(*,*) ' Found ', nloglines, ' links in log file. '
-    close(20)
+    write(str,*) ' Found ', nloglines, ' links in log file. ' ; call writelog(str)
+    close(30)
   end if
 
-  write(*,*)
-  write(*,intout) ' Number of experiments: ', nexp
+  call writelog(blank)
+  write(str,intout) ' Number of experiments: ', nexp ; call writelog(str)
   allocate( experiment(nexp) )
 
   !
@@ -428,7 +463,8 @@ program topolink
       if ( keyword(record) == 'observed' .or. &
            keyword(record) == 'linktype' .or. &
            keyword(record) == 'deadend' ) then
-        write(*,*) ' ERROR: On input: observed, linktype or deadend keyword outside experiment section. '
+        write(str,*) ' ERROR: On input: observed, linktype or deadend keyword outside experiment section. '
+        call writelog(str)
         stop
       end if
     end if
@@ -531,9 +567,10 @@ program topolink
     do i = 1, experiment(iexp)%nobs - 1
       do j = i + 1, experiment(iexp)%nobs
         if ( experiment(iexp)%observed(i) .eq. experiment(iexp)%observed(j) ) then
-          write(*,*) ' ERROR: An observed link is listed repeatedly in experiment: ', &
-                     trim(experiment(iexp)%name)
-          write(*,*) ' Repeated observed link: ', trim(print_obs(experiment(iexp)%observed(i)))
+          write(str,*) ' ERROR: An observed link is listed repeatedly in experiment: ', &
+                     trim(experiment(iexp)%name) ; call writelog(str)
+          write(str,*) ' Repeated observed link: ', trim(print_obs(experiment(iexp)%observed(i)))
+          call writelog(str)
           stop
         end if
       end do
@@ -546,7 +583,7 @@ program topolink
 
   open(10,file=pdbfile,status='old',iostat=ioerr)
   if ( ioerr /= 0 ) then
-    write(*,*) ' ERROR: Could not open PDB file: ', trim(adjustl(pdbfile))
+    write(str,*) ' ERROR: Could not open PDB file: ', trim(adjustl(pdbfile)) ; call writelog(str)
     stop
   end if
   natoms = 0
@@ -560,11 +597,11 @@ program topolink
     if ( .not. isprotein(readatom) ) cycle
     if ( readatom%residue%conformation /= " " .and. &
          readatom%residue%conformation /= "A" ) then
-      write(*,"(3(a,tr1),i8,a)") '  WARNING: Multiple conformations of residue',&
-                                 trim(adjustl(readatom%residue%name)),&
-                                 trim(adjustl(readatom%residue%chain)),&
-                                 readatom%residue%index,&
-                                 ' found. Using only A.'
+      write(str,"(3(a,tr1),i8,a)") '  WARNING: Multiple conformations of residue',&
+                                   trim(adjustl(readatom%residue%name)),&
+                                   trim(adjustl(readatom%residue%chain)),&
+                                   readatom%residue%index,&
+                                   ' found. Using only A.' ; call writelog(str)
     end if
     if ( readatoms == 1 ) then
       if ( ishydrogen(readatom) ) cycle
@@ -583,8 +620,8 @@ program topolink
     natoms = natoms + 1
   end do
   rewind(10)
-  write(*,*)
-  write(*,intout) ' Number of atoms read from PDB file: ', natoms
+  call writelog(blank)
+  write(str,intout) ' Number of atoms read from PDB file: ', natoms ; call writelog(str)
   allocate(atom(natoms),skip(natoms))
 
   i = 0
@@ -617,7 +654,8 @@ program topolink
     if ( trim(atom(i)%residue%chain) == "0" ) then
       if ( j == 0 ) then
         j = 1
-        write(*,*) " WARNING: Some atoms do not have a chain specifier. Will attribute chain = '0' "
+        write(str,*) " WARNING: Some atoms do not have a chain specifier. Will attribute chain = '0' "
+        call writelog(str)
         warning = .true.
       end if
     end if
@@ -630,10 +668,11 @@ program topolink
 
   ! If interchain and there is only one chain, report error and stop
 
-  write(*,*) ' Number of chains found in PDB file: ', nchains
+  write(str,*) ' Number of chains found in PDB file: ', nchains ; call writelog(str)
   if ( interchain ) then
     if ( nchains == 1 ) then
-      write(*,*) ' ERROR: Only one chain was found in PDB file, and the interchain keyword was used. '
+      write(str,*) ' ERROR: Only one chain was found in PDB file, and the interchain keyword was used. '
+      call writelog(str)
       stop
     end if
   end if
@@ -681,10 +720,10 @@ program topolink
            experiment(iexp)%linktype(i)%atom2%residue%name ) then
         if ( experiment(iexp)%linktype(i)%atom1%name /= &
              experiment(iexp)%linktype(i)%atom2%name ) then
-          write(*,*) ' ERROR: Two different atoms of the same residue define a linktype. '
-          write(*,*) '        The reactivity becomes ambiguous. '
-          write(*,*) '        Experiment: ', trim(experiment(iexp)%name)
-          write(*,*) '        Link type: ', trim(print_linktype(experiment(iexp)%linktype(i)))
+          write(str,*) ' ERROR: Two different atoms of the same residue define a linktype. ' ; call writelog(str)
+          write(str,*) '        The reactivity becomes ambiguous. ' ; call writelog(str)
+          write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+          write(str,*) '        Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
           stop
         end if
       end if
@@ -699,10 +738,10 @@ program topolink
       do j = 1, natoms
         if ( atom(j) .in. experiment(iexp)%observed(i)%residue1 ) cycle checkobs1
       end do
-      write(*,*)
-      write(*,*) ' ERROR: First residue of observed link could not be found on the structure. '
-      write(*,*) '        Experiment: ', trim(experiment(iexp)%name)
-      write(*,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i)))
+      call writelog(blank)
+      write(str,*) ' ERROR: First residue of observed link could not be found on the structure. ' ; call writelog(str)
+      write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+      write(str,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
       error = .true.
     end do checkobs1
 
@@ -710,10 +749,10 @@ program topolink
       do j = 1, natoms
         if ( atom(j) .in. experiment(iexp)%observed(i)%residue2 ) cycle checkobs2 
       end do
-      write(*,*)
-      write(*,*) ' ERROR: Second residue of observed link could not be found on the structure. '
-      write(*,*) '        Experiment: ', trim(experiment(iexp)%name)
-      write(*,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i)))
+      call writelog(blank)
+      write(str,*) ' ERROR: Second residue of observed link could not be found on the structure. ' ; call writelog(str)
+      write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+      write(str,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
       error = .true.
     end do checkobs2
 
@@ -721,10 +760,10 @@ program topolink
       do j = 1, natoms
         if ( atom(j) .in. experiment(iexp)%deadend(i) ) cycle checkdeadend
       end do
-      write(*,*)
-      write(*,*) ' ERROR: Residue of observed deadend could not be found on the structure. '
-      write(*,*) '        Experiment: ', trim(experiment(iexp)%name)
-      write(*,*) '        Observed deadend: ', trim(print_deadend(experiment(iexp)%deadend(i)))
+      call writelog(blank)
+      write(str,*) ' ERROR: Residue of observed deadend could not be found on the structure. ' ; call writelog(str)
+      write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+      write(str,*) '        Observed deadend: ', trim(print_deadend(experiment(iexp)%deadend(i))) ; call writelog(str)
       error = .true.
     end do checkdeadend
 
@@ -732,10 +771,10 @@ program topolink
       do j = 1, natoms
         if ( atom(j) .in. experiment(iexp)%linktype(i)%atom1%residue ) cycle checktypes1
       end do
-      write(*,*)
-      write(*,*) ' WARNING: First atom of link type does not correspond to any atom of the structure. '
-      write(*,*) '          Experiment: ', trim(experiment(iexp)%name)
-      write(*,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i)))
+      call writelog(blank)
+      write(str,*) ' WARNING: First atom of link type does not correspond to any atom of the structure. ' ; call writelog(str)
+      write(str,*) '          Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+      write(str,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
       warning = .true.
     end do checktypes1
  
@@ -743,10 +782,10 @@ program topolink
       do j = 1, natoms
         if ( atom(j) .in. experiment(iexp)%linktype(i)%atom2%residue ) cycle checktypes2
       end do
-      write(*,*)
-      write(*,*) ' WARNING: Second atom of link type does not correspond to any atom of the structure. '
-      write(*,*) '          Experiment: ', trim(experiment(iexp)%name)
-      write(*,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i)))
+      call writelog(blank)
+      write(str,*) ' WARNING: Second atom of link type does not correspond to any atom of the structure. ' ; call writelog(str)
+      write(str,*) '          Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+      write(str,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
       warning = .true.
     end do checktypes2
 
@@ -757,10 +796,10 @@ program topolink
           cycle checkobstype
         end if
       end do
-      write(*,*)
-      write(*,*) ' ERROR: Observed link does not match any link type. '
-      write(*,*) '        Experiment: ', trim(experiment(iexp)%name)
-      write(*,*) '        Obseved link: ', trim(print_obs(experiment(iexp)%observed(i)))
+      call writelog(blank)
+      write(str,*) ' ERROR: Observed link does not match any link type. ' ; call writelog(str)
+      write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+      write(str,*) '        Obseved link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
       error = .true.
     end do checkobstype
 
@@ -798,11 +837,11 @@ program topolink
         end if
       end do
       if ( error ) then
-        write(*,*) ' ERROR: Atom missing in the structure is required for observed link: '
-        write(*,*) '        Missing atom: ', testatom%residue%name, &
-                   experiment(iexp)%observed(k)%residue1%chain, &
-                   experiment(iexp)%observed(k)%residue1%index, &
-                   testatom%name
+        write(str,*) ' ERROR: Atom missing in the structure is required for observed link: ' ; call writelog(str)
+        write(str,*) '        Missing atom: ', testatom%residue%name, &
+                     experiment(iexp)%observed(k)%residue1%chain, &
+                     experiment(iexp)%observed(k)%residue1%index, &
+                     testatom%name ; call writelog(str)
         stop
       end if
 
@@ -826,10 +865,10 @@ program topolink
         end if
       end do
       if ( error ) then
-        write(*,*) ' ERROR: Atom missing in the structure is required for observed link: '
-        write(*,*) '        Missing atom: ', testatom%residue%name, &
-                   experiment(iexp)%observed(k)%residue2%index, &
-                   testatom%name
+        write(str,*) ' ERROR: Atom missing in the structure is required for observed link: ' ; call writelog(str)
+        write(str,*) '        Missing atom: ', testatom%residue%name, &
+                     experiment(iexp)%observed(k)%residue2%index, &
+                     testatom%name ; call writelog(str)
         stop
       end if
     end do
@@ -839,32 +878,32 @@ program topolink
 
   do iexp = 1, nexp
 
-    write(*,*)
-    write(*,dashes)
-    write(*,*) ' Experiment: ', trim(experiment(iexp)%name)
+    call writelog(blank)
+    write(str,dashes) ; call writelog(str)
+    write(str,*) ' Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
 
     ! Printing observed links for this experiment
        
     if ( experiment(iexp)%nobs > 0 ) then
-      write(*,*) ' Observed links: '
+      write(str,*) ' Observed links: ' ; call writelog(str)
       do i = 1, experiment(iexp)%nobs
-        write(*,"( i5, a )") i, trim(print_obs(experiment(iexp)%observed(i)))
+        write(str,"( i5, a )") i, trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
       end do
     end if
 
    ! Printing the observed deadend data
       
     if ( experiment(iexp)%ndeadends > 0 ) then
-      write(*,*) ' Observed deadends: '
+      write(str,*) ' Observed deadends: ' ; call writelog(str)
       do i = 1, experiment(iexp)%ndeadends
-        write(*,*) trim(print_deadend(experiment(iexp)%deadend(i)))
+        write(str,*) trim(print_deadend(experiment(iexp)%deadend(i))) ; call writelog(str)
       end do
     end if
 
   end do
-  write(*,*)
-  write(*,dashes) 
-  write(*,dashes) 
+  call writelog(blank)
+  write(str,dashes)  ; call writelog(str)
+  write(str,dashes)  ; call writelog(str)
 
   ! Counting how many atoms in the structure are "reactive", according to link types, save
   ! their indices in reactiveatom vector
@@ -880,8 +919,8 @@ program topolink
       end do
     end do
   end do reactive1
-  write(*,*)
-  write(*,intout) ' Number of atoms that might be involved in reactions, according link types: ', i1
+  call writelog(blank)
+  write(str,intout) ' Number of atoms that might be involved in reactions, according link types: ', i1 ; call writelog(str)
   natreactive = i1
   allocate( reactiveatom(natreactive) )
   i1 = 0
@@ -899,8 +938,8 @@ program topolink
 
   ! Counting how many atoms in the structure are "reactive", according to observed reactivity
 
-  write(*,*)
-  write(*,*) ' All reactive atoms, according to observations: ' 
+  call writelog(blank)
+  write(str,*) ' All reactive atoms, according to observations: '  ; call writelog(str)
   i2 = 0
   reactive3 : do i = 1, natreactive
     i1 = reactiveatom(i)
@@ -908,14 +947,14 @@ program topolink
       do j = 1, experiment(iexp)%nobs
         if ( atom(i1) .in. experiment(iexp)%observed(j) ) then
           i2 = i2 + 1
-          write(*,*) i2, print_atom(atom(i1))
+          write(str,*) i2, print_atom(atom(i1)) ; call writelog(str)
           cycle reactive3
         end if
       end do
       do j = 1, experiment(iexp)%ndeadends
         if ( atom(i1) .in. experiment(iexp)%deadend(j) ) then
           i2 = i2 + 1
-          write(*,*) i2, print_atom(atom(i1))
+          write(str,*) i2, print_atom(atom(i1)) ; call writelog(str)
           cycle reactive3
         end if
       end do
@@ -983,10 +1022,10 @@ program topolink
       do k = 1, experiment(iexp)%ntypes
         if ( link(ii) .matches. experiment(iexp)%linktype(k) ) then
           if( type_reactive(ii,iexp) ) then
-            write(*,*) ' ERROR: A reactive pair of atoms corresponds to two different types of links '
-            write(*,*) '        of the same experiment. The link types are not correctly defined. '
-            write(*,*) ' Experiment: ', trim(experiment(iexp)%name)
-            write(*,*) ' Atoms: ', print_atom(link(ii)%atom1), print_atom(link(ii)%atom2)
+            write(str,*) ' ERROR: A reactive pair of atoms corresponds to two different types of links ' ; call writelog(str)
+            write(str,*) '        of the same experiment. The link types are not correctly defined. ' ; call writelog(str)
+            write(str,*) ' Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+            write(str,*) ' Atoms: ', print_atom(link(ii)%atom1), print_atom(link(ii)%atom2) ; call writelog(str)
             stop
           else
             type_reactive(ii,iexp) = .true.
@@ -1042,29 +1081,29 @@ program topolink
       end if
     end do
   end do
-  write(*,*) 
-  write(*,*) ' Number of reactive pairs according to sequence: '
+  call writelog(blank)
+  write(str,*) ' Number of reactive pairs according to sequence: ' ; call writelog(str)
   i1 = 0
   do iexp = 1, nexp
-    write(*,"( tr3, a, a, a, i5 )") ' Experiment ', trim(experiment(iexp)%name), ': ', &
-            experiment(iexp)%nreactive_type
+    write(str,"( tr3, a, a, a, i5 )") ' Experiment ', trim(experiment(iexp)%name), ': ', &
+            experiment(iexp)%nreactive_type ; call writelog(str)
     i1 = i1 + experiment(iexp)%nreactive_type
   end do
-  write(*,*) ' Total number of unique reactive pairs, according to link types: ', i1
-  write(*,*) 
-  write(*,*) ' Number of reactive pairs according to observations: '
+  write(str,*) ' Total number of unique reactive pairs, according to link types: ', i1 ; call writelog(str)
+  call writelog(blank)
+  write(str,*) ' Number of reactive pairs according to observations: ' ; call writelog(str)
   i1 = 0
   do iexp = 1, nexp
-    write(*,"( tr3, a, a, a, i5 )") ' Experiment ', trim(experiment(iexp)%name), ': ', &
-            experiment(iexp)%nreactive_obs
+    write(str,"( tr3, a, a, a, i5 )") ' Experiment ', trim(experiment(iexp)%name), ': ', &
+            experiment(iexp)%nreactive_obs ; call writelog(blank)
     i1 = i1 + experiment(iexp)%nreactive_obs
   end do
-  write(*,*) ' Total number of unique reactive pairs, according to observations: ', i1
+  write(str,*) ' Total number of unique reactive pairs, according to observations: ', i1 ; call writelog(str)
 
   ! Printing the list of reactive pairs of atoms
 
-  write(*,*)
-  write(*,*) ' List of reactive atom pairs, according to observations: ' 
+  call writelog(blank)
+  write(str,*) ' List of reactive atom pairs, according to observations: '  ; call writelog(str)
   j = 0
   do i = 1, npairs
     r1 = .false.
@@ -1081,9 +1120,9 @@ program topolink
       end if
     end do
     if ( r1 ) then
-       write(*,"( i5, a, a, a )") j, print_atom(link(i)%atom1), &
-                                     print_atom(link(i)%atom2), &
-                                     trim(record)
+       write(str,"( i5, a, a, a )") j, print_atom(link(i)%atom1), &
+                                       print_atom(link(i)%atom2), &
+                                       trim(record) ; call writelog(str)
     end if
   end do
 
@@ -1157,8 +1196,8 @@ program topolink
 
   call initcells()
   if ( print > 0 ) then
-    write(*,"( t2,a, 6(f8.3) )") ' Minimum and maximum coordinates of the structure: ',&
-                                 xmin, ymin, zmin, xmax, ymax, zmax
+    write(str,"( t2,a, 6(f8.3) )") ' Minimum and maximum coordinates of the structure: ',&
+                                   xmin, ymin, zmin, xmax, ymax, zmax ; call writelog(str)
   end if
 
   ! Check which residues are solvent accessible
@@ -1171,7 +1210,7 @@ program topolink
 
   ! Print title of LINK output if print == 0
 
-  write(*,*)
+  call writelog(blank)
   if ( print == 0 ) call printdata(-1,link(1))
 
   allpairs : do i = 1, npairs
@@ -1201,15 +1240,15 @@ program topolink
     link(i)%atom2%residue%accessible = atom(atom2)%residue%accessible
 
     if ( print > 0 ) then
-      write(*,"( a, a, 3(tr2,f8.3) )") ' Reference atom 1: ', &
-                    print_atom(link(i)%atom1), &
-                    link(i)%atom1%x, link(i)%atom1%y, link(i)%atom1%z
-      write(*,"( a, a, 3(tr2,f8.3) )") ' Reference atom 2: ', &
-                    print_atom(link(i)%atom2), &
-                    link(i)%atom2%x, link(i)%atom2%y, link(i)%atom2%z
-      if (link(i)%observed ) write(*,*) ' This link was experimentally observed '
-      write(*,intout2) ' First and last atoms of residue 1: ', first(1), last(1)
-      write(*,intout2) ' First and last atoms of residue 2: ', first(2), last(2)
+      write(str,"( a, a, 3(tr2,f8.3) )") ' Reference atom 1: ', &
+                      print_atom(link(i)%atom1), &
+                      link(i)%atom1%x, link(i)%atom1%y, link(i)%atom1%z ; call writelog(str)
+      write(str,"( a, a, 3(tr2,f8.3) )") ' Reference atom 2: ', &
+                      print_atom(link(i)%atom2), &
+                      link(i)%atom2%x, link(i)%atom2%y, link(i)%atom2%z
+      if (link(i)%observed ) write(str,*) ' This link was experimentally observed '  ; call writelog(str)
+      write(str,intout2) ' First and last atoms of residue 1: ', first(1), last(1) ; call writelog(str)
+      write(str,intout2) ' First and last atoms of residue 2: ', first(2), last(2) ; call writelog(str)
     end if
 
     ! Try to read the properties of this link from a previous log file, if required
@@ -1259,7 +1298,7 @@ program topolink
       link(i)%euclidean =  dsqrt( (coor(atom2,1) - coor(atom1,1))**2 + & 
                                   (coor(atom2,2) - coor(atom1,2))**2 + & 
                                   (coor(atom2,3) - coor(atom1,3))**2 )
-      if ( print > 0 ) write(*,floatout) ' Euclidean distance: ', link(i)%euclidean
+      if ( print > 0 ) write(str,floatout) ' Euclidean distance: ', link(i)%euclidean ; call writelog(str)
       if ( link(i)%euclidean > link(i)%dsearch ) then
         if ( printnotfound ) then
           link(i)%status = linkstatus(link(i))
@@ -1282,11 +1321,11 @@ program topolink
       end if
 
       if ( print > 0 ) then
-        write(*,intout2) ' Reference atoms: ', atom1, atom2
-        write(*,*) ' Solvent accessibility of these atoms: ', atom(atom1)%accessible, &
-                                                              atom(atom2)%accessible
-        write(*,*) ' Solvent accessibility of the residues: ', atom(atom1)%residue%accessible, &
-                                                               atom(atom2)%residue%accessible
+        write(str,intout2) ' Reference atoms: ', atom1, atom2 ; call writelog(str)
+        write(str,*) ' Solvent accessibility of these atoms: ', atom(atom1)%accessible, &
+                                                                atom(atom2)%accessible ; call writelog(str)
+        write(str,*) ' Solvent accessibility of the residues: ', atom(atom1)%residue%accessible, &
+                                                                 atom(atom2)%residue%accessible ; call writelog(str)
       end if
 
       ! Define the atoms that must be invisible in this path calculation
@@ -1299,7 +1338,7 @@ program topolink
       ! 
 
       search_dmin = link(i)%euclidean
-      search_dmin = link(i)%dsearch - 1.d0 !voltar
+      search_dmin = link(i)%dsearch - 1.d0 
       search_dmax = link(i)%dsearch
 
       dpath_best = 1.d30
@@ -1320,10 +1359,10 @@ program topolink
         n = nlinkatoms*3
     
         if ( print > 0 ) then
-          write(*,floatout) ' Using dsearch = ', dsearch
-          write(*,intout) ' Number of atoms of the linker: ', nlinkatoms
-          write(*,intout) ' Number of variables of the optimization problem: ', n
-          write(*,floatout) ' Force constante for link bonds: ', kbond
+          write(str,floatout) ' Using dsearch = ', dsearch ; call writelog(str)
+          write(str,intout) ' Number of atoms of the linker: ', nlinkatoms ; call writelog(str)
+          write(str,intout) ' Number of variables of the optimization problem: ', n ; call writelog(str)
+          write(str,floatout) ' Force constante for link bonds: ', kbond ; call writelog(str)
         end if
 
         ! Define the vdw radii of the linker atoms, which changes with mimic chain option
@@ -1377,16 +1416,16 @@ program topolink
               end do
             end if
             if ( print > 0 ) then
-              write(*,"(' Trial ', i5, ' Valid path with length = ', &
+              write(str,"(' Trial ', i5, ' Valid path with length = ', &
                     &f8.3, '( overlap = ', f12.5, ' dmin_maxviol = ', f8.3,' )', i5)") &
-                    itrial, dpath, overviol, dmin_maxviol, best_repeat
+                    itrial, dpath, overviol, dmin_maxviol, best_repeat ; call writelog(str)
             end if
             if ( quitgood .and. dpath <= link(i)%dmaxlink ) exit search
           else
             if ( print > 0 ) then
-              write(*,"( ' Trial ', i5, ' Invalid path with length = ', &
+              write(str,"( ' Trial ', i5, ' Invalid path with length = ', &
                          &f8.3, '( overlap = ', f12.5, ' dmin_maxviol = ', f8.3,' )' )")&
-                      itrial, dpath, overviol, dmin_maxviol
+                      itrial, dpath, overviol, dmin_maxviol ; call writelog(str)
             end if
           end if
         end do
@@ -1426,14 +1465,14 @@ program topolink
     end if
 
   end do allpairs
-  write(*,dashes)
-  if ( readlog /= 'none' ) close(20)
+  write(str,dashes) ; call writelog(str)
+  if ( readlog /= 'none' ) close(30)
  
-  write(*,*) 
-  write(*,*) ' RESULTS: '
+  call writelog(blank)
+  write(str,*) ' RESULTS: ' ; call writelog(str)
   
-  write(*,*)
-  write(*,*) ' For each experiment: '
+  call writelog(blank)
+  write(str,*) ' For each experiment: ' ; call writelog(str)
 
   do iexp = 1, nexp
 
@@ -1560,51 +1599,63 @@ program topolink
    
     ! Report results for this experiment
 
-    write(*,*)  
-    write(*,dashes)  
-    write(*,*)  
-    write(*,*) ' Experiment: ', trim(experiment(iexp)%name)
-    write(*,*)
-    write(*,intout) '   Number of type-reactive pairs of atoms: ', experiment(iexp)%nreactive_type
+    call writelog(blank)
+    write(str,dashes)   ; call writelog(str)
+    call writelog(blank)
+    write(str,*) ' Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+    call writelog(blank)
+    write(str,intout) '   Number of type-reactive pairs of atoms: ', experiment(iexp)%nreactive_type ; call writelog(str)
     if ( compute == 3 ) then
-      write(*,intout) '   Number of type-reactive pairs of atoms within linker reach: ', experiment(iexp)%nreach_type
-      write(*,intout) '   Number of type-reactive pairs of atoms outside linker reach: ', experiment(iexp)%noutreach_type
-      write(*,intout) '   Missing links, according to the structure and type-reactivity: ', experiment(iexp)%nmiss_type
+      write(str,intout) '   Number of type-reactive pairs of atoms within linker reach: ', experiment(iexp)%nreach_type 
+      call writelog(str)
+      write(str,intout) '   Number of type-reactive pairs of atoms outside linker reach: ', experiment(iexp)%noutreach_type 
+      call writelog(str)
+      write(str,intout) '   Missing links, according to the structure and type-reactivity: ', experiment(iexp)%nmiss_type 
+      call writelog(str)
     end if
-    write(*,*)
-    write(*,intout) '   Number of observed-reactive pairs of atoms: ', experiment(iexp)%nreactive_obs
-    write(*,intout) '   Number of observed-reactive pairs of atoms within linker reach: ', experiment(iexp)%nreach_obs
-    write(*,intout) '   Number of observed-reactive pairs of atoms outside linker reach: ', experiment(iexp)%noutreach_obs
-    write(*,intout) '   Missing links, according to the structure and observed-reactivity: ', experiment(iexp)%nmiss_obs
+    call writelog(blank)
+    write(str,intout) '   Number of observed-reactive pairs of atoms: ', experiment(iexp)%nreactive_obs ; call writelog(str)
+    write(str,intout) '   Number of observed-reactive pairs of atoms within linker reach: ', experiment(iexp)%nreach_obs 
+    call writelog(str)
+    write(str,intout) '   Number of observed-reactive pairs of atoms outside linker reach: ', experiment(iexp)%noutreach_obs 
+    call writelog(str)
+    write(str,intout) '   Missing links, according to the structure and observed-reactivity: ', experiment(iexp)%nmiss_obs 
+    call writelog(str)
     if ( experiment(iexp)%nobs > 0 ) then
-      write(*,*)
-      write(*,intout) '   Number of observed links: ', experiment(iexp)%nobs
-      write(*,intout) '   Number of observed links consistent with the structure: ', experiment(iexp)%ngood
-      write(*,intout) '   Number of observed links NOT consistent with the structure: ', experiment(iexp)%nbad
-      write(*,*)
-      write(*,floatout) '   Sum of scores of observed links: ', experiment(iexp)%score
-      write(*,*)
+      call writelog(blank)
+      write(str,intout) '   Number of observed links: ', experiment(iexp)%nobs ; call writelog(str)
+      write(str,intout) '   Number of observed links consistent with the structure: ', experiment(iexp)%ngood ; call writelog(str)
+      write(str,intout) '   Number of observed links NOT consistent with the structure: ', experiment(iexp)%nbad 
+      call writelog(str)
+      call writelog(blank)
+      write(str,floatout) '   Sum of scores of observed links: ', experiment(iexp)%score ; call writelog(str)
+      call writelog(blank)
       if ( experiment(iexp)%nreach_obs > 0 ) then 
-        write(*,floatout) '   Sensitivity of the cross-linking reaction: ', dble(experiment(iexp)%ngood)/experiment(iexp)%nreach_obs
+        write(str,floatout) '   Sensitivity of the cross-linking reaction: ', &
+                            dble(experiment(iexp)%ngood)/experiment(iexp)%nreach_obs
+        call writelog(str)
       else
-        write(*,floatout) '   Sensitivity of the cross-linking reaction: ', 1.
+        write(str,floatout) '   Sensitivity of the cross-linking reaction: ', 1. ; call writelog(str)
       end if
-      write(*,floatout) '   False-assignment probability: ', dble(experiment(iexp)%nbad)/experiment(iexp)%nreactive_type
-      write(*,*)
-      write(*,floatout) '   Likelihood of the experimental result: ', experiment(iexp)%likelihood
-      write(*,floatout) '   Log-likelihood of the experimental result: ', dlog(experiment(iexp)%likelihood)
+      write(str,floatout) '   False-assignment probability: ', dble(experiment(iexp)%nbad)/experiment(iexp)%nreactive_type 
+      call writelog(str)
+      call writelog(blank)
+      write(str,floatout) '   Likelihood of the experimental result: ', experiment(iexp)%likelihood ; call writelog(str)
+      write(str,floatout) '   Log-likelihood of the experimental result: ', dlog(experiment(iexp)%likelihood) ; call writelog(str)
       if ( pbad > 0.d0 .and. pgood > 0.d0 ) then
-        write(*,*)
-        write(*,floatout) '   Likelihood using user-defined pbad and pgood: ', experiment(iexp)%userlikelihood
-        write(*,floatout) '   Log-likelihood using user-defined pbad and pgood: ', dlog(experiment(iexp)%userlikelihood)
-        write(*,"( t4, 3(a,f8.3))") ' Using: pgood = ', pgood, '; pbad = ', pbad
+        call writelog(blank)
+        write(str,floatout) '   Likelihood using user-defined pbad and pgood: ', experiment(iexp)%userlikelihood 
+        call writelog(str)
+        write(str,floatout) '   Log-likelihood using user-defined pbad and pgood: ', dlog(experiment(iexp)%userlikelihood) 
+        call writelog(str)
+        write(str,"( t4, 3(a,f8.3))") ' Using: pgood = ', pgood, '; pbad = ', pbad ; call writelog(str)
       end if
    end if
     
   end do
 
-  write(*,*)
-  write(*,dashes)
+  call writelog(blank)
+  write(str,dashes) ; call writelog(str)
   
   !
   ! Final results
@@ -1643,14 +1694,17 @@ program topolink
     end if
   end do
 
-  write(*,*)
-  write(*,*) ' FINAL RESULTS: '
-  write(*,*)
-  write(*,"( t3, a, i5, a )") ' RESULT0: ', ngood, ' : Number of observations that are consistent with the structure.' 
-  write(*,*)
-  write(*,"( t3, a, i5, a )") ' RESULT1: ', ngooddist, ' : Number of topological distances consistent with all observations. ' 
-  write(*,"( t3, a, i5, a )") ' RESULT2: ', nbaddist, ' : Number of topological distances NOT consistent with observations.  ' 
-  write(*,"( t3, a, i5, a )") ' RESULT3: ', nmisslinks, ' : Number of links with missing observations.  ' 
+  call writelog(blank)
+  write(str,*) ' FINAL RESULTS: ' ; call writelog(str)
+  call writelog(blank)
+  write(str,"( t3, a, i5, a )") ' RESULT0: ', ngood, ' : Number of observations that are consistent with the structure.'  
+  call writelog(str)
+  call writelog(blank)
+  write(str,"( t3, a, i5, a )") ' RESULT1: ', ngooddist, ' : Number of topological distances consistent with all observations. '  
+  call writelog(str)
+  write(str,"( t3, a, i5, a )") ' RESULT2: ', nbaddist, ' : Number of topological distances NOT consistent with observations.  '  
+  call writelog(str)
+  write(str,"( t3, a, i5, a )") ' RESULT3: ', nmisslinks, ' : Number of links with missing observations.  '  ; call writelog(str)
 
   if ( nobs > 0 ) then
     likelihood = 1.d0
@@ -1661,29 +1715,36 @@ program topolink
         userlikelihood = userlikelihood*experiment(iexp)%userlikelihood
       end if
     end do
-    write(*,*)
-    write(*,"( t3, a, f12.5, a )") ' RESULT4: ', totscore, ' : Sum of scores of observed links of all experiments. '
-    write(*,*)
-    write(*,"( t3, a, f12.5, a )") ' RESULT5: ', likelihood, ' : Likelihood of the set of experimental results. '
-    write(*,"( t3, a, f12.5, a )") ' RESULT6: ', dlog(likelihood), ' : Log-likelihood of the set of experimental results. '
+    call writelog(blank)
+    write(str,"( t3, a, f12.5, a )") ' RESULT4: ', totscore, ' : Sum of scores of observed links of all experiments. ' 
+    call writelog(str)
+    call writelog(blank)
+    write(str,"( t3, a, f12.5, a )") ' RESULT5: ', likelihood, ' : Likelihood of the set of experimental results. ' 
+    call writelog(str)
+    write(str,"( t3, a, f12.5, a )") ' RESULT6: ', dlog(likelihood), ' : Log-likelihood of the set of experimental results. ' 
+    call writelog(str)
     if ( pbad > 0.d0 .and. pgood > 0.d0 ) then
-      write(*,*)
-      write(*,"( t3, 3(a,f8.3))") ' Using: pgood = ', pgood, '; pbad = ', pbad
-      write(*,"( t3, a, f12.5, a )") ' RESULT7: ', userlikelihood, ' : Likelihood of the set of experimental results. '
-      write(*,"( t3, a, f12.5, a )") ' RESULT8: ', dlog(userlikelihood), ' : Log-likelihood of the set of experimental results. '
+      call writelog(blank)
+      write(str,"( t3, 3(a,f8.3))") ' Using: pgood = ', pgood, '; pbad = ', pbad ; call writelog(str)
+      write(str,"( t3, a, f12.5, a )") ' RESULT7: ', userlikelihood, ' : Likelihood of the set of experimental results. ' 
+      call writelog(str)
+      write(str,"( t3, a, f12.5, a )") ' RESULT8: ', dlog(userlikelihood), ' : Log-likelihood of the set of experimental results. ' 
+      call writelog(str)
     end if
   end if
 
   if ( warning ) then
-    write(*,*)
-    write(*,dashes)
-    write(*,*) ' ATTENTION: There are WARNINGS of input file parsing. Please check the output carefully. '
-    write(*,dashes)
-    write(*,*)
+    call writelog(blank)
+    write(str,dashes) ; call writelog(str)
+    write(str,*) ' ATTENTION: There are WARNINGS of input file parsing. Please check the output carefully. ' ; call writelog(str)
+    write(str,dashes) ; call writelog(str)
+    call writelog(blank)
   end if
    
-  write(*,*)
-  write(*,hashes)
+  call writelog(blank)
+  write(str,hashes) ; call writelog(str)
+
+  if ( output_log ) close(output_log_unit)
 
 end program topolink
 

@@ -33,23 +33,23 @@ subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
     trim(adjustl(char1))//trim(adjustl(link%atom1%name))//&
     '-'//trim(adjustl(link%atom2%residue%name))//trim(adjustl(link%atom2%residue%chain))//&
     trim(adjustl(char2))//trim(adjustl(link%atom2%name))//'.pdb'
-  open(10,file=linkfile,iostat=ioerr)
+  open(11,file=linkfile,iostat=ioerr)
   if ( ioerr /= 0 ) then
-    write(*,*) ' ERROR: Could not create link PDB file: ', trim(adjustl(linkfile))
-    write(*,*) '        Perhaps the output directory does not exist.'
-    write(*,*) '        Output directory: ', trim(adjustl(linkdir))
+    write(str,*) ' ERROR: Could not create link PDB file: ', trim(adjustl(linkfile)) ; call writelog(str)
+    write(str,*) '        Perhaps the output directory does not exist.' ; call writelog(str)
+    write(str,*) '        Output directory: ', trim(adjustl(linkdir)) ; call writelog(str)
     stop
   end if
-  write(10,"( 'REMARK EUCLIDEAN DISTANCE: ', (tr2,f12.5) )") link%euclidean
-  write(10,"( 'REMARK TOPOLOGICAL DISTANCE: ', (tr2,f12.5) )") link%topodist
-  write(10,"( 'REMARK OVERLAP and STRETCH: ', 2(tr2,f12.5) )") overlap(n,x), stretch(n,x)
-  write(10,"( 'REMARK LINK STATUS: ', a13 )") statuschar(link%status)
+  write(11,"( 'REMARK EUCLIDEAN DISTANCE: ', (tr2,f12.5) )") link%euclidean
+  write(11,"( 'REMARK TOPOLOGICAL DISTANCE: ', (tr2,f12.5) )") link%topodist
+  write(11,"( 'REMARK OVERLAP and STRETCH: ', 2(tr2,f12.5) )") overlap(n,x), stretch(n,x)
+  write(11,"( 'REMARK LINK STATUS: ', a13 )") statuschar(link%status)
   writeatom = atom(link%atom1%index)
   writeatom%residue%name = "LINK"
   writeatom%residue%chain = "A"
   writeatom%residue%index = 1
   writeatom%index = 1
-  write(10,"(a)") trim(print_pdbhetatm(writeatom))
+  write(11,"(a)") trim(print_pdbhetatm(writeatom))
   do j = 1, nlinkatoms
     ix = (j-1)*3 + 1
     iy = ix + 1
@@ -62,15 +62,15 @@ subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
     writeatom%x = x(ix)
     writeatom%y = x(iy)
     writeatom%z = x(iz)
-    write(10,"(a)") trim(print_pdbhetatm(writeatom))
+    write(11,"(a)") trim(print_pdbhetatm(writeatom))
   end do
   writeatom = atom(link%atom2%index)
   writeatom%residue%name = "LINK"
   writeatom%residue%chain = "A"
   writeatom%residue%index = 1
   writeatom%index = nlinkatoms + 2
-  write(10,"(a)") trim(print_pdbhetatm(writeatom))
-  close(10)
+  write(11,"(a)") trim(print_pdbhetatm(writeatom))
+  close(11)
 
 end subroutine link_to_pdb
 

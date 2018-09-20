@@ -16,13 +16,14 @@
 
 ! Subroutine that prints the title
 
-subroutine title()
+subroutine title(iout)
 
-  write(*,*) 
-  write(*,"(t3,56('#'),' TOPOLINK ',55('#'))") 
-  write(*,"(t15,a)") 'L. Martinez, Institute of Chemistry - University of Campinas. http://leandro.iqm.unicamp.br'
-  write(*,*) 
-  write(*,"(t105,a)") " Version 18.229 "
-  write(*,*) 
+  integer :: iout
+  write(iout,*) 
+  write(iout,"(t3,56('#'),' TOPOLINK ',55('#'))") 
+  write(iout,"(t15,a)") 'L. Martinez, Institute of Chemistry - University of Campinas. http://leandro.iqm.unicamp.br'
+  write(iout,*) 
+  write(iout,"(t105,a)") " Version 18.229 "
+  write(iout,*) 
 
 end subroutine title

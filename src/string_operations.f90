@@ -124,24 +124,24 @@ module string_operations
       character(len=max_string_length) :: file
       character(len=1) :: char
     
-      open(10,file=file,status='new',action='write',iostat=ioerr)
+      open(12,file=file,status='new',action='write',iostat=ioerr)
       if ( ioerr /= 0 ) then
         write(*,*) ' ERROR: Trying to create file: ', trim(adjustl(file)),' but file already exists '
         write(*,"(a,$)") '  Overwrite it? (Y/N): '
         read(*,*) char
         if ( char == "Y" ) then
-          open(10,file=file,action='write',iostat=ioerr)
+          open(12,file=file,action='write',iostat=ioerr)
           if ( ioerr /= 0 ) then
             write(*,*) ' Could not open file. Quitting. '
             stop
           end if
-          close(10)
+          close(12)
         else
           write(*,*) ' Quitting. '
           stop
         end if
       end if
-      close(10)
+      close(12)
     
     end subroutine checkfile
 

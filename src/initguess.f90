@@ -30,7 +30,7 @@ subroutine initguess(n,x,iguess)
 
   ntrial = 100
 
-  iguess = 3
+  iguess = 2
   if ( iguess == 1 ) then
     best = 1.d30
     do j = 1, ntrial
@@ -237,7 +237,7 @@ subroutine initguess(n,x,iguess)
       dtot = dleft + dright + darch
       dstep = dtot / (nlinkatoms+1)
 
-      narch = darch/dstep+1
+      narch = int(darch/dstep)+1
       tstep = (t_right - t_left) / narch
 
       ! Build the initial guess for the linker

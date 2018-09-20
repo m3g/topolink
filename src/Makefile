@@ -61,6 +61,7 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  overlapcell.o \
                  overlap.o \
                  printdata.o \
+                 writelog.o \
                  link_to_pdb.o \
                  random.o \
                  stretch.o \
@@ -86,6 +87,7 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  overlapcell.o \
                  overlap.o \
                  printdata.o \
+                 writelog.o \
                  link_to_pdb.o \
                  random.o \
                  stretch.o \
@@ -211,6 +213,9 @@ overlap.o : overlap.f90
 
 printdata.o : printdata.f90
 	$(FORTRAN) -c printdata.f90 $(FLAGS)
+
+writelog.o : writelog.f90
+	$(FORTRAN) -c writelog.f90 $(FLAGS)
 
 link_to_pdb.o : link_to_pdb.f90
 	$(FORTRAN) -c link_to_pdb.f90 $(FLAGS)
