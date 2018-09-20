@@ -127,18 +127,12 @@ program topolink
   if ( nargs == 2 ) then
     call getarg(2,pdbfile)
   end if
-  screen_log = .true.
   output_log = .false.
   if ( nargs > 1 ) then
     i = 2
     do while( i <= nargs )
       call getarg(i,record)
       select case ( record )
-        case ("-screen_log")
-          i=i+1
-          call getarg(i,record)
-          if ( record == "Y" .or. record == "y" ) screen_log = .true.
-          if ( record == "N" .or. record == "n" ) screen_log = .false.
         case ("-o")
           i=i+1
           call getarg(i,output_log_file)
