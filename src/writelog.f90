@@ -5,9 +5,7 @@ subroutine writelog(string)
 
   character(len=*) :: string
 
-  if ( screen_log ) then
-    write(*,*) trim(adjustl(string))
-  end if
+  write(*,*) trim(adjustl(string))
 
   if ( output_log ) then
     write(output_log_unit,*) trim(adjustl(string))

@@ -1240,7 +1240,9 @@ program topolink
       write(str,"( a, a, 3(tr2,f8.3) )") ' Reference atom 2: ', &
                       print_atom(link(i)%atom2), &
                       link(i)%atom2%x, link(i)%atom2%y, link(i)%atom2%z
-      if (link(i)%observed ) write(str,*) ' This link was experimentally observed '  ; call writelog(str)
+      if (link(i)%observed ) then 
+        write(str,*) ' This link was experimentally observed ' ; call writelog(str)
+      end if
       write(str,intout2) ' First and last atoms of residue 1: ', first(1), last(1) ; call writelog(str)
       write(str,intout2) ' First and last atoms of residue 2: ', first(2), last(2) ; call writelog(str)
     end if
@@ -1292,7 +1294,9 @@ program topolink
       link(i)%euclidean =  dsqrt( (coor(atom2,1) - coor(atom1,1))**2 + & 
                                   (coor(atom2,2) - coor(atom1,2))**2 + & 
                                   (coor(atom2,3) - coor(atom1,3))**2 )
-      if ( print > 0 ) write(str,floatout) ' Euclidean distance: ', link(i)%euclidean ; call writelog(str)
+      if ( print > 0 ) then 
+        write(str,floatout) ' Euclidean distance: ', link(i)%euclidean ; call writelog(str)
+      end if
       if ( link(i)%euclidean > link(i)%dsearch ) then
         if ( printnotfound ) then
           link(i)%status = linkstatus(link(i))
