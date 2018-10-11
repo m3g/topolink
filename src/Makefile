@@ -20,6 +20,10 @@ ifeq ($(MAKECMDGOALS),devel)
   FLAGS = -Wall -fcheck=bounds
 endif
  
+ifeq ($(MAKECMDGOALS),static)
+  FLAGS = -O3 -ffast-math -static
+endif
+
 ###################################################################
 #                                                                 #
 # Generally no modifications are required after this.             #
@@ -43,6 +47,7 @@ MODULES = functionpars.o \
 
 all : bindir $(BINARIES)
 devel : bindir $(BINARIES)
+static: bindir $(BINARIES)
 
 $(BIN)/topolink: Makefile $(MODULES) \
                  topolink.o \
