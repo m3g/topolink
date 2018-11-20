@@ -322,6 +322,10 @@ program topolink
   ! Print input parameters
 
   write(str,"(a,a)") '  PDB input file: ', trim(adjustl(pdbfile)) ; call writelog(str)
+  write(str,"(a,a)") '  TopoLink input file: ', trim(adjustl(inputfile)) ; call writelog(str)
+  if( output_log ) then
+    write(str,"(a,a)") '  Output log file: ', trim(adjustl(output_log_file)) ; call writelog(str)
+  end if
   if ( endread /= "###" ) then
     write(str,*) ' Will stop PDB reading when ', trim(endread), ' is found. ' ; call writelog(str)
   end if
