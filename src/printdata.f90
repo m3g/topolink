@@ -19,7 +19,7 @@ subroutine printdata(print,link)
 
   if ( print == -1 ) then
     write(str,dashes) ; call writelog(str)
-    write(str,"( '        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED&
+    write(str,"( '>     RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED&
                  &    DMIN      DMAX        RESULT  OBSRES REACRES RA AA')") ; call writelog(str)
     write(str,dashes) ; call writelog(str)
     return

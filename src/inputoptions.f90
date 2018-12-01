@@ -29,6 +29,7 @@ module inputoptions
   logical :: printlinks
   logical :: printallfound
   logical :: printnotfound
+  logical :: printPDBnotfound
   logical :: observedscores
   logical :: mimicchain
   logical :: printaccessible

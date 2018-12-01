@@ -10,8 +10,8 @@ subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
   implicit none
 
   integer :: ioerr
-  integer :: j, ix, iy, iz
-  integer :: natoms, nlinkatoms
+  integer :: j, ix, iy, iz, index
+  integer :: natoms, nlinkatoms, nsteps
 
   type(specific_link) :: link
   type(pdbatom) :: writeatom, atom(natoms)
@@ -20,7 +20,7 @@ subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
   character(len=4) :: char1, char2
 
   integer :: n
-  double precision :: x(n)
+  double precision :: x(n), stepx, stepy, stepz
   double precision :: overlap, stretch
   character(len=13) :: statuschar
 
@@ -41,33 +41,57 @@ subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
     stop
   end if
   write(11,"( 'REMARK EUCLIDEAN DISTANCE: ', (tr2,f12.5) )") link%euclidean
-  write(11,"( 'REMARK TOPOLOGICAL DISTANCE: ', (tr2,f12.5) )") link%topodist
-  write(11,"( 'REMARK OVERLAP and STRETCH: ', 2(tr2,f12.5) )") overlap(n,x), stretch(n,x)
   write(11,"( 'REMARK LINK STATUS: ', a13 )") statuschar(link%status)
+  if ( link%found ) then
+    write(11,"( 'REMARK TOPOLOGICAL DISTANCE: ', (tr2,f12.5) )") link%topodist
+    write(11,"( 'REMARK OVERLAP and STRETCH: ', 2(tr2,f12.5) )") overlap(n,x), stretch(n,x)
+  end if
+  index = 1
   writeatom = atom(link%atom1%index)
   writeatom%residue%name = "LINK"
   writeatom%residue%chain = "A"
   writeatom%residue%index = 1
-  writeatom%index = 1
+  writeatom%index = index
   write(11,"(a)") trim(print_pdbhetatm(writeatom))
-  do j = 1, nlinkatoms
-    ix = (j-1)*3 + 1
-    iy = ix + 1
-    iz = ix + 2
-    writeatom%index = j + 1
-    writeatom%name = "O"
-    writeatom%residue%name = "LINK"
-    writeatom%residue%chain = "A"
-    writeatom%residue%index = 1
-    writeatom%x = x(ix)
-    writeatom%y = x(iy)
-    writeatom%z = x(iz)
-    write(11,"(a)") trim(print_pdbhetatm(writeatom))
-  end do
+  if ( link%found ) then
+    do j = 1, nlinkatoms
+      index = index + 1
+      ix = (j-1)*3 + 1
+      iy = ix + 1
+      iz = ix + 2
+      writeatom%index = index
+      writeatom%name = "N"
+      writeatom%residue%name = "LINK"
+      writeatom%residue%chain = "A"
+      writeatom%residue%index = 1
+      writeatom%x = x(ix)
+      writeatom%y = x(iy)
+      writeatom%z = x(iz)
+      write(11,"(a)") trim(print_pdbhetatm(writeatom))
+    end do
+  else
+    nsteps = int(link%euclidean)-2
+    stepx = (link%atom2%x - link%atom1%x)/nsteps
+    stepy = (link%atom2%y - link%atom1%y)/nsteps
+    stepz = (link%atom2%z - link%atom1%z)/nsteps
+    do j = 1, nsteps
+      index = index + 1
+      writeatom%index = index
+      writeatom%name = "O"
+      writeatom%residue%name = "LINK"
+      writeatom%residue%chain = "A"
+      writeatom%residue%index = 1
+      writeatom%x = link%atom1%x + j*stepx
+      writeatom%y = link%atom1%y + j*stepy
+      writeatom%z = link%atom1%z + j*stepz
+      write(11,"(a)") trim(print_pdbhetatm(writeatom))
+    end do
+  end if
+  index = index + 1
   writeatom = atom(link%atom2%index)
   writeatom%residue%name = "LINK"
   writeatom%residue%chain = "A"
-  writeatom%residue%index = 1
+  writeatom%residue%index = index
   writeatom%index = nlinkatoms + 2
   write(11,"(a)") trim(print_pdbhetatm(writeatom))
   close(11)

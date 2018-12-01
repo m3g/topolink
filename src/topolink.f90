@@ -80,6 +80,7 @@ program topolink
   printlinks = .false.
   printnotfound = .false.
   printallfound = .false.
+  printPDBnotfound = .false.
   compute = 2
   pgood = -1.d0
   pbad = -1.d0
@@ -227,6 +228,9 @@ program topolink
       case ("printnotfound")
         if ( keyvalue(record,1) == 'yes' ) printnotfound = .true.
         if ( keyvalue(record,1) == 'no' ) printnotfound = .false.
+      case ("printPDBnotfound")
+        if ( keyvalue(record,1) == 'yes' ) printPDBnotfound = .true.
+        if ( keyvalue(record,1) == 'no' ) printPDBnotfound = .false.
       case ("printaccessible")
         if ( keyvalue(record,1) == 'yes' ) printaccessible = .true.
         if ( keyvalue(record,1) == 'no' ) printaccessible = .false.
@@ -1307,6 +1311,11 @@ program topolink
           call linkconsistency(link(i),nexp,experiment)
           call printdata(print,link(i))
         end if
+        if ( printlinks ) then
+          if ( printPDBnotfound ) then
+            call link_to_pdb(link(i),nlinkatoms,linkdir,pdbfile,natoms,atom,n,xbest)
+          end if
+        end if
         cycle allpairs
       end if
 
@@ -1318,6 +1327,11 @@ program topolink
           link(i)%status = linkstatus(link(i))
           call linkconsistency(link(i),nexp,experiment)
           call printdata(print,link(i))
+        end if
+        if ( printlinks ) then
+          if ( printPDBnotfound ) then
+            call link_to_pdb(link(i),nlinkatoms,linkdir,pdbfile,natoms,atom,n,xbest)
+          end if
         end if
         cycle allpairs
       end if
@@ -1456,6 +1470,8 @@ program topolink
         if ( printallfound .or. &
              ( link(i)%status == 0 .or. link(i)%status == 5 ) ) then
           call link_to_pdb(link(i),nlinkatoms,linkdir,pdbfile,natoms,atom,n,xbest)
+        else if( printPDBnotfound ) then
+          call link_to_pdb(link(i),nlinkatoms,linkdir,pdbfile,natoms,atom,n,xbest)
         end if
       end if
 
@@ -1463,6 +1479,11 @@ program topolink
 
       ! If a topological distance was not found for this pair
       if ( printnotfound ) call printdata(print,link(i))
+      if ( printlinks ) then
+        if ( printPDBnotfound ) then
+          call link_to_pdb(link(i),nlinkatoms,linkdir,pdbfile,natoms,atom,n,xbest)
+        end if
+      end if
 
     end if
 
