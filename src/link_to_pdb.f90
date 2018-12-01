@@ -18,11 +18,23 @@ subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
 
   character(len=max_string_length) :: linkfile, pdbfile, linkdir
   character(len=4) :: char1, char2
+  character(len=1) :: color
 
   integer :: n
   double precision :: x(n), stepx, stepy, stepz
   double precision :: overlap, stretch
   character(len=13) :: statuschar
+
+  ! Define the color of the linker (using standard atom colors)
+  if ( link%status == 0 ) then
+    color = "N" ! Blue for links that are completely ok
+  else
+    if ( link%found ) then
+      color = "S" ! Yellow for links that are too long, too short, or not observed 
+    else 
+      color = "O" ! Red for links that were not found at all
+    end if
+  end if
 
   linkfile = pdbfile
   call cleanname(linkfile)
@@ -60,7 +72,7 @@ subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
       iy = ix + 1
       iz = ix + 2
       writeatom%index = index
-      writeatom%name = "N"
+      writeatom%name = color
       writeatom%residue%name = "LINK"
       writeatom%residue%chain = "A"
       writeatom%residue%index = 1
@@ -77,7 +89,7 @@ subroutine link_to_pdb(link,nlinkatoms,linkdir,pdbfile,natoms,atom,n,x)
     do j = 1, nsteps
       index = index + 1
       writeatom%index = index
-      writeatom%name = "O"
+      writeatom%name = color
       writeatom%residue%name = "LINK"
       writeatom%residue%chain = "A"
       writeatom%residue%index = 1
