@@ -211,6 +211,7 @@ module topolink_data
 
        if ( mmCIF ) then
          error = .false.
+
          if ( record(1:4) == "ATOM" .or. record(1:6) == "HETATM" ) then
 
            read(record,*,iostat=ioerr) (cfields(i),i=1,mmCIF_maxfield)
@@ -221,6 +222,7 @@ module topolink_data
 
            read(cfields(mmCIF_fields(2)),*,iostat=ioerr) read_atom%residue%name 
            if ( ioerr /= 0 ) error = .true.
+           call alternate_conformation(read_atom%residue)
 
            read(cfields(mmCIF_fields(3)),*,iostat=ioerr) read_atom%residue%chain
            if ( ioerr /= 0 ) error = .true.
@@ -550,7 +552,6 @@ module topolink_data
      
      end subroutine alternate_conformation
 
-     
      !
      ! Checks if structure file is of PDB or mmCIF formats
      !
@@ -607,12 +608,12 @@ module topolink_data
               mmCIF_fields(7) == 0 ) then
            write(line,"(a)") " ERROR: Could not find all necessary fields in mmCIF file. " ; call writelog(line)
            stop
+         else
+           mmCIF_maxfield = 0
+           do i = 1, 7
+             mmCIF_maxfield = max(mmCIF_maxfield,mmCIF_fields(i))
+           end do
          end if
-       else
-         mmCIF_maxfield = 0
-         do i = 1, 7
-           mmCIF_maxfield = max(mmCIF_maxfield,mmCIF_fields(i))
-         end do
        end if
 
        close(17)
