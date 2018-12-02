@@ -39,4 +39,8 @@ module inputoptions
   character(len=max_string_length) :: output_log_file
   integer :: output_log_unit 
 
+  logical :: mmCIF
+  integer :: mmCIF_maxfield
+  integer :: mmCIF_fields(7) !name, residue%name, residue%chain, residue%index, x, y, z
+
 end module inputoptions

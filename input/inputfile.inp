@@ -5,8 +5,8 @@
 # http://leandro.iqm.unicamp.br
 #
 
-# PDB file (can be provided in the command line, overwriting this definition)
-pdbfile ./protein.pdb
+# Structure file (can be provided in the command line, overwriting this definition); PDB or mmCIF formats
+structure ./protein.pdb
 
 endread ENDMDL  # Use this to stop reading atoms if this keyword is found (comment otherwise)
 readatoms heavy # Which atoms to consider (all/heavy(no-H)/backbone/backplusCB)

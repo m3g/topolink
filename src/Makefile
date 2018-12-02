@@ -39,10 +39,10 @@ BINARIES = $(BIN)/topolink \
 
 MODULES = functionpars.o \
           ioformat.o \
+          inputoptions.o \
           linkedcells.o \
           topolink_data.o \
           topolink_operations.o \
-          inputoptions.o \
           string_operations.o
 
 all : bindir $(BINARIES)
@@ -103,22 +103,22 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  title.o \
                  $(FLAGS)
 
-$(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o title.o
-	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o title.o $(FLAGS)
+$(BIN)/linkcorrelation : Makefile $(MODULES) linkcorrelation.o title.o writelog.o
+	$(FORTRAN) -o $(BIN)/linkcorrelation $(MODULES) linkcorrelation.o title.o writelog.o $(FLAGS)
 
-$(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o title.o
-	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o title.o $(FLAGS)
+$(BIN)/filtermodels : Makefile $(MODULES) filtermodels.o title.o writelog.o
+	$(FORTRAN) -o $(BIN)/filtermodels $(MODULES) filtermodels.o title.o writelog.o $(FLAGS)
 
-$(BIN)/evalmodels : Makefile $(MODULES) evalmodels.o title.o sort.o model_index.o
-	$(FORTRAN) -o $(BIN)/evalmodels $(MODULES) evalmodels.o title.o \
+$(BIN)/evalmodels : Makefile $(MODULES) evalmodels.o title.o sort.o model_index.o writelog.o
+	$(FORTRAN) -o $(BIN)/evalmodels $(MODULES) evalmodels.o title.o writelog.o \
                                       sort.o model_index.o $(FLAGS)
 
-$(BIN)/linkensemble : Makefile $(MODULES) linkensemble.o title.o sort.o model_index.o
-	$(FORTRAN) -o $(BIN)/linkensemble $(MODULES) linkensemble.o title.o \
+$(BIN)/linkensemble : Makefile $(MODULES) linkensemble.o title.o sort.o model_index.o writelog.o
+	$(FORTRAN) -o $(BIN)/linkensemble $(MODULES) linkensemble.o title.o writelog.o \
                                       sort.o model_index.o $(FLAGS)
 
-$(BIN)/comparecols : Makefile $(MODULES) comparecols.o title.o
-	$(FORTRAN) -o $(BIN)/comparecols $(MODULES) comparecols.o title.o $(FLAGS)
+$(BIN)/comparecols : Makefile $(MODULES) comparecols.o title.o writelog.o
+	$(FORTRAN) -o $(BIN)/comparecols $(MODULES) comparecols.o title.o writelog.o $(FLAGS)
 
 
 #
@@ -149,6 +149,12 @@ comparecols.o : Makefile comparecols.f90
 
 modules : $(MODULES) 
 
+ioformat.o : ioformat.f90
+	$(FORTRAN) -c ioformat.f90 $(FLAGS)
+
+inputoptions.o : inputoptions.f90 
+	$(FORTRAN) -c inputoptions.f90 $(FLAGS)
+
 functionpars.o : functionpars.f90
 	$(FORTRAN) -c functionpars.f90 $(FLAGS)
 
@@ -160,12 +166,6 @@ topolink_data.o : topolink_data.f90
 
 topolink_operations.o : topolink_operations.f90
 	$(FORTRAN) -c topolink_operations.f90 $(FLAGS)
-
-ioformat.o : ioformat.f90
-	$(FORTRAN) -c ioformat.f90 $(FLAGS)
-
-inputoptions.o : inputoptions.f90
-	$(FORTRAN) -c inputoptions.f90 $(FLAGS)
 
 string_operations.o : string_operations.f90
 	$(FORTRAN) -c string_operations.f90 $(FLAGS)
@@ -219,9 +219,6 @@ overlap.o : overlap.f90
 printdata.o : printdata.f90
 	$(FORTRAN) -c printdata.f90 $(FLAGS)
 
-writelog.o : writelog.f90
-	$(FORTRAN) -c writelog.f90 $(FLAGS)
-
 link_to_pdb.o : link_to_pdb.f90
 	$(FORTRAN) -c link_to_pdb.f90 $(FLAGS)
 
@@ -239,6 +236,9 @@ solventaccess.o : solventaccess.f90
 
 setsigma.o : setsigma.f90
 	$(FORTRAN) -c setsigma.f90 $(FLAGS)
+
+writelog.o : writelog.f90
+	$(FORTRAN) -c writelog.f90 $(FLAGS)
 
 test_grad.o : test_grad.f90
 	$(FORTRAN) -c test_grad.f90 $(FLAGS)

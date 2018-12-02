@@ -163,46 +163,83 @@ module topolink_data
 
      function read_atom(record,error)
 
-       use ioformat, only : max_string_length
-       integer :: ioerr
+       use ioformat
+       use inputoptions, only : mmCIF, mmCIF_fields, mmCIF_maxfield
+       integer :: ioerr, i
        logical :: error
        type(pdbatom) :: read_atom
        character(len=max_string_length) :: record
+       character(len=50) :: cfields(20)
        
-       error = .false.
-       if ( record(1:4) == "ATOM" .or. record(1:6) == "HETATM" ) then
+       if ( .not. mmCIF ) then
+         error = .false.
+         if ( record(1:4) == "ATOM" .or. record(1:6) == "HETATM" ) then
 
-         read(record(13:16),*,iostat=ioerr) read_atom%name
-         read_atom%name = trim(adjustl(read_atom%name))
-         if ( ioerr /= 0 ) error = .true.
-
-         read(record(17:21),*,iostat=ioerr) read_atom%residue%name
-         read_atom%residue%name = trim(adjustl(read_atom%residue%name))
-         if ( ioerr /= 0 ) error = .true.
-         call alternate_conformation(read_atom%residue)
-
-         if ( record(22:22) /= " " ) then
-           read(record(22:22),*,iostat=ioerr) read_atom%residue%chain
+           read(record(13:16),*,iostat=ioerr) read_atom%name
+           read_atom%name = trim(adjustl(read_atom%name))
            if ( ioerr /= 0 ) error = .true.
-           read_atom%residue%chain = trim(adjustl(read_atom%residue%chain))
+
+           read(record(17:21),*,iostat=ioerr) read_atom%residue%name
+           read_atom%residue%name = trim(adjustl(read_atom%residue%name))
+           if ( ioerr /= 0 ) error = .true.
+           call alternate_conformation(read_atom%residue)
+
+           if ( record(22:22) /= " " ) then
+             read(record(22:22),*,iostat=ioerr) read_atom%residue%chain
+             if ( ioerr /= 0 ) error = .true.
+             read_atom%residue%chain = trim(adjustl(read_atom%residue%chain))
+           else
+             read_atom%residue%chain = "0"
+           end if
+
+           read(record(23:26),*,iostat=ioerr) read_atom%residue%index
+           if ( ioerr /= 0 ) error = .true.
+
+           read(record(31:38),*,iostat=ioerr) read_atom%x
+           if ( ioerr /= 0 ) error = .true.
+
+           read(record(39:46),*,iostat=ioerr) read_atom%y
+           if ( ioerr /= 0 ) error = .true.
+
+           read(record(47:54),*,iostat=ioerr) read_atom%z
+           if ( ioerr /= 0 ) error = .true.
+
          else
-           read_atom%residue%chain = "0"
+           error = .true.
          end if
+       end if
 
-         read(record(23:26),*,iostat=ioerr) read_atom%residue%index
-         if ( ioerr /= 0 ) error = .true.
+       if ( mmCIF ) then
+         error = .false.
+         if ( record(1:4) == "ATOM" .or. record(1:6) == "HETATM" ) then
 
-         read(record(31:38),*,iostat=ioerr) read_atom%x
-         if ( ioerr /= 0 ) error = .true.
+           read(record,*,iostat=ioerr) (cfields(i),i=1,mmCIF_maxfield)
+           if ( ioerr /= 0 ) error = .true.
 
-         read(record(39:46),*,iostat=ioerr) read_atom%y
-         if ( ioerr /= 0 ) error = .true.
+           read(cfields(mmCIF_fields(1)),*,iostat=ioerr) read_atom%name 
+           if ( ioerr /= 0 ) error = .true.
 
-         read(record(47:54),*,iostat=ioerr) read_atom%z
-         if ( ioerr /= 0 ) error = .true.
+           read(cfields(mmCIF_fields(2)),*,iostat=ioerr) read_atom%residue%name 
+           if ( ioerr /= 0 ) error = .true.
 
-       else
-         error = .true.
+           read(cfields(mmCIF_fields(3)),*,iostat=ioerr) read_atom%residue%chain
+           if ( ioerr /= 0 ) error = .true.
+
+           read(cfields(mmCIF_fields(4)),*,iostat=ioerr) read_atom%residue%index
+           if ( ioerr /= 0 ) error = .true.
+
+           read(cfields(mmCIF_fields(5)),*,iostat=ioerr) read_atom%x
+           if ( ioerr /= 0 ) error = .true.
+
+           read(cfields(mmCIF_fields(6)),*,iostat=ioerr) read_atom%y
+           if ( ioerr /= 0 ) error = .true.
+
+           read(cfields(mmCIF_fields(7)),*,iostat=ioerr) read_atom%z
+           if ( ioerr /= 0 ) error = .true.
+
+         else
+           error = .true.
+         end if
        end if
        
      end function read_atom
@@ -512,6 +549,76 @@ module topolink_data
        end select
      
      end subroutine alternate_conformation
+
+     
+     !
+     ! Checks if structure file is of PDB or mmCIF formats
+     !
+
+     subroutine check_structure_format(pdbfile,mmCIF)
+
+       use ioformat, only : max_string_length, string_read
+       use inputoptions, only : mmCIF_fields, mmCIF_maxfield
+       implicit none
+       character(len=max_string_length) :: pdbfile, line
+       integer :: ioerr, i, ifield
+       logical :: mmCIF
+
+       do i = 1, 7
+         mmCIF_fields(i) = 0
+       end do
+
+       open(17,file=pdbfile,action="read",status="old",iostat=ioerr)
+       do
+         read(17,string_read,iostat=ioerr) line
+         if ( ioerr /= 0 ) exit
+         line = adjustl(line)
+         if ( line(1:5) == "loop_" ) then
+           mmCIF = .true.
+           ifield = 0
+           do 
+             read(17,string_read,iostat=ioerr) line
+             if ( ioerr /= 0 ) exit
+             line = adjustl(line)
+             if ( line(1:1) == "#" ) cycle
+             if ( ifield > 0 ) then
+               ifield = ifield + 1
+               if ( line(1:24) == "_atom_site.label_atom_id" ) mmCIF_fields(1) = ifield ! name
+               if ( line(1:24) == "_atom_site.label_comp_id" ) mmCIF_fields(2) = ifield ! residue%name
+               if ( line(1:24) == "_atom_site.label_asym_id" ) mmCIF_fields(3) = ifield ! residue%chain
+               if ( line(1:23) == "_atom_site.label_seq_id" ) mmCIF_fields(4) = ifield ! residue%index
+               if ( line(1:18) == "_atom_site.Cartn_x" ) mmCIF_fields(5) = ifield ! x
+               if ( line(1:18) == "_atom_site.Cartn_y" ) mmCIF_fields(6) = ifield ! y
+               if ( line(1:18) == "_atom_site.Cartn_z" ) mmCIF_fields(7) = ifield ! z
+               if ( line(1:4) == "ATOM" .or. line(1:6) == "HETATM" ) exit
+             end if
+             if ( line(1:20) == "_atom_site.group_PDB" ) ifield = 1
+           end do
+         end if 
+       end do
+      
+       if ( mmCIF ) then
+         if ( mmCIF_fields(1) == 0 .or. &
+              mmCIF_fields(2) == 0 .or. &
+              mmCIF_fields(3) == 0 .or. &
+              mmCIF_fields(4) == 0 .or. &
+              mmCIF_fields(5) == 0 .or. &
+              mmCIF_fields(6) == 0 .or. &
+              mmCIF_fields(7) == 0 ) then
+           write(line,"(a)") " ERROR: Could not find all necessary fields in mmCIF file. " ; call writelog(line)
+           stop
+         end if
+       else
+         mmCIF_maxfield = 0
+         do i = 1, 7
+           mmCIF_maxfield = max(mmCIF_maxfield,mmCIF_fields(i))
+         end do
+       end if
+
+       close(17)
+       return
+
+     end subroutine check_structure_format
 
 end module topolink_data
 

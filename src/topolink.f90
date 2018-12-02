@@ -178,6 +178,10 @@ program topolink
         if ( pdbfile == 'none' ) then
           pdbfile = filename(record)
         end if
+      case ("structure")
+        if ( pdbfile == 'none' ) then
+          pdbfile = filename(record)
+        end if
       case ("readlog")
         if ( readlog == 'none' ) then
           readlog = filename(record)
@@ -322,10 +326,17 @@ program topolink
   
   if ( seed == 0 ) call seed_from_time(seed)
   call init_random_number(seed)
- 
+
+  ! Check if structure file is of PDB or mmCIF format
+
+  mmCIF = .false.
+  call check_structure_format(pdbfile,mmCIF)
   ! Print input parameters
 
-  write(str,"(a,a)") '  PDB input file: ', trim(adjustl(pdbfile)) ; call writelog(str)
+  write(str,"(a,a)") '  Structure file: ', trim(adjustl(pdbfile)) ; call writelog(str)
+  if ( mmCIF ) then
+    write(str,"(a)") '  Structure file in mmCIF format. ' ; call writelog(str)
+  end if
   write(str,"(a,a)") '  TopoLink input file: ', trim(adjustl(inputfile)) ; call writelog(str)
   if( output_log ) then
     write(str,"(a,a)") '  Output log file: ', trim(adjustl(output_log_file)) ; call writelog(str)
@@ -1097,7 +1108,7 @@ program topolink
   i1 = 0
   do iexp = 1, nexp
     write(str,"( tr3, a, a, a, i5 )") ' Experiment ', trim(experiment(iexp)%name), ': ', &
-            experiment(iexp)%nreactive_obs ; call writelog(blank)
+            experiment(iexp)%nreactive_obs ; call writelog(str)
     i1 = i1 + experiment(iexp)%nreactive_obs
   end do
   write(str,*) ' Total number of unique reactive pairs, according to observations: ', i1 ; call writelog(str)
