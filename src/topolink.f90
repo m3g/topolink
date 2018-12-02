@@ -342,7 +342,7 @@ program topolink
     write(str,"(a,a)") '  Output log file: ', trim(adjustl(output_log_file)) ; call writelog(str)
   end if
   if ( endread /= "###" ) then
-    write(str,*) ' Will stop PDB reading when ', trim(endread), ' is found. ' ; call writelog(str)
+    write(str,*) ' Will stop structure reading when ', trim(endread), ' is found. ' ; call writelog(str)
   end if
   if ( readatoms == 0 ) then
     write(str,*) ' All atoms will be considered, including hydrogens. ' ; call writelog(str)
@@ -596,7 +596,7 @@ program topolink
 
   open(10,file=pdbfile,status='old',iostat=ioerr)
   if ( ioerr /= 0 ) then
-    write(str,*) ' ERROR: Could not open PDB file: ', trim(adjustl(pdbfile)) ; call writelog(str)
+    write(str,*) ' ERROR: Could not open structure file: ', trim(adjustl(pdbfile)) ; call writelog(str)
     stop
   end if
   natoms = 0
@@ -634,7 +634,7 @@ program topolink
   end do
   rewind(10)
   call writelog(blank)
-  write(str,intout) ' Number of atoms read from PDB file: ', natoms ; call writelog(str)
+  write(str,intout) ' Number of atoms read from structure file: ', natoms ; call writelog(str)
   allocate(atom(natoms),skip(natoms))
 
   i = 0
@@ -681,10 +681,10 @@ program topolink
 
   ! If interchain and there is only one chain, report error and stop
 
-  write(str,*) ' Number of chains found in PDB file: ', nchains ; call writelog(str)
+  write(str,*) ' Number of chains found in structure file: ', nchains ; call writelog(str)
   if ( interchain ) then
     if ( nchains == 1 ) then
-      write(str,*) ' ERROR: Only one chain was found in PDB file, and the interchain keyword was used. '
+      write(str,*) ' ERROR: Only one chain was found in structure file, and the interchain keyword was used. '
       call writelog(str)
       stop
     end if
