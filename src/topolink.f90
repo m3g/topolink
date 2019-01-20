@@ -7,11 +7,10 @@
 ! Out 5, 2015
 !
 ! Reference:
-!
-! L. Martinez, A. Ferrari, F. C. Gozzo,
-! TopoLink: A package to compute the likelihood of structural models
-! based on surface accessible topological distances
-! 2015
+! A. J. R. Ferrari, M. A. Clasen, L. Kurt, P. C. Carvalho, F. C. Gozzo, L. Martínez, 
+! TopoLink: Evaluation of structural models using chemical crosslinking distance constraints.
+! Bioinformatics, 2019
+! https://doi.org/10.1093/bioinformatics/btz014
 !
 
 program topolink
