@@ -155,23 +155,24 @@ program linkcorrelation
           model(imodel)%link(ilink) = linktemp
         end if
       end if
-      if ( line(4:11) == "RESULT0:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%nobscons
+      record = adjustl(line)
+      if ( record(1:8) == "RESULT0:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%nobscons
       if ( ioerr /= 0 ) model(imodel)%nobscons = 0
-      if ( line(4:11) == "RESULT1:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%ntopcons
+      if ( record(1:8) == "RESULT1:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%ntopcons
       if ( ioerr /= 0 ) model(imodel)%ntopcons = 0
-      if ( line(4:11) == "RESULT2:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%ntopnot
+      if ( record(1:8) == "RESULT2:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%ntopnot
       if ( ioerr /= 0 ) model(imodel)%ntopnot = 0
-      if ( line(4:11) == "RESULT3:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%nmiss
+      if ( record(1:8) == "RESULT3:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%nmiss
       if ( ioerr /= 0 ) model(imodel)%nmiss = 0
-      if ( line(4:11) == "RESULT4:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%sumscores
+      if ( record(1:8) == "RESULT4:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%sumscores
       if ( ioerr /= 0 ) model(imodel)%sumscores = 0.
-      if ( line(4:11) == "RESULT5:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%likeli
+      if ( record(1:8) == "RESULT5:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%likeli
       if ( ioerr /= 0 ) model(imodel)%likeli = 0.
-      if ( line(4:11) == "RESULT6:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%loglikeli
+      if ( record(1:8) == "RESULT6:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%loglikeli
       if ( ioerr /= 0 ) model(imodel)%loglikeli = 0.
-      if ( line(4:11) == "RESULT7:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%usrlike
+      if ( record(1:8) == "RESULT7:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%usrlike
       if ( ioerr /= 0 ) model(imodel)%usrlike = 0.
-      if ( line(4:11) == "RESULT8:") read(line(12:max_string_length),*,iostat=ioerr) model(imodel)%usrloglike
+      if ( record(1:8) == "RESULT8:") read(record(9:max_string_length),*,iostat=ioerr) model(imodel)%usrloglike
       if ( ioerr /= 0 ) model(imodel)%usrloglike = 0.
     end do
     close(20)
