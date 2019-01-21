@@ -120,7 +120,7 @@ nbest 5     # Number of times the same best link is found until satisfied
 maxfunc 50  # Maximum number of function evaluations of CG-Newton
 maxcg 20    # Maximum number of CG iterations
 seed random # Seed for random number generator (random or integer number)
-iguess 2
+iguess 1
 
 exit # You can add anything after this
 
