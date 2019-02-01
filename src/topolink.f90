@@ -1364,7 +1364,6 @@ program topolink
       ! 
 
       search_dmin = link(i)%euclidean
-      search_dmin = link(i)%dsearch - 1.d0 
       search_dmax = link(i)%dsearch
 
       dpath_best = 1.d30
