@@ -119,7 +119,7 @@ program topolink
   optpars(1) = maxfunc ! Maximum number of functional evaluations
   optpars(2) = maxcg   ! Maximum number of CG iterations
   seed = 0
-  iguess = 1
+  iguess = 2
 
   ! Read command line parameters
 
