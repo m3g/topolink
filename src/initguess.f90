@@ -30,7 +30,6 @@ subroutine initguess(n,x,iguess)
 
   ntrial = 100
 
-  !iguess = 2
   if ( iguess == 1 ) then
     best = 1.d30
     do j = 1, ntrial
