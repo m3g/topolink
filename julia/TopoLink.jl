@@ -69,6 +69,28 @@ module TopoLink
 
     return compactlog
   end
+ 
+  #
+  # Function that returns the scores of one of the models given its index
+  #
+
+  function scores( c :: CompactLog, index :: Int64 )
+    x = Vector{Float64}(undef,c.nmodels) 
+    for jndex in 1:c.nmodels
+      ipos = icl(c,index,jndex)
+      if ipos == 0
+        x[jndex] = 1.
+        continue
+      end
+      x[jndex] = c.score[ipos]
+    end
+    return x
+  end
+
+  function scores( c :: CompactLog, model :: String )
+    index = findfirst(isequal(model),c.name)
+    return scores( c, index )
+  end
 
   #
   # Function to return a square distance matrix given the compaclog score data
