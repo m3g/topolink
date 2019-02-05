@@ -101,6 +101,27 @@ module TopoLink
     return dmatrix
   end
 
+  # Function that returns the index in vector score of the compactlog
+  # matrix, given the indexes of the pair to be studied
+
+  function icl( c :: CompactLog, index :: Int64, jndex :: Int64)
+
+    #upper triangular, without diagonal
+    #i,j ->   (i-1)*n+j - (i*(i-i))/2 + i
+
+    if index == jndex
+      return 0
+    elseif index > jndex
+      j = index
+      i = jndex
+    elseif index < jndex
+      i = index
+      j = jndex
+    end
+    return (i-1)*c.nmodels+j - (div((i*(i-1)),2)+i)
+
+  end
+
   #
   # Function that computes the degree of a model
   #
@@ -109,23 +130,14 @@ module TopoLink
 
     degree = 0
 
-    #upper triangular, without diagonal
-    #i,j ->   (i-1)*n+j - (i*(i-i))/2 + i
-
     n = c.nmodels
     for jndex in 1:c.nmodels
 
-      if index == jndex
+      ipos = icl(c,index,jndex)
+      if ipos == 0
         continue
-      elseif index > jndex
-        j = index
-        i = jndex
-      elseif index < jndex
-        i = index
-        j = jndex
       end
 
-      ipos = (i-1)*n+j - (div((i*(i-1)),2)+i)
       if c.score[ipos] > cutoff
         degree = degree + 1
       end
@@ -146,6 +158,7 @@ module TopoLink
 
   struct Gscore
     name :: String
+    index :: Int64
     gscore :: Float64
     degree :: Int64
   end
@@ -155,10 +168,37 @@ module TopoLink
     for i in 1:c.nmodels
       degree = TopoLink.degree( c, i, cutoff = cutoff )
       name = c.name[i]
-      gscore[i] = Gscore(name, degree / ( c.nmodels-1 ), degree )
+      gscore[i] = Gscore(name, i, degree / ( c.nmodels-1 ), degree )
     end
-    sort!(gscore, by = x -> x.gscore, rev=true)
+    #sort!(gscore, by = x -> x.gscore, rev=true)
     return gscore
+  end
+
+  #
+  # Function to produce a similarity vs. gscore plot 
+  #
+
+  function simg( c :: CompactLog, gscore :: Vector{Gscore}, model :: String )
+    index = findfirst(isequal(model),c.name)
+    return simg( c, gscore, index )
+  end
+
+  function simg( c :: CompactLog , gscore :: Vector{Gscore}, index :: Int64  )
+
+    x = Vector{Float64}(undef,c.nmodels)
+    y = Vector{Float64}(undef,c.nmodels)
+
+    for j in 1:c.nmodels
+      x[j] = gscore[j].gscore
+      if j == index
+        y[j] = 1.
+      else
+        ipos = icl(c,index,j) 
+        y[j] = c.score[ipos] 
+      end
+    end
+
+    return x, y
   end
 
 end
