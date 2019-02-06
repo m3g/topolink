@@ -16,6 +16,9 @@ module TopoLink
   # Functions to extract data in easy plotable ways
   include("./src/simg.jl")
 
+  # Functions to read topolink log files
+  include("./src/logs.jl")
+
 end
 
 

@@ -26,15 +26,19 @@ struct TopoLinkLog
   model :: String
   nlinks :: Int64
   link :: Vector{Link}
+  nconsist :: Int64
+  nnotcons :: Int64
+  nmissing :: Int64
 end
 
 function readlog( filename :: String )
 
-  local nlinks :: Int64
-  local pdb :: String
-  local link :: Vector{Link}
+  local nlinks
+  local pdb 
+  local link
   local ra 
   local model
+  local nconsist, nnotcons, nmissing
 
   file = open(filename,"r")
   nlinks = 0
@@ -63,6 +67,15 @@ function readlog( filename :: String )
       name = basename(pdb)
       name = split(name,".")
       model = name[1]
+    end
+    if data[1] == "RESULT0:"
+      nconsist = parse(Int64,data[2])
+    end
+    if data[1] == "RESULT2:"
+      nnotcons = parse(Int64,data[2])
+    end
+    if data[1] == "RESULT3:"
+      nmissing = parse(Int64,data[2])
     end
     if data[1] == "LINK:"
       ilink = ilink + 1
@@ -113,7 +126,7 @@ function readlog( filename :: String )
   end
   close(file)
 
-  return TopoLinkLog( pdb, model, nlinks, link )
+  return TopoLinkLog( pdb, model, nlinks, link, nconsist, nnotcons, nmissing )
 
 end
 
