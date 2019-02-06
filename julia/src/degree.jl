@@ -9,7 +9,7 @@ function degree( c :: CompactLog, index :: Int64 ; cutoff = 0.5 )
     if ipos == 0
       continue
     end
-    if c.score[ipos] > cutoff
+    if c.score[ipos] >= cutoff
       degree = degree + 1
     end
   end

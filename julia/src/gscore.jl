@@ -1,5 +1,6 @@
 #
-# Function that computes the degree of a model
+# Function that computes the gscore of a model
+# gscore = -RT ln(P) where P is the fraction of models within the cutoff
 #
 
 function gscore( c :: CompactLog, index :: Int64 ; cutoff = 0.5 )
@@ -9,11 +10,12 @@ function gscore( c :: CompactLog, index :: Int64 ; cutoff = 0.5 )
     if ipos == 0
       continue
     end
-    if c.score[ipos] > cutoff
+    if c.score[ipos] >= cutoff
       gscore = gscore + 1.
     end
   end
-  return gscore
+  gscore = -0.593*log(gscore / ( c.nmodels - 1 ))
+  return gscore 
 end
 
 function gscore( c :: CompactLog, model :: String ; cutoff = 0.5 )
