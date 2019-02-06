@@ -1,5 +1,4 @@
-#Link
- 
+# 
 # Functions to read topolink log files
 #
 
