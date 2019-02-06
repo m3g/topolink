@@ -1,4 +1,5 @@
-#
+#Link
+ 
 # Functions to read topolink log files
 #
 
@@ -18,10 +19,12 @@ struct Link
   observed :: Bool
   dmin :: Float64
   dmax :: Float64
+  result :: String
 end
 
 struct TopoLinkLog
   pdb :: String
+  model :: String
   nlinks :: Int64
   link :: Vector{Link}
 end
@@ -32,6 +35,7 @@ function readlog( filename :: String )
   local pdb :: String
   local link :: Vector{Link}
   local ra 
+  local model
 
   file = open(filename,"r")
   nlinks = 0
@@ -57,6 +61,9 @@ function readlog( filename :: String )
     if length(data) < 2 ; continue ; end
     if data[1] == "PDB" && data[2] == "input"
       pdb = data[4]
+      name = basename(pdb)
+      name = split(name,".")
+      model = name[1]
     end
     if data[1] == "LINK:"
       ilink = ilink + 1
@@ -99,12 +106,70 @@ function readlog( filename :: String )
       dmin = parse(Float64,data[13])
       dmax = parse(Float64,data[14])
 
-      link[ilink] = Link( resid1, resid2, euclidean, topological, observed, dmin, dmax )
+      result = "$(data[15]) $(data[16])"
+
+      link[ilink] = Link( resid1, resid2, euclidean, topological, observed, dmin, dmax, result )
 
     end
   end
   close(file)
 
-  return TopoLinkLog( pdb, nlinks, link )
+  return TopoLinkLog( pdb, model, nlinks, link )
 
 end
+
+function Base.show( io :: IO, m :: TopoLinkLog )
+  println(" Read ", m.model, " log file, with ", m.nlinks," links.")
+end
+
+#
+# Function to read a lot of log files
+#
+
+struct MultipleLogs
+  nlogs :: Int64
+  log :: Vector{TopoLinkLog}
+  filename :: String
+end
+
+function readlogs( loglistname :: String )
+
+  loglist = open(loglistname,"r")
+  nlogs = 0
+  for filename in eachline(loglist)
+    nlogs = nlogs + 1
+  end
+  seekstart(loglist)
+
+  logs = Vector{TopoLinkLog}(undef,nlogs)
+
+  ilog = 0
+  for filename in eachline(loglist)
+    ilog = ilog + 1
+    logs[ilog] = readlog(filename)
+  end
+
+  close(loglist)
+
+  return MultipleLogs( nlogs, logs, loglistname ) 
+
+end
+
+function Base.show( io :: IO, m :: MultipleLogs )
+  println(" Read ", m.filename," with ", m.nlogs , " log files.")
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
