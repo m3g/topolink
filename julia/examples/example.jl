@@ -1,5 +1,5 @@
 
-include("./TopoLink.jl")
+include("../TopoLink.jl")
 
 file = "/home/leandro/Drive/Work/topolink/compactlog-TMscore.dat"
 
