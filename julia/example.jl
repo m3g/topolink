@@ -1,14 +1,16 @@
 
 include("./TopoLink.jl")
 
-file = "/home/leandro/Documents/fabio/salbIII/26rest/gscore/compactlog-TMscore.dat"
+file = "/home/leandro/Drive/Work/topolink/compactlog-TMscore.dat"
 
 smatrix = TopoLink.compactlog(file) 
 
-gscore = TopoLink.gscore(smatrix) 
+consensus = TopoLink.cscores(smatrix) 
+
+sort!(consensus, by = x -> x.gscore, rev=true)
 
 for i in 1:10
-  println(gscore[i].name," ",gscore[i].gscore)
+  println(consensus[i].name," ",consensus[i].gscore)
 end
 
 
