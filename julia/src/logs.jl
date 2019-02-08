@@ -2,34 +2,7 @@
 # Functions to read topolink log files
 #
 
-struct Residue
-  name :: String
-  chain :: String
-  number :: Int64
-  atom :: String
-  sa :: Bool # Solvent accessibility
-end
-
-struct Link
-  resid1 :: Residue
-  resid2 :: Residue
-  euclidean :: Float64
-  topological :: Float64
-  observed :: Bool
-  dmin :: Float64
-  dmax :: Float64
-  result :: String
-end
-
-struct TopoLinkLog
-  pdb :: String
-  model :: String
-  nlinks :: Int64
-  link :: Vector{Link}
-  nconsist :: Int64
-  nnotcons :: Int64
-  nmissing :: Int64
-end
+include("./structures.jl")
 
 function readlog( filename :: String )
 
@@ -131,22 +104,18 @@ function readlog( filename :: String )
 end
 
 function Base.show( io :: IO, m :: TopoLinkLog )
-  println(" Read ", m.model, " log file, with ", m.nlinks," links.")
+  print( m.model, " log file, with ", m.nlinks," links.")
 end
 
 #
 # Function to read a lot of log files
 #
 
-struct MultipleLogs
-  nlogs :: Int64
-  log :: Vector{TopoLinkLog}
-  filename :: String
-end
-
+using ProgressMeter
 function readlogs( loglistname :: String )
 
   loglist = open(loglistname,"r")
+
   nlogs = 0
   for filename in eachline(loglist)
     nlogs = nlogs + 1
@@ -155,33 +124,25 @@ function readlogs( loglistname :: String )
 
   logs = Vector{TopoLinkLog}(undef,nlogs)
 
+  seekend(loglist) ; fileSize = position(loglist) ; seekstart(loglist)
+  p = Progress(fileSize,1," Reading list of log files: ")
+
   ilog = 0
   for filename in eachline(loglist)
+    update!(p,position(loglist))
     ilog = ilog + 1
     logs[ilog] = readlog(filename)
   end
 
   close(loglist)
 
-  return MultipleLogs( nlogs, logs, loglistname ) 
+  return logs 
 
 end
 
-function Base.show( io :: IO, m :: MultipleLogs )
-  println(" Read ", m.filename," with ", m.nlogs , " log files.")
+function Base.show( io :: IO, ::MIME"text/plain", logs :: Array{TopoLinkLog} )
+  print(" Log list with ", length(logs)," log files.")
 end
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

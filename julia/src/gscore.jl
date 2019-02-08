@@ -22,3 +22,4 @@ function gscore( c :: CompactLog, model :: String ; cutoff = 0.5 )
   index = findfirst(isequal(model),c.name)
   return gscore( c, index, cutoff=cutoff )
 end
+

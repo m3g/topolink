@@ -1,5 +1,8 @@
 module TopoLink
 
+  # Data structures
+  include("./src/structures.jl")
+
   # Functions to read and manipulate the compactlog file
   include("./src/compactlog.jl")
 
