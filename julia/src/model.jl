@@ -75,7 +75,7 @@ function models( loglistname :: String; compactlog :: CompactLog = CompactLog(),
                                         cutoff = 0.5,
                                         fdist = inverse_minus_one )
 
-  loglist = open( logliting Pame, "r" )
+  loglist = open( loglistname, "r" )
   nlogs = 0
   for filename in eachline(loglist)
     nlogs = nlogs + 1

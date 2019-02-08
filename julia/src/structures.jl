@@ -31,6 +31,10 @@ struct LinkAtom
   residue :: Residue
 end 
 
+function Base.show( io :: IO, atom :: LinkAtom )
+  print( atom.residue.name," ",atom.residue.chain," ",atom.residue.number," ",atom.name )
+end
+
 #
 # A specific link
 #
