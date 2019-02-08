@@ -17,5 +17,5 @@ end
 
 function davis( c :: CompactLog, model :: String ; f = inverse_minus_one )
   index = findfirst(isequal(model),c.name)
-  return davis( c, index, f )
+  return davis( c, index, f = f )
 end

@@ -80,6 +80,12 @@ function compactlog( filename :: String )
   return compactlog
 end
 
+CompactLog() = CompactLog("none",0,[],[],"none","none","none")
+
+function Base.show( io :: IO, c :: CompactLog )
+  print( " Compact log file with data for ", c.nmodels, " models, score type: ", c.score_type ) 
+end
+
 #
 # Function that returns the scores written in the compactlog file 
 # of one of the models given its index

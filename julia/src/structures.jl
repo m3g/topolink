@@ -1,33 +1,15 @@
+import Base: ==
+
+#
+# Amino acid residue 
+#
+
 struct Residue
   name :: String
   chain :: String
   number :: Int64
-  atom :: String
   sa :: Bool # Solvent accessibility
 end
-
-struct Link
-  resid1 :: Residue
-  resid2 :: Residue
-  euclidean :: Float64
-  topological :: Float64
-  observed :: Bool
-  dmin :: Float64
-  dmax :: Float64
-  result :: String
-end
-
-struct TopoLinkLog
-  pdb :: String
-  model :: String
-  nlinks :: Int64
-  link :: Vector{Link}
-  nconsist :: Int64
-  nnotcons :: Int64
-  nmissing :: Int64
-end
-
-import Base: ==
 
 function ==( x :: Residue, y :: Residue )
   if x.name == y.name &&
@@ -40,15 +22,78 @@ function ==( x :: Residue, y :: Residue )
   end
 end
 
+#
+# Link Atom
+#
+
+struct LinkAtom
+  name :: String 
+  residue :: Residue
+end 
+
+#
+# A specific link
+#
+
+struct Link
+  atom1 :: LinkAtom
+  atom2 :: LinkAtom
+  euclidean :: Float64
+  topological :: Float64
+  observed :: Bool
+  dmin :: Float64
+  dmax :: Float64
+  result :: String
+end
+
 function ==( x :: Link, y :: Link ) 
-  if ( x.resid1 == y.resid1 && x.resid2 == y.resid2 ) ||
-     ( x.resid1 == y.resid2 && x.resid2 == y.resid1 ) ||
-     ( x.resid2 == y.resid1 && x.resid1 == y.resid2 )
+  if ( x.atom1 == y.atom1 && x.atom2 == y.atom2 ) ||
+     ( x.atom1 == y.atom2 && x.atom2 == y.atom1 ) ||
+     ( x.atom2 == y.atom1 && x.atom1 == y.atom2 )
     return true
   else
     return false
   end
 end
+
+#
+# A topolink log file
+#
+
+struct TopoLinkLog
+
+  pdb :: String
+  name :: String
+  nlinks :: Int64
+  link :: Vector{Link}
+  nconsist :: Int64
+  nnotcons :: Int64
+  nmissing :: Int64
+
+end
+
+#
+# All data for a model
+#
+
+struct Model
+
+  name :: String
+  pdb :: String
+  nlinks :: Int64
+
+  log :: String
+  link :: Vector{Link}
+  nconsist :: Int64
+  nnotcons :: Int64
+  nmissing :: Int64
+
+  gscore :: Float64
+  degree :: Int64
+  davis :: Float64
+
+end
+
 
 
  

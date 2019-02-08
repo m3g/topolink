@@ -14,13 +14,11 @@ module TopoLink
   include("./src/davis.jl")
   include("./src/gscore.jl")
 
-  include("./src/cscore.jl")
-
-  # Functions to extract data in easy plotable ways
-  include("./src/simg.jl")
-
   # Functions to read topolink log files
-  include("./src/logs.jl")
+  include("./src/readlog.jl")
+
+  # Function to setup all data for a model
+  include("./src/model.jl")
 
 end
 

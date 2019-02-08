@@ -10,7 +10,7 @@ function readlog( filename :: String )
   local pdb 
   local link
   local ra 
-  local model
+  local modelname
   local nconsist, nnotcons, nmissing
 
   file = open(filename,"r")
@@ -39,7 +39,7 @@ function readlog( filename :: String )
       pdb = data[4]
       name = basename(pdb)
       name = split(name,".")
-      model = name[1]
+      modelname = name[1]
     end
     if data[1] == "RESULT0:"
       nconsist = parse(Int64,data[2])
@@ -62,7 +62,8 @@ function readlog( filename :: String )
       else
         sa = false
       end
-      resid1 = Residue( name, chain, number, atom, sa )
+      residue = Residue( name, chain, number, sa )
+      atom1 = LinkAtom( atom, residue )
      
       name = data[6]
       chain = data[7]
@@ -73,7 +74,8 @@ function readlog( filename :: String )
       else
         sa = false
       end
-      resid2 = Residue( name, chain, number, atom, sa )
+      residue = Residue( name, chain, number, sa )
+      atom2 = LinkAtom( atom, residue )
    
       euclidean = parse(Float64,data[10])
       if data[11][1:1] == ">"
@@ -93,55 +95,18 @@ function readlog( filename :: String )
 
       result = "$(data[15]) $(data[16])"
 
-      link[ilink] = Link( resid1, resid2, euclidean, topological, observed, dmin, dmax, result )
+      link[ilink] = Link( atom1, atom2, euclidean, topological, observed, dmin, dmax, result )
 
     end
   end
   close(file)
 
-  return TopoLinkLog( pdb, model, nlinks, link, nconsist, nnotcons, nmissing )
+  return TopoLinkLog( pdb, modelname, nlinks, link, nconsist, nnotcons, nmissing )
 
 end
 
 function Base.show( io :: IO, m :: TopoLinkLog )
-  print( m.model, " log file, with ", m.nlinks," links.")
-end
-
-#
-# Function to read a lot of log files
-#
-
-using ProgressMeter
-function readlogs( loglistname :: String )
-
-  loglist = open(loglistname,"r")
-
-  nlogs = 0
-  for filename in eachline(loglist)
-    nlogs = nlogs + 1
-  end
-  seekstart(loglist)
-
-  logs = Vector{TopoLinkLog}(undef,nlogs)
-
-  seekend(loglist) ; fileSize = position(loglist) ; seekstart(loglist)
-  p = Progress(fileSize,1," Reading list of log files: ")
-
-  ilog = 0
-  for filename in eachline(loglist)
-    update!(p,position(loglist))
-    ilog = ilog + 1
-    logs[ilog] = readlog(filename)
-  end
-
-  close(loglist)
-
-  return logs 
-
-end
-
-function Base.show( io :: IO, ::MIME"text/plain", logs :: Array{TopoLinkLog} )
-  print(" Log list with ", length(logs)," log files.")
+  print( m.name, " log file, with ", m.nlinks," links.")
 end
 
 
