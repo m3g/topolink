@@ -27,7 +27,31 @@ struct TopoLinkLog
   nmissing :: Int64
 end
 
+import Base: ==
 
+function ==( x :: Residue, y :: Residue )
+  if x.name == y.name &&
+     x.chain == y.chain &&
+     x.number == y.number &&
+     x.atom == y.atom 
+    return true
+  else
+    return false
+  end
+end
+
+function ==( x :: Link, y :: Link ) 
+  if ( x.resid1 == y.resid1 && x.resid2 == y.resid2 ) ||
+     ( x.resid1 == y.resid2 && x.resid2 == y.resid1 ) ||
+     ( x.resid2 == y.resid1 && x.resid1 == y.resid2 )
+    return true
+  else
+    return false
+  end
+end
+
+
+ 
 
 
 

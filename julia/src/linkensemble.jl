@@ -8,7 +8,11 @@ function linkensemble( logs , cscore :: Cscore )
   nsatisfied = 0
   satisfied = [ false for i in 1:nlinks ]
 
+  for ilink in 1:nlinks
+
   for ilog in logs
+
+    
 
   end
 
