@@ -20,6 +20,12 @@ module TopoLink
   # Function to setup all data for a model
   include("./src/model.jl")
 
+  # Function to compute the linkensemble plot
+  include("./src/linkensemble.jl")
+
+  # Functions to easy ploting data
+  include("./src/simpleget.jl")
+
 end
 
 
