@@ -11,7 +11,7 @@ function gscore( models :: Vector{Model} )
   return [ models[i].gscore for i in 1:length(models) ]
 end
 
-function gscore( models :: Vector{Model} )
+function name( models :: Vector{Model} )
   return [ models[i].name for i in 1:length(models) ]
 end
 

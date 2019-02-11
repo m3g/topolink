@@ -1,5 +1,7 @@
 module TopoLink
 
+  export davis, gscore
+
   # Data structures
   include("./src/structures.jl")
 
