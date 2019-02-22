@@ -16,6 +16,6 @@ consensus scores with:
 
 ```
 using Plots
-plot(TopoLink.davis(models),TopoLink.nconsist(models))
+plot(davis(models),nconsist(models))
 
 ```
