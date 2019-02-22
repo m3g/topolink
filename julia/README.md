@@ -29,8 +29,11 @@ where `loglist.txt` is a file containing the list of TopoLink log files generate
 The `models` vector contains the data for all models, meaning, for example:
 
 `model[1].name` : model name
+
 `model[1].davis` : model Davis consensus score
+
 `model[1].nconsist` : number of consistent links of this model
+
 `model[1].degree` : model clustering degree
 
 The vector can be sorted by any of these properteis by using the standard Julia sort function:

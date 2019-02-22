@@ -2,8 +2,6 @@
 # Functions to read topolink log files
 #
 
-include("./structures.jl")
-
 function readlog( filename :: String )
 
   local nlinks

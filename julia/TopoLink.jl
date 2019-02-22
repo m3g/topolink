@@ -1,6 +1,7 @@
 module TopoLink
 
-  export davis, gscore
+  export names, davis, gscore, degree, nconsist, index
+  export linkensemble
 
   # Data structures
   include("./src/structures.jl")
@@ -27,7 +28,7 @@ module TopoLink
 
   # Functions to easy ploting data
   include("./src/simpleget.jl")
-
+ 
 end
 
 

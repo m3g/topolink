@@ -17,7 +17,8 @@ function model( logfilename :: String; compactlog :: CompactLog = CompactLog(),
 
     degree = TopoLink.degree( compactlog, logdata.name, cutoff = cutoff )
     davis = TopoLink.davis( compactlog, logdata.name, f = fdist )
-    gscore = -0.593*log( degree / ( compactlog.nmodels - 1. ) )
+    #gscore = -0.593*log( degree / ( compactlog.nmodels - 1. ) )
+    gscore = degree / ( compactlog.nmodels - 1. ) 
 
   else
 

@@ -18,3 +18,7 @@ end
 function nconsist( models :: Vector{Model} )
   return [ models[i].nconsist for i in 1:length(models) ]
 end
+
+function index( models :: Vector{Model} )
+  return [ i for i in 1:length(models) ]
+end

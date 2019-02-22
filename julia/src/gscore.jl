@@ -14,7 +14,8 @@ function gscore( c :: CompactLog, index :: Int64 ; cutoff = 0.5 )
       gscore = gscore + 1.
     end
   end
-  gscore = -0.593*log(gscore / ( c.nmodels - 1 ))
+  #gscore = -0.593*log(gscore / ( c.nmodels - 1 ))
+  gscore = gscore / ( c.nmodels - 1 )
   return gscore 
 end
 
