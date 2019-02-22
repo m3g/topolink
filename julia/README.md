@@ -47,7 +47,12 @@ Once the compactlog and model data are loaded, you can plot many properties of t
 ```
 using Plots
 scatter( davis(models), nconsist(models) )
+scatter!( xlabel="Davis score", ylabel="Number of consistent XLs")
 ```
+
+This will produce the following plot:
+
+![alt text](http://github.com/mcubeg/topolink/julia/examples/davis_nxl.png)
 
 We also provide the function necessary to compute the number of models, as classified by any of the model features, necessary to cumulatively satisfy the crosslinks. This is the `linkensemble` function:
 
