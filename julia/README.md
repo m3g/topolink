@@ -52,7 +52,7 @@ scatter!( xlabel="Davis score", ylabel="Number of consistent XLs")
 
 This will produce the following plot:
 
-![](https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.png?raw=true | width=200)
+![](https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.png?raw=true)
 
 We also provide the function necessary to compute the number of models, as classified by any of the model features, necessary to cumulatively satisfy the crosslinks. This is the `linkensemble` function:
 
@@ -69,6 +69,7 @@ plot!(xlim=[0,200],linewidth=2)
 
 producing the linkensemble plot:
 
+![](https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.png?raw=true)
 
 
 

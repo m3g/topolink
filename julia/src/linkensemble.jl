@@ -1,5 +1,5 @@
 
-function linkensemble( models :: Vector{} ; score = x -> x.gscore, rev = true )
+function linkensemble( models :: Vector{Model} ; by= x -> x.gscore, rev = true )
   
   nlinks = models[1].nlinks
 
@@ -7,7 +7,7 @@ function linkensemble( models :: Vector{} ; score = x -> x.gscore, rev = true )
   satisfied = [ false for i in 1:nlinks ]
 
   # The models have to be sorted by the desired score
-  sort!( models, by = score, rev = rev )
+  sort!( models, by = by, rev = rev )
 
   for imodel in 1:length(models)
     for ilink in 1:nlinks
