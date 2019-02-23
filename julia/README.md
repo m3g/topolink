@@ -123,6 +123,21 @@ resulting in the figure below:
 
 ## Correlation between crosslinks
 
+The `linkdata` structure can also be used to compute the correlation
+between crosslinks. For example,
+
+``` 
+link1 = linkdata( models, 1 )
+link2 = linkdata( models, 2 )
+```
+define two structures with the ensembles properties of these two links.
+The correlation of these two links can then be computed with the
+`correlation` function:
+```
+c12 = correlation( link1, link2 )
+```
+
+
 
 
 
