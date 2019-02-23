@@ -89,6 +89,35 @@ producing the linkensemble plot:
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.png?raw=true">
 </p>
 
+To view the results of the modeling for a single link, you can use the
+`linkdata` structure and the `linkresult` function. For example:
+
+```
+link = linkdata( models, 5 )
+```
+will get all the data concerning link number 5 into the `link`
+structure. The results obtained can be summarized with the `linkresult`
+function, as in
+```
+result, nmodels = linkresults( link )
+```
+This will return, the name of the result ("OK: FOUND", etc) and the
+number of models for which that result was observed. 
+An histogram with this data can be easily constructed with:
+```
+bar(x,y,xrotation=60,title=linkname(link))
+bar!(xlabel="Result",ylabel="Number of models")
+```
+resulting in the figure below:
+<p align="center">
+<img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/linkhistogram.png?raw=true">
+</p>
+
+
+
+
+
+
 
 
 

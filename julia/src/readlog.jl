@@ -93,7 +93,7 @@ function readlog( filename :: String )
 
       result = "$(data[15]) $(data[16])"
 
-      link[ilink] = Link( atom1, atom2, euclidean, topological, observed, dmin, dmax, result )
+      link[ilink] = Link( atom1, atom2, euclidean, topological, observed, dmin, dmax, result, status(result) )
 
     end
   end

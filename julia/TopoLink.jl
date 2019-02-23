@@ -2,9 +2,16 @@ module TopoLink
 
   export names, davis, gscore, degree, nconsist, index
   export linkensemble
+  export status, result
+  export linkdata
+  export linkresults
 
   # Data structures
   include("./src/structures.jl")
+
+  # Functions to get status index or name from one another
+  include("./src/status.jl")
+  include("./src/result.jl")
 
   # Functions to read and manipulate the compactlog file
   include("./src/compactlog.jl")
@@ -25,10 +32,18 @@ module TopoLink
 
   # Function to compute the linkensemble plot
   include("./src/linkensemble.jl")
+  
+  # Functions to get link data for all models
+  include("./src/linkdata.jl")
+  include("./src/linkresults.jl")
 
   # Functions to easy ploting data
   include("./src/simpleget.jl")
- 
+
+  # Functions to write some data in specific formats
+  include("./src/write.jl")
+  export linkname
+
 end
 
 

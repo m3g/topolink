@@ -48,6 +48,7 @@ struct Link
   dmin :: Float64
   dmax :: Float64
   result :: String
+  status :: Int64
 end
 
 function ==( x :: Link, y :: Link ) 
@@ -58,6 +59,25 @@ function ==( x :: Link, y :: Link )
   else
     return false
   end
+end
+
+#
+# Link data for ensemble analysis
+#
+
+struct LinkData
+
+  index :: Int64
+  atom1 :: LinkAtom
+  atom2 :: LinkAtom
+  dmin :: Float64
+  dmax :: Float64
+  observed :: Bool
+
+  # Link result for all models
+  result :: Vector{String}
+  status :: Vector{Int64}
+
 end
 
 #
