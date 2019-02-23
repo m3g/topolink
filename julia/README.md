@@ -1,4 +1,5 @@
 
+# TopoLink.jl :  Tools to analyze ensembles of models with TopoLink
 
 This is a dynamic set of tools to analyze ensembles of structural models studied with TopoLink
 
@@ -10,6 +11,7 @@ Load the TopoLink julia package using:
 ```
 push!(LOAD_PATH,"/path_to/topolink/julia")
 using TopoLink
+using Plots
 ```
 
 After obtaining the compactlog file as explained in the main TopoLink
@@ -26,6 +28,8 @@ models = TopoLink.models( "./loglist.txt", compactlog=compactlog )
 ```
 
 where `loglist.txt` is a file containing the list of TopoLink log files generated.
+
+# Model data
 
 The `models` vector contains the data for all models, meaning, for example:
 
@@ -64,6 +68,8 @@ This will produce the following plot:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.png?raw=true">
 </p>
+
+## Evaluating the number of models necessary to satisfy the crosslinks
 
 We also provide the function necessary to compute the number of models,
 as classified by any of the model features, necessary to cumulatively
