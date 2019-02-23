@@ -73,7 +73,7 @@ satisfy the crosslinks. This is the `linkensemble` function:
 nsatisfied = linkensemble(models, by = model -> model.degree)
 ```
 
-and these data can be plot as a function of the index of the model. The
+and these data can be plotted as a function of the index of the model. The
 data is sorted by the `linkensemble` function by the chosen model
 property. To plot the result, do  
 
