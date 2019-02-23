@@ -61,7 +61,9 @@ scatter!( xlabel="Davis score", ylabel="Number of consistent XLs")
 
 This will produce the following plot:
 
-![](https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.png?raw=true)
+<p align="center">
+<img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.png?raw=true">
+</p>
 
 We also provide the function necessary to compute the number of models,
 as classified by any of the model features, necessary to cumulatively
