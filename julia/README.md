@@ -29,7 +29,7 @@ models = TopoLink.models( "./loglist.txt", compactlog=compactlog )
 
 where `loglist.txt` is a file containing the list of TopoLink log files generated.
 
-# Model data
+## Model data
 
 The `models` vector contains the data for all models, meaning, for example:
 
@@ -94,6 +94,8 @@ producing the linkensemble plot:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.png?raw=true">
 </p>
+
+## Evaluating the ensemble properties of a specific link
 
 To view the results of the modeling for a single link, you can use the
 `linkdata` structure and the `linkresult` function. For example:
