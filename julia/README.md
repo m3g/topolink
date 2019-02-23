@@ -10,8 +10,7 @@ How to use it:
 Load the TopoLink julia package using:
 ```
 push!(LOAD_PATH,"/path_to/topolink/julia")
-using TopoLink
-using Plots
+using TopoLink, Plots
 ```
 
 After obtaining the compactlog file as explained in the main TopoLink
@@ -145,7 +144,7 @@ C  = cmatrix( models )
 This matrix can be plot as a heatmap, using:
 ```
 heatmap(C,color=cgrad(:RdBu),clims=(-1,1))
-heatmap!(xlabel="XL index",ylabel="XL index",title="XL correlation map"
+heatmap!(xlabel="XL index",ylabel="XL index",title="XL correlation map")
 ```
 leading to the correlation matrix plot:
 <p align="center">
