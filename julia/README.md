@@ -76,7 +76,8 @@ data is sorted by the `linkensemble` function by the chosen model
 property. To plot the result, do  
 
 ```
-plot( index(models), nsatisfied, xlabel="Models ordered by degree", ylabel="Cumulative XL satisfied", linewidth=2 )
+plot( index(models), nsatisfied, , linewidth=2 ) 
+plot!(xlabel="Models ordered by degree", ylabel="Cumulative XL satisfied")
 plot!(xlim=[0,50])
 ```
 
