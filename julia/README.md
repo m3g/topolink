@@ -105,7 +105,7 @@ This will return, the name of the result ("OK: FOUND", etc) and the
 number of models for which that result was observed. 
 An histogram with this data can be easily constructed with:
 ```
-bar(x,y,xrotation=60,title=linkname(link))
+bar(result,nmodels,xrotation=60,title=linkname(link))
 bar!(xlabel="Result",ylabel="Number of models")
 ```
 resulting in the figure below:
