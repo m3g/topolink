@@ -83,7 +83,8 @@ plot!(xlim=[0,50])
 
 producing the linkensemble plot:
 
-![](https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.png?raw=true)
+<img src=https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.png?raw=true align=center>
+
 
 
 
