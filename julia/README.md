@@ -136,6 +136,24 @@ The correlation of these two links can then be computed with the
 ```
 c12 = correlation( link1, link2 )
 ```
+Of course, this feature can be easily extended to compute the complete
+correlation matrix between the crosslinks. This is implemented in the
+`cmatrix` function, to be used as:
+```
+C  = cmatrix( models )
+```
+This matrix can be plot as a heatmap, using:
+```
+heatmap(C,color=cgrad(:RdBu),clims=(-1,1))
+heatmap!(xlabel="XL index",ylabel="XL index",title="XL correlation map"
+```
+leading to the correlation matrix plot:
+<p align="center">
+<img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/correlation.png?raw=true">
+</p>
+
+
+
 
 
 

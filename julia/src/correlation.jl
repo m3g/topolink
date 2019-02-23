@@ -31,7 +31,11 @@ function correlation( link1 :: LinkData, link2 :: LinkData )
   nx1 = n[1,1] + n[2,1]
   nx2 = n[1,2] + n[2,2]
 
-  correlation = (n[1,1]*n[2,2] - n[1,2]*n[2,1]) / sqrt( n1x*n2x*nx1*nx2 )
+  if n1x*n2x*nx1*nx2 != 0 
+    correlation = (n[1,1]*n[2,2] - n[1,2]*n[2,1]) / sqrt( n1x*n2x*nx1*nx2 )
+  else
+    correlation = 0.
+  end
 
   return correlation
 

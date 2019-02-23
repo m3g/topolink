@@ -36,8 +36,11 @@ module TopoLink
   # Functions to get link data for all models
   include("./src/linkdata.jl")
   include("./src/linkresults.jl")
+
+  # Correlation functions
   include("./src/correlation.jl")
-  export correlation
+  include("./src/cmatrix.jl")
+  export correlation, cmatrix
 
   # Functions to easy ploting data
   include("./src/simpleget.jl")
