@@ -36,6 +36,8 @@ module TopoLink
   # Functions to get link data for all models
   include("./src/linkdata.jl")
   include("./src/linkresults.jl")
+  include("./src/correlation.jl")
+  export correlation
 
   # Functions to easy ploting data
   include("./src/simpleget.jl")
