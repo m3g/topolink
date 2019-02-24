@@ -1,7 +1,11 @@
 
-# TopoLink.jl :  Tools to analyze ensembles of models with TopoLink
+## TopoLink.jl :  Tools to analyze ensembles of models with TopoLink
 
 This is a dynamic set of tools to analyze ensembles of structural models studied with TopoLink
+
+* [Installation and data loading](#installation-and-data-loading)
+
+# Installation and data loading
 
 Requisites: the Julia language and the packages Plots and ProgressMeter.
 
@@ -28,7 +32,7 @@ models = TopoLink.models( "./loglist.txt", compactlog=compactlog )
 
 where `loglist.txt` is a file containing the list of TopoLink log files generated.
 
-## Model data
+### Model data
 
 The `models` vector contains the data for all models, meaning, for example:
 
@@ -68,7 +72,7 @@ This will produce the following plot:
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.png?raw=true">
 </p>
 
-## Evaluating the number of models necessary to satisfy the crosslinks
+### Evaluating the number of models necessary to satisfy the crosslinks
 
 We also provide the function necessary to compute the number of models,
 as classified by any of the model features, necessary to cumulatively
@@ -94,7 +98,7 @@ producing the linkensemble plot:
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.png?raw=true">
 </p>
 
-## Evaluating the ensemble properties of a specific link
+### Evaluating the ensemble properties of a specific link
 
 To view the results of the modeling for a single link, you can use the
 `linkdata` structure and the `linkresult` function. For example:
@@ -120,7 +124,7 @@ resulting in the figure below:
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/linkhistogram.png?raw=true">
 </p>
 
-## Correlation between crosslinks
+### Correlation between crosslinks
 
 The `linkdata` structure can also be used to compute the correlation
 between crosslinks. For example,
