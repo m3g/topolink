@@ -76,17 +76,24 @@ function models( loglistname :: String; compactlog :: CompactLog = CompactLog(),
                                         cutoff = 0.5,
                                         fdist = inverse_minus_one )
 
-  loglist = open( loglistname, "r" )
-  nlogs = 0
-  for filename in eachline(loglist)
-    nlogs = nlogs + 1
-  end
-  seekstart(loglist)
-  list = Vector{String}(undef,nlogs)
-  ilog = 0
-  for filename in eachline(loglist)
-    ilog = ilog + 1
-    list[ilog] = filename
+  # If the input is a directory, get the list of files
+  if isdir(loglistname)
+    list = joinpath.(abspath(loglistname),readdir(loglistname))
+
+  # Else, we expect it to be a list of log files given in a file 
+  else
+    loglist = open( loglistname, "r" )
+    nlogs = 0
+    for filename in eachline(loglist)
+      nlogs = nlogs + 1
+    end
+    seekstart(loglist)
+    list = Vector{String}(undef,nlogs)
+    ilog = 0
+    for filename in eachline(loglist)
+      ilog = ilog + 1
+      list[ilog] = filename
+    end
   end
 
   return models( list, compactlog=compactlog, cutoff=cutoff, fdist=fdist )
