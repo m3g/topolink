@@ -11,7 +11,7 @@ This is a dynamic set of tools to analyze ensembles of structural models studied
 
 ### Installation and data loading
 
-Requisites: the Julia language and the packages Plots and ProgressMeter.
+Requisites: the <a href=https://julialang.org/downloads/ target="_blank">Julia</a> language and the packages Plots and ProgressMeter.
 Therefore, after installing the Julia interpreter, do:
 
 ```
