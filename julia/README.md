@@ -12,7 +12,7 @@ This is a dynamic set of tools to analyze ensembles of structural models studied
 ### Installation and data loading
 
 Requisites: the Julia language and the packages Plots and ProgressMeter.
-Therefore, after installing the Julia interprerter, do:
+Therefore, after installing the Julia interpreter, do:
 
 ```
 using Pkg
@@ -70,7 +70,7 @@ the name of the model of greater degree.
 Once the compactlog and model data are loaded, you can easily plot many
 properties of the models as function of other properties. For instance,
 to plot the number of links consistent with each model as a function of
-their davis consensus score, just do:
+their Davis consensus score, just do:
 
 ```
 scatter( davis(models), nconsist(models) )
@@ -168,7 +168,7 @@ correlation matrix between the crosslinks. This is implemented in the
 ```
 C  = cmatrix( models )
 ```
-This matrix can be plot as a heatmap, using:
+This matrix can be plotted as a heatmap, using:
 ```
 heatmap(C,color=cgrad(:RdBu),clims=(-1,1))
 heatmap!(xlabel="XL index",ylabel="XL index",title="XL correlation map")
@@ -190,7 +190,7 @@ each possible pair simultaneously can be obtained with
 ```
 C  = cmatrix( models, get = "n11" )
 ```
-and this can be plot with
+and this can be plotted with
 ```
 heatmap(C,color=cgrad(:tempo))
 heatmap!(xlabel="XL index",ylabel="XL index",title="Number of models satisfying both links")
