@@ -14,8 +14,8 @@ link = linkdata( models, 5 )
 
 result, nmodels = linkresults( link )
 
-bar(result,nmodels,xrotation=60,title=linkname(link))
-bar!(xlabel="Result",ylabel="Number of models")
+bar(result,nmodels,xrotation=60,label="")
+bar!(xlabel="Result",ylabel="Number of models",title=linkname(link))
 savefig("./linkhistogram.png")
 println(" Created plot: ./linkhistogram.png")
 

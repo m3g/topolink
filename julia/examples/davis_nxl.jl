@@ -12,7 +12,7 @@ compactlog = TopoLink.compactlog("./data/compactlog-TMscore.dat")
 # Read all logs and alignment data into models vector
 models = TopoLink.models( "./data/logs" , compactlog=compactlog )
 
-scatter( davis(models), nconsist(models) )
+scatter(davis(models),nconsist(models),label="")
 scatter!( xlabel="Davis score", ylabel="Number of consistent XLs")
 savefig("davis_nxl.png")
 

@@ -15,7 +15,7 @@ models = TopoLink.models( "./data/logs" , compactlog=compactlog )
 
 nsatisfied = linkensemble(models, by = model -> model.degree)
 
-plot( index(models), nsatisfied, linewidth=2 ) 
+plot(index(models),nsatisfied,linewidth=2,label="") 
 plot!(xlabel="Models ordered by degree", ylabel="Cumulative XL satisfied")
 plot!(xlim=[0,50])
 savefig("ensemble.png")
