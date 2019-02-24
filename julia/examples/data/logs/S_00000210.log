@@ -1,0 +1,419 @@
+
+  ######################################################## TOPOLINK #######################################################
+              L. Martinez, Institute of Chemistry - University of Campinas. http://leandro.iqm.unicamp.br
+
+                                                                                                         Version 16.348 
+
+  PDB input file: /home/leandro/Documents/topolink/salbIII/26rest/models/pdb/S_00000210.pdb
+  Will stop PDB reading when ENDMDL is found. 
+  Only heavy atoms will be considered. 
+
+  Links will not be written as PDB files. 
+
+  Printing option:        0
+  Leave when first valid link is found:  F
+  Link bond distance:    1.5000000
+  Link bond force-constant:   10.0000000
+  VdW radius for volume exclusion:    3.0000000
+  Path energy constant:   10.0000000
+  Cutoff for observed scores:    0.0000000
+  Number of trials for link search:      200
+  Number of repeated best links to find until quit:        5
+  Maximum number of function evaluations of CGNewton:      500
+  Maximum number of CG iterations in CGNewton:      100
+  Seed for random number generator:     9296
+
+  Number of experiments:        3
+
+  Number of atoms read from PDB file:     1051
+  Number of chains found in PDB file:            1
+
+  -------------------------------------------------------------------------------------------------------------------------
+  Experiment: Diamina
+  Observed links: 
+    1  ASP   A        38  GLU   A        53
+    2  GLU   A        13  GLU   A        20
+    3  GLU   A        62  GLU   A        86
+    4  GLU   A        66  GLU   A        86
+    5  ASP   A        22  GLU   A        13
+    6  GLU   A        62  ASP   A       135
+    7  GLU   A        28  GLU   A        53
+    8  GLU   A        32  GLU   A        53
+    9  ASP   A       115  GLU   A       111
+
+  -------------------------------------------------------------------------------------------------------------------------
+  Experiment: zerolength
+  Observed links: 
+    1  GLU   A        86  LYS   A        99
+    2  GLU   A         9  LYS   A         6
+    3  LYS   A        17  GLU   A        13
+    4  SER   A        57  ASP   A        38
+    5  ASP   A        75  SER   A        71
+    6  SER   A        78  ASP   A        75
+    7  SER   A       116  GLU   A       111
+    8  LYS   A        17  GLU   A         9
+
+  -------------------------------------------------------------------------------------------------------------------------
+  Experiment: DSS
+  Observed links: 
+    1  LYS   A       113  SER   A       116
+    2  SER   A        71  SER   A        78
+    3  LYS   A       113  LYS   A         6
+    4  LYS   A        99  SER   A       131
+    5  LYS   A       113  LYS   A        17
+    6  LYS   A        17  LYS   A         6
+    7  LYS   A        17  MET   A         1
+    8  LYS   A        99  SER   A       133
+    9  LYS   A       113  MET   A         1
+
+  -------------------------------------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------------------------------------
+
+  Number of atoms that might be involved in reactions, according link types:       39
+
+  All reactive atoms, according to observations: 
+           1   MET   A         1  N   
+           2   LYS   A         6  CB  
+           3   GLU   A         9  CB  
+           4   GLU   A        13  CB  
+           5   LYS   A        17  CB  
+           6   GLU   A        20  CB  
+           7   ASP   A        22  CB  
+           8   GLU   A        28  CB  
+           9   GLU   A        32  CB  
+          10   ASP   A        38  CB  
+          11   GLU   A        53  CB  
+          12   SER   A        57  CB  
+          13   GLU   A        62  CB  
+          14   GLU   A        66  CB  
+          15   SER   A        71  CB  
+          16   ASP   A        75  CB  
+          17   SER   A        78  CB  
+          18   GLU   A        86  CB  
+          19   LYS   A        99  CB  
+          20   GLU   A       111  CB  
+          21   LYS   A       113  CB  
+          22   ASP   A       115  CB  
+          23   SER   A       116  CB  
+          24   SER   A       131  CB  
+          25   SER   A       133  CB  
+          26   ASP   A       135  CB  
+
+  Number of reactive pairs according to sequence: 
+    Experiment Diamina:   276
+    Experiment zerolength:   336
+    Experiment DSS:   105
+  Total number of unique reactive pairs, according to link types:          717
+
+  Number of reactive pairs according to observations: 
+    Experiment Diamina:    78
+    Experiment zerolength:    42
+    Experiment DSS:    45
+  Total number of unique reactive pairs, according to observations:          165
+
+  List of reactive atom pairs, according to observations: 
+    1  MET   A         1  N     LYS   A         6  CB   in experiments:DSS
+    2  MET   A         1  N     LYS   A        17  CB   in experiments:DSS
+    3  MET   A         1  N     SER   A        71  CB   in experiments:DSS
+    4  MET   A         1  N     SER   A        78  CB   in experiments:DSS
+    5  MET   A         1  N     LYS   A        99  CB   in experiments:DSS
+    6  MET   A         1  N     LYS   A       113  CB   in experiments:DSS
+    7  MET   A         1  N     SER   A       116  CB   in experiments:DSS
+    8  MET   A         1  N     SER   A       131  CB   in experiments:DSS
+    9  MET   A         1  N     SER   A       133  CB   in experiments:DSS
+   10  LYS   A         6  CB    GLU   A         9  CB   in experiments:zerolength
+   11  LYS   A         6  CB    GLU   A        13  CB   in experiments:zerolength
+   12  LYS   A         6  CB    LYS   A        17  CB   in experiments:DSS
+   13  LYS   A         6  CB    ASP   A        38  CB   in experiments:zerolength
+   14  LYS   A         6  CB    SER   A        71  CB   in experiments:DSS
+   15  LYS   A         6  CB    ASP   A        75  CB   in experiments:zerolength
+   16  LYS   A         6  CB    SER   A        78  CB   in experiments:DSS
+   17  LYS   A         6  CB    GLU   A        86  CB   in experiments:zerolength
+   18  LYS   A         6  CB    LYS   A        99  CB   in experiments:DSS
+   19  LYS   A         6  CB    GLU   A       111  CB   in experiments:zerolength
+   20  LYS   A         6  CB    LYS   A       113  CB   in experiments:DSS
+   21  LYS   A         6  CB    SER   A       116  CB   in experiments:DSS
+   22  LYS   A         6  CB    SER   A       131  CB   in experiments:DSS
+   23  LYS   A         6  CB    SER   A       133  CB   in experiments:DSS
+   24  GLU   A         9  CB    LYS   A        17  CB   in experiments:zerolength
+   25  GLU   A         9  CB    SER   A        57  CB   in experiments:zerolength
+   26  GLU   A         9  CB    SER   A        71  CB   in experiments:zerolength
+   27  GLU   A         9  CB    SER   A        78  CB   in experiments:zerolength
+   28  GLU   A         9  CB    LYS   A        99  CB   in experiments:zerolength
+   29  GLU   A         9  CB    SER   A       116  CB   in experiments:zerolength
+   30  GLU   A        13  CB    LYS   A        17  CB   in experiments:zerolength
+   31  GLU   A        13  CB    GLU   A        20  CB   in experiments:Diamina
+   32  GLU   A        13  CB    ASP   A        22  CB   in experiments:Diamina
+   33  GLU   A        13  CB    GLU   A        28  CB   in experiments:Diamina
+   34  GLU   A        13  CB    GLU   A        32  CB   in experiments:Diamina
+   35  GLU   A        13  CB    ASP   A        38  CB   in experiments:Diamina
+   36  GLU   A        13  CB    GLU   A        53  CB   in experiments:Diamina
+   37  GLU   A        13  CB    SER   A        57  CB   in experiments:zerolength
+   38  GLU   A        13  CB    GLU   A        62  CB   in experiments:Diamina
+   39  GLU   A        13  CB    GLU   A        66  CB   in experiments:Diamina
+   40  GLU   A        13  CB    SER   A        71  CB   in experiments:zerolength
+   41  GLU   A        13  CB    SER   A        78  CB   in experiments:zerolength
+   42  GLU   A        13  CB    GLU   A        86  CB   in experiments:Diamina
+   43  GLU   A        13  CB    LYS   A        99  CB   in experiments:zerolength
+   44  GLU   A        13  CB    GLU   A       111  CB   in experiments:Diamina
+   45  GLU   A        13  CB    ASP   A       115  CB   in experiments:Diamina
+   46  GLU   A        13  CB    SER   A       116  CB   in experiments:zerolength
+   47  GLU   A        13  CB    ASP   A       135  CB   in experiments:Diamina
+   48  LYS   A        17  CB    ASP   A        38  CB   in experiments:zerolength
+   49  LYS   A        17  CB    SER   A        71  CB   in experiments:DSS
+   50  LYS   A        17  CB    ASP   A        75  CB   in experiments:zerolength
+   51  LYS   A        17  CB    SER   A        78  CB   in experiments:DSS
+   52  LYS   A        17  CB    GLU   A        86  CB   in experiments:zerolength
+   53  LYS   A        17  CB    LYS   A        99  CB   in experiments:DSS
+   54  LYS   A        17  CB    GLU   A       111  CB   in experiments:zerolength
+   55  LYS   A        17  CB    LYS   A       113  CB   in experiments:DSS
+   56  LYS   A        17  CB    SER   A       116  CB   in experiments:DSS
+   57  LYS   A        17  CB    SER   A       131  CB   in experiments:DSS
+   58  LYS   A        17  CB    SER   A       133  CB   in experiments:DSS
+   59  GLU   A        20  CB    ASP   A        22  CB   in experiments:Diamina
+   60  GLU   A        20  CB    GLU   A        28  CB   in experiments:Diamina
+   61  GLU   A        20  CB    GLU   A        32  CB   in experiments:Diamina
+   62  GLU   A        20  CB    ASP   A        38  CB   in experiments:Diamina
+   63  GLU   A        20  CB    GLU   A        53  CB   in experiments:Diamina
+   64  GLU   A        20  CB    GLU   A        62  CB   in experiments:Diamina
+   65  GLU   A        20  CB    GLU   A        66  CB   in experiments:Diamina
+   66  GLU   A        20  CB    GLU   A        86  CB   in experiments:Diamina
+   67  GLU   A        20  CB    GLU   A       111  CB   in experiments:Diamina
+   68  GLU   A        20  CB    ASP   A       115  CB   in experiments:Diamina
+   69  GLU   A        20  CB    ASP   A       135  CB   in experiments:Diamina
+   70  ASP   A        22  CB    GLU   A        28  CB   in experiments:Diamina
+   71  ASP   A        22  CB    GLU   A        32  CB   in experiments:Diamina
+   72  ASP   A        22  CB    ASP   A        38  CB   in experiments:Diamina
+   73  ASP   A        22  CB    GLU   A        53  CB   in experiments:Diamina
+   74  ASP   A        22  CB    GLU   A        62  CB   in experiments:Diamina
+   75  ASP   A        22  CB    GLU   A        66  CB   in experiments:Diamina
+   76  ASP   A        22  CB    GLU   A        86  CB   in experiments:Diamina
+   77  ASP   A        22  CB    GLU   A       111  CB   in experiments:Diamina
+   78  ASP   A        22  CB    ASP   A       115  CB   in experiments:Diamina
+   79  ASP   A        22  CB    ASP   A       135  CB   in experiments:Diamina
+   80  GLU   A        28  CB    GLU   A        32  CB   in experiments:Diamina
+   81  GLU   A        28  CB    ASP   A        38  CB   in experiments:Diamina
+   82  GLU   A        28  CB    GLU   A        53  CB   in experiments:Diamina
+   83  GLU   A        28  CB    GLU   A        62  CB   in experiments:Diamina
+   84  GLU   A        28  CB    GLU   A        66  CB   in experiments:Diamina
+   85  GLU   A        28  CB    GLU   A        86  CB   in experiments:Diamina
+   86  GLU   A        28  CB    GLU   A       111  CB   in experiments:Diamina
+   87  GLU   A        28  CB    ASP   A       115  CB   in experiments:Diamina
+   88  GLU   A        28  CB    ASP   A       135  CB   in experiments:Diamina
+   89  GLU   A        32  CB    ASP   A        38  CB   in experiments:Diamina
+   90  GLU   A        32  CB    GLU   A        53  CB   in experiments:Diamina
+   91  GLU   A        32  CB    GLU   A        62  CB   in experiments:Diamina
+   92  GLU   A        32  CB    GLU   A        66  CB   in experiments:Diamina
+   93  GLU   A        32  CB    GLU   A        86  CB   in experiments:Diamina
+   94  GLU   A        32  CB    GLU   A       111  CB   in experiments:Diamina
+   95  GLU   A        32  CB    ASP   A       115  CB   in experiments:Diamina
+   96  GLU   A        32  CB    ASP   A       135  CB   in experiments:Diamina
+   97  ASP   A        38  CB    GLU   A        53  CB   in experiments:Diamina
+   98  ASP   A        38  CB    SER   A        57  CB   in experiments:zerolength
+   99  ASP   A        38  CB    GLU   A        62  CB   in experiments:Diamina
+  100  ASP   A        38  CB    GLU   A        66  CB   in experiments:Diamina
+  101  ASP   A        38  CB    SER   A        71  CB   in experiments:zerolength
+  102  ASP   A        38  CB    SER   A        78  CB   in experiments:zerolength
+  103  ASP   A        38  CB    GLU   A        86  CB   in experiments:Diamina
+  104  ASP   A        38  CB    LYS   A        99  CB   in experiments:zerolength
+  105  ASP   A        38  CB    GLU   A       111  CB   in experiments:Diamina
+  106  ASP   A        38  CB    ASP   A       115  CB   in experiments:Diamina
+  107  ASP   A        38  CB    SER   A       116  CB   in experiments:zerolength
+  108  ASP   A        38  CB    ASP   A       135  CB   in experiments:Diamina
+  109  GLU   A        53  CB    GLU   A        62  CB   in experiments:Diamina
+  110  GLU   A        53  CB    GLU   A        66  CB   in experiments:Diamina
+  111  GLU   A        53  CB    GLU   A        86  CB   in experiments:Diamina
+  112  GLU   A        53  CB    GLU   A       111  CB   in experiments:Diamina
+  113  GLU   A        53  CB    ASP   A       115  CB   in experiments:Diamina
+  114  GLU   A        53  CB    ASP   A       135  CB   in experiments:Diamina
+  115  SER   A        57  CB    ASP   A        75  CB   in experiments:zerolength
+  116  SER   A        57  CB    GLU   A        86  CB   in experiments:zerolength
+  117  SER   A        57  CB    GLU   A       111  CB   in experiments:zerolength
+  118  GLU   A        62  CB    GLU   A        66  CB   in experiments:Diamina
+  119  GLU   A        62  CB    GLU   A        86  CB   in experiments:Diamina
+  120  GLU   A        62  CB    GLU   A       111  CB   in experiments:Diamina
+  121  GLU   A        62  CB    ASP   A       115  CB   in experiments:Diamina
+  122  GLU   A        62  CB    ASP   A       135  CB   in experiments:Diamina
+  123  GLU   A        66  CB    GLU   A        86  CB   in experiments:Diamina
+  124  GLU   A        66  CB    GLU   A       111  CB   in experiments:Diamina
+  125  GLU   A        66  CB    ASP   A       115  CB   in experiments:Diamina
+  126  GLU   A        66  CB    ASP   A       135  CB   in experiments:Diamina
+  127  SER   A        71  CB    ASP   A        75  CB   in experiments:zerolength
+  128  SER   A        71  CB    SER   A        78  CB   in experiments:DSS
+  129  SER   A        71  CB    GLU   A        86  CB   in experiments:zerolength
+  130  SER   A        71  CB    LYS   A        99  CB   in experiments:DSS
+  131  SER   A        71  CB    GLU   A       111  CB   in experiments:zerolength
+  132  SER   A        71  CB    LYS   A       113  CB   in experiments:DSS
+  133  SER   A        71  CB    SER   A       116  CB   in experiments:DSS
+  134  SER   A        71  CB    SER   A       131  CB   in experiments:DSS
+  135  SER   A        71  CB    SER   A       133  CB   in experiments:DSS
+  136  ASP   A        75  CB    SER   A        78  CB   in experiments:zerolength
+  137  ASP   A        75  CB    LYS   A        99  CB   in experiments:zerolength
+  138  ASP   A        75  CB    SER   A       116  CB   in experiments:zerolength
+  139  SER   A        78  CB    GLU   A        86  CB   in experiments:zerolength
+  140  SER   A        78  CB    LYS   A        99  CB   in experiments:DSS
+  141  SER   A        78  CB    GLU   A       111  CB   in experiments:zerolength
+  142  SER   A        78  CB    LYS   A       113  CB   in experiments:DSS
+  143  SER   A        78  CB    SER   A       116  CB   in experiments:DSS
+  144  SER   A        78  CB    SER   A       131  CB   in experiments:DSS
+  145  SER   A        78  CB    SER   A       133  CB   in experiments:DSS
+  146  GLU   A        86  CB    LYS   A        99  CB   in experiments:zerolength
+  147  GLU   A        86  CB    GLU   A       111  CB   in experiments:Diamina
+  148  GLU   A        86  CB    ASP   A       115  CB   in experiments:Diamina
+  149  GLU   A        86  CB    SER   A       116  CB   in experiments:zerolength
+  150  GLU   A        86  CB    ASP   A       135  CB   in experiments:Diamina
+  151  LYS   A        99  CB    GLU   A       111  CB   in experiments:zerolength
+  152  LYS   A        99  CB    LYS   A       113  CB   in experiments:DSS
+  153  LYS   A        99  CB    SER   A       116  CB   in experiments:DSS
+  154  LYS   A        99  CB    SER   A       131  CB   in experiments:DSS
+  155  LYS   A        99  CB    SER   A       133  CB   in experiments:DSS
+  156  GLU   A       111  CB    ASP   A       115  CB   in experiments:Diamina
+  157  GLU   A       111  CB    SER   A       116  CB   in experiments:zerolength
+  158  GLU   A       111  CB    ASP   A       135  CB   in experiments:Diamina
+  159  LYS   A       113  CB    SER   A       116  CB   in experiments:DSS
+  160  LYS   A       113  CB    SER   A       131  CB   in experiments:DSS
+  161  LYS   A       113  CB    SER   A       133  CB   in experiments:DSS
+  162  ASP   A       115  CB    ASP   A       135  CB   in experiments:Diamina
+  163  SER   A       116  CB    SER   A       131  CB   in experiments:DSS
+  164  SER   A       116  CB    SER   A       133  CB   in experiments:DSS
+  165  SER   A       131  CB    SER   A       133  CB   in experiments:DSS
+
+  Number of atoms accessible to solvent:          981
+  Number of residues accessible to solvent:          135
+
+  -------------------------------------------------------------------------------------------------------------------------
+        RESIDUE1   ATOM1 RESIDUE2   ATOM2 EUCLDIST  TOPODIST OBSERVED    DMIN      DMAX        RESULT  OBSRES REACRES RA AA
+  -------------------------------------------------------------------------------------------------------------------------
+  LINK: MET  A    1 N    LYS  A   17 CB     14.919    15.571   YES      0.000    16.900     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: MET  A    1 N    LYS  A  113 CB     13.491    15.929   YES      0.000    16.900     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: LYS  A    6 CB   GLU  A    9 CB      5.248     6.049   YES      0.000    12.700     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: LYS  A    6 CB   LYS  A   17 CB     15.407    16.213   YES      0.000    22.100     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: LYS  A    6 CB   LYS  A  113 CB      8.454    10.377   YES      0.000    22.100     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: GLU  A    9 CB   LYS  A   17 CB     12.085    13.328   YES      0.000    12.700     BAD: LONG    0/ 1    0/ 1 YY YY
+  LINK: GLU  A   13 CB   LYS  A   17 CB      5.917     6.503   YES      0.000    12.700     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: GLU  A   13 CB   GLU  A   20 CB     10.183    10.817   YES      0.000    16.900     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: GLU  A   13 CB   ASP  A   22 CB      9.492   >15.600   YES      0.000    15.600 BAD: NOTFOUND    0/ 1    0/ 1 YY YY
+  LINK: LYS  A   17 CB   LYS  A  113 CB     15.628   >22.100   YES      0.000    22.100 BAD: NOTFOUND    0/ 1    0/ 1 YY YY
+  LINK: GLU  A   28 CB   GLU  A   53 CB     13.879    14.445   YES      0.000    16.900     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: GLU  A   32 CB   GLU  A   53 CB     15.323    16.970   YES      0.000    16.900     BAD: LONG    0/ 1    0/ 1 YY YY
+  LINK: ASP  A   38 CB   GLU  A   53 CB     11.631   >15.600   YES      0.000    15.600 BAD: NOTFOUND    0/ 1    0/ 1 YY YY
+  LINK: ASP  A   38 CB   SER  A   57 CB     12.167    >7.500   YES      0.000     7.500     BAD: EUCL    0/ 1    0/ 1 YY YY
+  LINK: GLU  A   62 CB   GLU  A   86 CB     12.517    12.520   YES      0.000    16.900     OK: FOUND    1/ 1    1/ 1 YY NY
+  LINK: GLU  A   62 CB   ASP  A  135 CB     17.876   >15.600   YES      0.000    15.600     BAD: EUCL    0/ 1    0/ 1 YY NY
+  LINK: GLU  A   66 CB   GLU  A   86 CB     11.035    11.035   YES      0.000    16.900     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: SER  A   71 CB   ASP  A   75 CB     11.603    >7.500   YES      0.000     7.500     BAD: EUCL    0/ 1    0/ 1 YY YY
+  LINK: SER  A   71 CB   SER  A   78 CB     15.163   >14.300   YES      0.000    14.300     BAD: EUCL    0/ 1    0/ 1 YY YY
+  LINK: ASP  A   75 CB   SER  A   78 CB      4.969     5.026   YES      0.000     7.500     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: GLU  A   86 CB   LYS  A   99 CB      7.514     7.770   YES      0.000    12.700     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: LYS  A   99 CB   SER  A  131 CB     14.632   >18.200   YES      0.000    18.200 BAD: NOTFOUND    0/ 1    0/ 1 YY YY
+  LINK: LYS  A   99 CB   SER  A  133 CB     19.520   >18.200   YES      0.000    18.200     BAD: EUCL    0/ 1    0/ 1 YY YY
+  LINK: GLU  A  111 CB   ASP  A  115 CB      8.159     8.440   YES      0.000    15.600     OK: FOUND    1/ 1    1/ 1 YY YY
+  LINK: GLU  A  111 CB   SER  A  116 CB     11.380    >8.800   YES      0.000     8.800     BAD: EUCL    0/ 1    0/ 1 YY YY
+  LINK: LYS  A  113 CB   SER  A  116 CB     10.053    14.102   YES      0.000    18.200     OK: FOUND    1/ 1    1/ 1 YY YY
+  -------------------------------------------------------------------------------------------------------------------------
+
+  RESULTS: 
+
+  For each experiment: 
+
+  -------------------------------------------------------------------------------------------------------------------------
+
+  Experiment: Diamina
+
+    Number of type-reactive pairs of atoms:      276
+
+    Number of observed-reactive pairs of atoms:       78
+    Number of observed-reactive pairs of atoms within linker reach:       74
+    Number of observed-reactive pairs of atoms outside linker reach:        4
+    Missing links, according to the structure and observed-reactivity:       69
+
+    Number of observed links:        9
+    Number of observed links consistent with the structure:        5
+    Number of observed links NOT consistent with the structure:        4
+
+    Sum of scores of observed links:    0.0000000
+
+    Sensitivity of the cross-linking reaction:    0.0675676
+    False-assignment probability:    0.0144928
+
+    Likelyhood of the experimental result:    0.9499098
+    Log-likelyhood of the experimental result:   -0.0513883
+
+    Likelyhood using user-defined pbad and pgood:    0.9999998
+    Log-likelyhood using user-defined pbad and pgood:   -0.0000002
+    Using: pgood =    0.700; pbad =    0.010
+
+  -------------------------------------------------------------------------------------------------------------------------
+
+  Experiment: zerolength
+
+    Number of type-reactive pairs of atoms:      336
+
+    Number of observed-reactive pairs of atoms:       42
+    Number of observed-reactive pairs of atoms within linker reach:       38
+    Number of observed-reactive pairs of atoms outside linker reach:        4
+    Missing links, according to the structure and observed-reactivity:       34
+
+    Number of observed links:        8
+    Number of observed links consistent with the structure:        4
+    Number of observed links NOT consistent with the structure:        4
+
+    Sum of scores of observed links:    0.0000000
+
+    Sensitivity of the cross-linking reaction:    0.1052632
+    False-assignment probability:    0.0119048
+
+    Likelyhood of the experimental result:    0.9929143
+    Log-likelyhood of the experimental result:   -0.0071109
+
+    Likelyhood using user-defined pbad and pgood:    0.9999998
+    Log-likelyhood using user-defined pbad and pgood:   -0.0000002
+    Using: pgood =    0.700; pbad =    0.010
+
+  -------------------------------------------------------------------------------------------------------------------------
+
+  Experiment: DSS
+
+    Number of type-reactive pairs of atoms:      105
+
+    Number of observed-reactive pairs of atoms:       45
+    Number of observed-reactive pairs of atoms within linker reach:       41
+    Number of observed-reactive pairs of atoms outside linker reach:        4
+    Missing links, according to the structure and observed-reactivity:       36
+
+    Number of observed links:        9
+    Number of observed links consistent with the structure:        5
+    Number of observed links NOT consistent with the structure:        4
+
+    Sum of scores of observed links:    0.0000000
+
+    Sensitivity of the cross-linking reaction:    0.1219512
+    False-assignment probability:    0.0380952
+
+    Likelyhood of the experimental result:    0.8421277
+    Log-likelyhood of the experimental result:   -0.1718237
+
+    Likelyhood using user-defined pbad and pgood:    0.9999998
+    Log-likelyhood using user-defined pbad and pgood:   -0.0000002
+    Using: pgood =    0.700; pbad =    0.010
+
+  -------------------------------------------------------------------------------------------------------------------------
+
+  FINAL RESULTS: 
+
+   RESULT0:    14 : Number of observations that are consistent with the structure.
+
+   RESULT1:    14 : Number of topological distances consistent with all observations. 
+   RESULT2:    12 : Number of topological distances NOT consistent with observations.  
+   RESULT3:     0 : Number of links with missing observations.  
+
+   RESULT4:      0.00000 : Sum of scores of observed links of all experiments. 
+
+   RESULT5:      0.79428 : Likelyhood of the set of experimental results. 
+   RESULT6:     -0.23032 : Log-likelyhood of the set of experimental results. 
+
+   Using: pgood =    0.700; pbad =    0.010
+   RESULT7:      1.00000 : Likelyhood of the set of experimental results. 
+   RESULT8:     -0.00000 : Log-likelyhood of the set of experimental results. 
+
+  #########################################################################################################################
