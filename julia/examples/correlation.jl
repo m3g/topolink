@@ -7,14 +7,15 @@ ENV["GKSwstype"]="nul" # This supresses the need of a display while plotting
 
 using TopoLink, Plots
 
-models = TopoLink.models( "./data/loglist.txt" )
+# Read all model data into models vector
+models = TopoLink.models("./data/logs")
 
 link1 = linkdata( models, 1 )
 link2 = linkdata( models, 2 )
 
 c12 = correlation( link1, link2 )
 
-println(" Correlation between 1 and 2: ", c12)
+println(" Correlation between $(linkname(link1)) and $(linkname(link2)): ", c12)
 
 C  = cmatrix( models )
 

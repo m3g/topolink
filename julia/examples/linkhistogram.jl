@@ -7,7 +7,8 @@ ENV["GKSwstype"]="nul" # This supresses the need of a display while plotting
 
 using TopoLink, Plots
 
-models = TopoLink.models( "./data/loglist.txt" )
+# Read all logs into models vector
+models = TopoLink.models( "./data/logs" )
 
 link = linkdata( models, 5 )
 
