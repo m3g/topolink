@@ -27,9 +27,9 @@ using TopoLink, Plots
 
 The TopoLink log data can be read into a vector using: 
 ```
-models = TopoLink.models( "./loglist.txt")
+models = TopoLink.models( "./data/logs" )
 ```
-where `loglist.txt` is a file containing the list of TopoLink log files generated.
+where `./data/logs` is directory containing the TopoLink log files generated.
 
 After obtaining the compactlog alignment file as explained in the main TopoLink
 site, load it using:
@@ -41,7 +41,7 @@ compactlog = TopoLink.compactlog("./compactlog-TMscore.dat")
 And, in this case, the TopoLink log data can be read including the alignment data, with
 
 ```
-models = TopoLink.models( "./loglist.txt", compactlog=compactlog )
+models = TopoLink.models( "./data/logs", compactlog=compactlog )
 ```
 
 ### Model data
