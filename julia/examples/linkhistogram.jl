@@ -1,5 +1,5 @@
 #
-# Run with: julia davis_nxl.jl
+# Run with: julia linkhistogram.jl
 #
 
 push!(LOAD_PATH,"../")
@@ -16,6 +16,6 @@ result, nmodels = linkresults( link )
 bar(result,nmodels,xrotation=60,title=linkname(link))
 bar!(xlabel="Result",ylabel="Number of models")
 savefig("./linkhistogram.png")
-println("Created plot: ./linkhistogram.png")
+println(" Created plot: ./linkhistogram.png")
 
 

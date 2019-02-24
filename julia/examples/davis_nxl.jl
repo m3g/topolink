@@ -14,6 +14,6 @@ scatter( davis(models), nconsist(models) )
 scatter!( xlabel="Davis score", ylabel="Number of consistent XLs")
 savefig("davis_nxl.png")
 
-println("Created plot: davis_nxl.png")
+println(" Created plot: davis_nxl.png")
 
 

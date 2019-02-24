@@ -1,5 +1,5 @@
 #
-# Run with: julia davis_nxl.jl
+# Run with: julia ensemble.jl
 #
 
 push!(LOAD_PATH,"../")
@@ -17,6 +17,6 @@ plot!(xlabel="Models ordered by degree", ylabel="Cumulative XL satisfied")
 plot!(xlim=[0,50])
 savefig("ensemble.png")
 
-println("Created plot: ensemble.png")
+println(" Created plot: ensemble.png")
 
 

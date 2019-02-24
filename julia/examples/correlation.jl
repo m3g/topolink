@@ -1,5 +1,5 @@
 #
-# Run with: julia davis_nxl.jl
+# Run with: julia correlation.jl
 #
 
 push!(LOAD_PATH,"../")
