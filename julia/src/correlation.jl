@@ -4,7 +4,7 @@
 # https://en.wikipedia.org/wiki/Phi_coefficient
 #
 
-function correlation( link1 :: LinkData, link2 :: LinkData )
+function correlation( link1 :: LinkData, link2 :: LinkData ; get :: String = "phi" )
 
   nmodels = length(link1.status)
   n = zeros(2,2)
@@ -26,19 +26,26 @@ function correlation( link1 :: LinkData, link2 :: LinkData )
       end
     end
   end
-  n1x = n[1,1] + n[1,2]
-  n2x = n[2,1] + n[2,2]
-  nx1 = n[1,1] + n[2,1]
-  nx2 = n[1,2] + n[2,2]
 
-  if n1x*n2x*nx1*nx2 != 0 
+  if get == "phi" 
+    n1x = n[1,1] + n[1,2] + 1
+    n2x = n[2,1] + n[2,2] + 1
+    nx1 = n[1,1] + n[2,1] + 1
+    nx2 = n[1,2] + n[2,2] + 1
     correlation = (n[1,1]*n[2,2] - n[1,2]*n[2,1]) / sqrt( n1x*n2x*nx1*nx2 )
+    return correlation
+  elseif get == "n11"
+    return n[1,1]
+  elseif get == "n00"
+    return n[2,2]
+  elseif get == "n10"
+    return n[1,2]
+  elseif get == "n01"
+    return n[2,1]
   else
-    correlation = 0.
+    error(" Correlation type must be: phi, n11, n00, n01, or n10. ")
   end
-
-  return correlation
-
+ 
 end
 
 function foundlink( status :: Int64 ) 

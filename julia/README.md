@@ -151,6 +151,26 @@ leading to the correlation matrix plot:
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/correlation.png?raw=true">
 </p>
 
+The `correlation` and `cmatrix` functions also accept a `get` argument
+which by default is `"phi"` and returns the correlation coefficient.
+`get` might be set, however, to `n11`, `n00`, `n10`, or `n01`, and the
+functions will return the number of models satisfying both links,
+neither of them, only the first one, or only the second one,
+respectively.  
+
+For example, a matrix of the number of models satisfying both links of
+each possible pair simultaneously can be obtained with
+```
+C  = cmatrix( models, get = "n11" )
+```
+and this can be plot with
+```
+heatmap(C,color=cgrad(:tempo))
+heatmap!(xlabel="XL index",ylabel="XL index",title="Number of models satisfying both links")
+leading to the following figure:
+<p align="center">
+<img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/n11.png?raw=true">
+</p>
 
 
 
