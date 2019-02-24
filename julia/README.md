@@ -5,11 +5,10 @@ This is a dynamic set of tools to analyze ensembles of structural models studied
 
 * [Installation and data loading](#installation-and-data-loading)
 * [Model data](#model-data) 
-* [Evaluating the number of models necessary to satisfy the crosslinks]
-* [Evaluating the ensemble properties of a specific link]
-* [Correlation between crosslinks]
-
-voltar
+* [Evaluating the number of models necessary to satisfy the crosslinks](#evaluating-the-number-of-models-necessary-to-satisfy-the-crosslinks) 
+* [Evaluating the ensemble properties of a specific link](#evaluating-the-ensemble-properties-of-a-specific-link)
+* [Correlation between crosslinks](#correlation-between-crosslinks)  
+* [Examples](#examples)  
 
 ### Installation and data loading
 
