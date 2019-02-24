@@ -112,6 +112,9 @@ producing the linkensemble plot:
 
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.png?raw=true">
+<a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.jl">
+Complete Example
+</a>
 </p>
 
 ### Evaluating the ensemble properties of a specific link
@@ -138,6 +141,9 @@ bar!(xlabel="Result",ylabel="Number of models")
 resulting in the figure below:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/linkhistogram.png?raw=true">
+<a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/linkhistogram.jl">
+Complete Example
+</a>
 </p>
 
 ### Correlation between crosslinks
@@ -191,6 +197,10 @@ heatmap!(xlabel="XL index",ylabel="XL index",title="Number of models satisfying 
 leading to the following figure:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/n11.png?raw=true">
+<br>
+<a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/correlation.jl">
+Complete Example
+</a>
 </p>
 
 
