@@ -12,7 +12,7 @@ function linkdata( models :: Vector{Model}, ilink :: Int64 )
 
   index = ilink
   atom1 = models[1].link[ilink].atom1
-  atom2 = models[1].link[ilink].atom1
+  atom2 = models[1].link[ilink].atom2
   dmin = models[1].link[ilink].dmin
   dmax = models[1].link[ilink].dmax
   observed = models[1].link[ilink].observed
