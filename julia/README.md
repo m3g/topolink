@@ -82,7 +82,7 @@ This will produce the following plot:
 
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.png?raw=true">
-<br>
+<br><br>
 <a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.jl">
 Complete Example
 </a>
@@ -113,6 +113,7 @@ producing the linkensemble plot:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.png?raw=true">
 <a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/ensemble.jl">
+<br><br>
 Complete Example
 </a>
 </p>
@@ -142,6 +143,7 @@ resulting in the figure below:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/linkhistogram.png?raw=true">
 <a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/linkhistogram.jl">
+<br><br>
 Complete Example
 </a>
 </p>
@@ -197,7 +199,7 @@ heatmap!(xlabel="XL index",ylabel="XL index",title="Number of models satisfying 
 leading to the following figure:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/n11.png?raw=true">
-<br>
+<br><br>
 <a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/correlation.jl">
 Complete Example
 </a>
