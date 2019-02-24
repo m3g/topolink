@@ -8,34 +8,41 @@ This is a dynamic set of tools to analyze ensembles of structural models studied
 * [Evaluating the number of models necessary to satisfy the crosslinks](#evaluating-the-number-of-models-necessary-to-satisfy-the-crosslinks) 
 * [Evaluating the ensemble properties of a specific link](#evaluating-the-ensemble-properties-of-a-specific-link)
 * [Correlation between crosslinks](#correlation-between-crosslinks)  
-* [Examples](#examples)  
 
 ### Installation and data loading
 
 Requisites: the Julia language and the packages Plots and ProgressMeter.
+Therefore, after installing the Julia interprerter, do:
 
-How to use it:
+```
+using Pkg
+Pkg.add("Plots","ProgressMeter")
+```
 
-Load the TopoLink julia package using:
+When starting a job, load the TopoLink julia package using:
 ```
 push!(LOAD_PATH,"/path_to/topolink/julia")
 using TopoLink, Plots
 ```
 
-After obtaining the compactlog file as explained in the main TopoLink
+The TopoLink log data can be read into a vector using: 
+```
+models = TopoLink.models( "./loglist.txt")
+```
+where `loglist.txt` is a file containing the list of TopoLink log files generated.
+
+After obtaining the compactlog alignment file as explained in the main TopoLink
 site, load it using:
 
 ```
 compactlog = TopoLink.compactlog("./compactlog-TMscore.dat")
 ```
 
-The TopoLink load data can be read into a vector using: 
+And, in this case, the TopoLink log data can be read including the alignment data, with
 
 ```
 models = TopoLink.models( "./loglist.txt", compactlog=compactlog )
 ```
-
-where `loglist.txt` is a file containing the list of TopoLink log files generated.
 
 ### Model data
 
@@ -75,6 +82,10 @@ This will produce the following plot:
 
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.png?raw=true">
+<br>
+<a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/davis_nxl.jl">
+Complete Example
+</a>
 </p>
 
 ### Evaluating the number of models necessary to satisfy the crosslinks
@@ -92,7 +103,7 @@ data is sorted by the `linkensemble` function by the chosen model
 property. To plot the result, do  
 
 ```
-plot( index(models), nsatisfied, , linewidth=2 ) 
+plot( index(models), nsatisfied, linewidth=2 ) 
 plot!(xlabel="Models ordered by degree", ylabel="Cumulative XL satisfied")
 plot!(xlim=[0,50])
 ```
