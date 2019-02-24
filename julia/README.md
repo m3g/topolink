@@ -200,7 +200,7 @@ leading to the following figure:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/n11.png?raw=true">
 <br><br>
-<a href="https://github.com/mcubeg/topolink/blob/master/julia/examples/correlation.jl">
+<a target=_blank_ href="https://github.com/mcubeg/topolink/blob/master/julia/examples/correlation.jl">
 Complete Example
 </a>
 </p>
