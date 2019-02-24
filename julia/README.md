@@ -167,6 +167,7 @@ and this can be plot with
 ```
 heatmap(C,color=cgrad(:tempo))
 heatmap!(xlabel="XL index",ylabel="XL index",title="Number of models satisfying both links")
+```
 leading to the following figure:
 <p align="center">
 <img src="https://github.com/mcubeg/topolink/blob/master/julia/examples/n11.png?raw=true">
