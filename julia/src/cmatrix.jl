@@ -30,7 +30,9 @@ function cmatrix( models :: Vector{Model} ; get = "phi" )
     end
   elseif get == "n11"
     for i in 1:nlinks
-      cmatrix[i,i] = nmodels
+      linki = linkdata( models, i )
+      result, n = linkresults( linki )
+      cmatrix[i,i] = n[1] + n[2] + n[6]
     end
   else
     for i in 1:nlinks
