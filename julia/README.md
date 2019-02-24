@@ -73,7 +73,6 @@ to plot the number of links consistent with each model as a function of
 their davis consensus score, just do:
 
 ```
-using Plots
 scatter( davis(models), nconsist(models) )
 scatter!( xlabel="Davis score", ylabel="Number of consistent XLs")
 ```
