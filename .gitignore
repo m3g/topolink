@@ -3,4 +3,4 @@
 *bin/*
 *.*.swp
 *input/links/*
-#*.log
+*input/*.log
