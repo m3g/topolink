@@ -25,10 +25,21 @@
 ! type 3 : Print the fraction of structures that satisfy
 !          one OR the other link
 !
-! type 4 : Print the overall correlation, that is, the sum of the fraction
+! type 4 : Print the the sum of the fraction
 !          of structures that satify both links or fail to satisfy
 !          both links, minus the fraction of structures that satisfy
 !          one link OR the other.
+!
+! type 5 : Prints the Phi correlation, that is,
+!          phi(1,2) = (n11*n00-n10*n01)/ sqrt(n1x*n0x*nx1*nx0) 
+!          where: n11: number of models satisfying both links
+!                 n00: number of models not satisfying any of the links
+!                 n10: number of models satyisfying the first but not the second link
+!                 n01: number of models satyisfying the second but not the first link
+!                 n1x: number of models satyisfying the first link
+!                 n0x: number of models not satyisfying the first link
+!                 nx1: number of models satyisfying the second link
+!                 nx0: number of models not satyisfying the second link
 !
 ! The default option is type = 1, which is easier to visualize.
 !
@@ -44,6 +55,7 @@ program linkcorrelation
   integer :: nargs, nmodels, ioerr, maxlinks, nlinks
   character(len=max_string_length) :: loglist, record, line, format
   double precision, allocatable :: correlation(:,:), fraction(:)
+  double precision, allocatable :: n11(:,:), n00(:,:), n10(:,:), n01(:,:), n1x(:,:), n0x(:,:), nx1(:,:), nx0(:,:)
   type(specific_link) :: linktemp
   type(modeldata), allocatable :: model(:)
 
@@ -67,10 +79,21 @@ program linkcorrelation
     write(*,*) ' type 3 : Print the fraction of structures that satisfy '
     write(*,*) '          one OR the other link                         '
     write(*,*) '                                                        '
-    write(*,*) ' type 4 : Print the overall correlation, that is, the sum of the fraction'
+    write(*,*) ' type 4 : Print the the sum of the fraction'
     write(*,*) '          of structures that satify both links or fail to satisfy        '
     write(*,*) '          both links, minus the fraction of structures that satisfy      '
     write(*,*) '          one link OR the other.                                         '
+    write(*,*) '                                                        '
+    write(*,*) ' type 5 : Prints the Phi correlation, that is,'
+    write(*,*) '          phi(1,2) = (n11*n00-n10*n01)/ sqrt(n1x*n0x*nx1*nx0) '
+    write(*,*) '          where: n11: number of models satisfying both links'
+    write(*,*) '                 n00: number of models not satisfying any of the links'
+    write(*,*) '                 n10: number of models satyisfying the first but not the second link'
+    write(*,*) '                 n01: number of models satyisfying the second but not the first link'
+    write(*,*) '                 n1x: number of models satyisfying the first link'
+    write(*,*) '                 n0x: number of models not satyisfying the first link'
+    write(*,*) '                 nx1: number of models satyisfying the second link'
+    write(*,*) '                 nx0: number of models not satyisfying the second link'
     write(*,*)
     stop
   end if
@@ -83,7 +106,7 @@ program linkcorrelation
       write(*,*) ' ERROR: Could not read type parameter. '
       stop
     end if
-    if ( type < 0 .or. type > 4 ) then
+    if ( type < 0 .or. type > 5 ) then
       write(*,*) ' ERROR: Invalid value for type parameter.'
       stop
     end if
@@ -202,74 +225,140 @@ program linkcorrelation
   write(*,"(a)") '#'
   write(*,"(a)") '# Reseting link correlation array ... '
   allocate(correlation(nlinks,nlinks),fraction(nlinks))
+  allocate(n11(nlinks,nlinks),&
+           n00(nlinks,nlinks),&
+           n10(nlinks,nlinks),&
+           n01(nlinks,nlinks),&
+           n1x(nlinks,nlinks),&
+           nx1(nlinks,nlinks),&
+           n0x(nlinks,nlinks),&
+           nx0(nlinks,nlinks))
   do i = 1, nlinks
     fraction(i) = 0.d0
     do j = i, nlinks
       correlation(i,j) = 0.d0
+      n11(i,j) = 0.
+      n00(i,j) = 0.
+      n10(i,j) = 0. 
+      n01(i,j) = 0. 
+      n1x(i,j) = 0. 
+      nx1(i,j) = 0.
+      n0x(i,j) = 0.
+      nx0(i,j) = 0.
     end do
   end do
 
   write(*,"(a)") '# Computing link correlations ... '
   do imodel = 1, nmodels
     do i = 1, model(imodel)%nlinks
-      if ( ( model(imodel)%link(i)%status == 0 .or. &
-             model(imodel)%link(i)%status == 1 .or. &
-             model(imodel)%link(i)%status == 5 ) ) then
-        fraction(i) = fraction(i) + 1.d0
-      end if
       do j = i, model(imodel)%nlinks
         !
-        ! Satisfied at the same time
+        ! First satisfied
         !
-        if ( ( model(imodel)%link(i)%status == 0 .or. &
-               model(imodel)%link(i)%status == 1 .or. &
-               model(imodel)%link(i)%status == 5 ) .and. &
-             ( model(imodel)%link(j)%status == 0 .or. &
+        if ( model(imodel)%link(i)%status == 0 .or. &
+             model(imodel)%link(i)%status == 1 .or. &
+             model(imodel)%link(i)%status == 5 ) then
+          ! Second satisfied
+          if ( model(imodel)%link(j)%status == 0 .or. &
                model(imodel)%link(j)%status == 1 .or. &
-               model(imodel)%link(j)%status == 5 ) ) then
-          if ( type == 0 .or. type == 1 .or. type == 4 ) then
-            correlation(i,j) = correlation(i,j) + 1.d0
+               model(imodel)%link(j)%status == 5 ) then
+            n11(i,j) = n11(i,j) + 1.
+          ! Second not satisfied
+          else
+            n10(i,j) = n10(i,j) + 1
           end if
           cycle
         end if
         !
-        ! Not satisfied at the same time
+        ! First not satisfied
         !
-        if ( ( model(imodel)%link(i)%status /= 0 .and. &
-               model(imodel)%link(i)%status /= 1 .and. &
-               model(imodel)%link(i)%status /= 5 ) .and. &
-             ( model(imodel)%link(j)%status /= 0 .and. &
-               model(imodel)%link(j)%status /= 1 .and. &
-               model(imodel)%link(j)%status /= 5 ) ) then
-          if ( type == 2 .or. type == 4 ) then 
-            correlation(i,j) = correlation(i,j) + 1.d0
+        if ( model(imodel)%link(i)%status /= 0 .and. &
+             model(imodel)%link(i)%status /= 1 .and. &
+             model(imodel)%link(i)%status /= 5 ) then
+          ! Second satisfied 
+          if ( model(imodel)%link(j)%status == 0 .and. &
+               model(imodel)%link(j)%status == 1 .and. &
+               model(imodel)%link(j)%status == 5 ) then
+            n01(i,j) = n01(i,j) + 1
+          ! Second not satisfied
+          else
+            n00(i,j) = n00(i,j) + 1.
           end if
           cycle
-        end if
-        !
-        ! One is satified, the other is not (if got here)
-        !
-        if ( type == 0 .or. type == 3 .or. type == 4 ) then
-          correlation(i,j) = correlation(i,j) - 1.d0
         end if
       end do
     end do
   end do
 
+  if ( type == 0 ) then
+    do i = 1, nlinks
+      do j = 1, nlinks
+        correlation(i,j) = ( n11(i,j) - (n10(i,j) + n01(i,j)) ) / nmodels
+      end do
+    end do
+  end if
+
+  if ( type == 1 ) then
+    do i = 1, nlinks
+      do j = 1, nlinks
+        correlation(i,j) = n11(i,j) / nmodels
+      end do
+    end do
+  end if
+
+  if ( type == 2 ) then
+    do i = 1, nlinks
+      do j = 1, nlinks
+        correlation(i,j) = ( n10(i,j) + n01(i,j) + n00(i,j) ) / nmodels
+      end do
+    end do
+  end if
+
+  if ( type == 3 ) then
+    do i = 1, nlinks
+      do j = 1, nlinks
+        correlation(i,j) = ( n10(i,j) + n01(i,j) ) / nmodels
+      end do
+    end do
+  end if
+
+  if ( type == 4 ) then
+    do i = 1, nlinks
+      do j = 1, nlinks
+        correlation(i,j) = ( ( n11(i,j) + n00(i,j) ) - ( n10(i,j) + n01(i,j) ) ) / nmodels 
+      end do
+    end do
+  end if
+
+  if ( type == 5 ) then
+    do i = 1, nlinks
+      do j = 1, nlinks
+        n1x(i,j) = max(n11(i,j)+n10(i,j), 1.)
+        n0x(i,j) = max(n01(i,j)+n00(i,j), 1.)
+        nx1(i,j) = max(n11(i,j)+n01(i,j), 1.)
+        nx0(i,j) = max(n10(i,j)+n10(i,j), 1.)
+      end do
+    end do
+    do i = 1, nlinks
+      do j = 1, nlinks
+        correlation(i,j) = ( n11(i,j)*n00(i,j) - n10(i,j)*n01(i,j) ) / sqrt( n1x(i,j)*n0x(i,j)*nx1(i,j)*nx0(i,j) )
+      end do
+    end do
+  end if
+
   ! Writting the links
 
   do i = 1, nlinks
-    fraction(i) = fraction(i) / dble(nmodels)
+    do j = 1, nlinks
+      fraction(i) = n11(i,j) + n10(i,j) 
+    end do
+    fraction(i) = fraction(i) / nmodels
     write(*,"(a,i5,a,a,i5,a,f8.3)") &
           "#",i, trim(print_link(model(1)%link(i))), " (",i-1,") ", fraction(i) 
   end do
 
-  write(format,*) "(",nlinks,"(tr1,f5.3))"
+  write(format,*) "(",nlinks,"(tr1,f6.3))"
   do i = 1, nlinks
-    do j = i, nlinks
-      correlation(i,j) = correlation(i,j) / dble(nmodels)
-      correlation(j,i) = correlation(i,j)
-    end do
     write(*,format) (correlation(i,j),j=1,nlinks)
   end do
 
