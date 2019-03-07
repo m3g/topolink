@@ -337,7 +337,7 @@ program linkcorrelation
         n1x(i,j) = n11(i,j)+n10(i,j)
         n0x(i,j) = n01(i,j)+n00(i,j)
         nx1(i,j) = n11(i,j)+n01(i,j)
-        nx0(i,j) = n10(i,j)+n10(i,j)
+        nx0(i,j) = n10(i,j)+n00(i,j)
       end do
     end do
     do i = 1, nlinks
