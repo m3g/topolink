@@ -28,11 +28,16 @@ function correlation( link1 :: LinkData, link2 :: LinkData ; get :: String = "ph
   end
 
   if get == "phi" 
-    n1x = n[1,1] + n[1,2] + 1
-    n2x = n[2,1] + n[2,2] + 1
-    nx1 = n[1,1] + n[2,1] + 1
-    nx2 = n[1,2] + n[2,2] + 1
-    correlation = (n[1,1]*n[2,2] - n[1,2]*n[2,1]) / sqrt( n1x*n2x*nx1*nx2 )
+    n1x = n[1,1] + n[1,2]
+    n2x = n[2,1] + n[2,2]
+    nx1 = n[1,1] + n[2,1]
+    nx2 = n[1,2] + n[2,2]
+    phiden = n1x*n2x*nx1*nx2
+    if phiden > 0.
+      correlation = (n[1,1]*n[2,2] - n[1,2]*n[2,1]) / sqrt( phiden )
+    else
+      correlation = 0.
+    end
     return correlation
   elseif get == "n11"
     return n[1,1]
