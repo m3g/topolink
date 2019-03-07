@@ -311,6 +311,7 @@ program linkcorrelation
     do i = 1, nlinks
       do j = 1, nlinks
         correlation(i,j) = ( n10(i,j) + n01(i,j) + n00(i,j) ) / nmodels
+        correlation(j,i) = correlation(i,j)
       end do
     end do
   end if
@@ -319,6 +320,7 @@ program linkcorrelation
     do i = 1, nlinks
       do j = 1, nlinks
         correlation(i,j) = ( n10(i,j) + n01(i,j) ) / nmodels
+        correlation(j,i) = correlation(i,j)
       end do
     end do
   end if
@@ -327,6 +329,7 @@ program linkcorrelation
     do i = 1, nlinks
       do j = 1, nlinks
         correlation(i,j) = ( ( n11(i,j) + n00(i,j) ) - ( n10(i,j) + n01(i,j) ) ) / nmodels 
+        correlation(j,i) = correlation(i,j)
       end do
     end do
   end if
@@ -345,8 +348,10 @@ program linkcorrelation
         phiden = n1x(i,j)*n0x(i,j)*nx1(i,j)*nx0(i,j) 
         if ( phiden > 0. ) then
           correlation(i,j) = ( n11(i,j)*n00(i,j) - n10(i,j)*n01(i,j) ) / sqrt( phiden ) 
+          correlation(j,i) = correlation(i,j)
         else
           correlation(i,j) = 0.
+          correlation(j,i) = correlation(i,j)
         end if
       end do
     end do
