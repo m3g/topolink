@@ -56,6 +56,7 @@ program linkcorrelation
   character(len=max_string_length) :: loglist, record, line, format
   double precision, allocatable :: correlation(:,:), fraction(:)
   double precision, allocatable :: n11(:,:), n00(:,:), n10(:,:), n01(:,:), n1x(:,:), n0x(:,:), nx1(:,:), nx0(:,:)
+  double precision :: phiden
   type(specific_link) :: linktemp
   type(modeldata), allocatable :: model(:)
 
@@ -333,15 +334,20 @@ program linkcorrelation
   if ( type == 5 ) then
     do i = 1, nlinks
       do j = 1, nlinks
-        n1x(i,j) = max(n11(i,j)+n10(i,j), 1.)
-        n0x(i,j) = max(n01(i,j)+n00(i,j), 1.)
-        nx1(i,j) = max(n11(i,j)+n01(i,j), 1.)
-        nx0(i,j) = max(n10(i,j)+n10(i,j), 1.)
+        n1x(i,j) = n11(i,j)+n10(i,j)
+        n0x(i,j) = n01(i,j)+n00(i,j)
+        nx1(i,j) = n11(i,j)+n01(i,j)
+        nx0(i,j) = n10(i,j)+n10(i,j)
       end do
     end do
     do i = 1, nlinks
       do j = 1, nlinks
-        correlation(i,j) = ( n11(i,j)*n00(i,j) - n10(i,j)*n01(i,j) ) / sqrt( n1x(i,j)*n0x(i,j)*nx1(i,j)*nx0(i,j) )
+        phiden = n1x(i,j)*n0x(i,j)*nx1(i,j)*nx0(i,j) 
+        if ( phiden > 0. ) then
+          correlation(i,j) = ( n11(i,j)*n00(i,j) - n10(i,j)*n01(i,j) ) / sqrt( phiden ) 
+        else
+          correlation(i,j) = 0.
+        end if
       end do
     end do
   end if
