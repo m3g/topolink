@@ -29,12 +29,19 @@ function readlog( filename :: String )
   for line in eachline(file)
     data = split(line) 
     if length(data) < 1 ; continue ; end
-    if data[1] == "RESIDUE1"
+    if findfirst("RESIDUE1",line) != nothing 
       ra = findfirst("RA",line)
     end
     if length(data) < 2 ; continue ; end
-    if data[1] == "PDB" && data[2] == "input"
+    # old input type
+    if ( data[1] == "PDB" && data[2] == "input" )
       pdb = data[4]
+      name = basename(pdb)
+      name = split(name,".")
+      modelname = name[1]
+    # new input type
+    elseif ( data[1] == "Structure" && data[2] == "file:" )
+      pdb = data[3]
       name = basename(pdb)
       name = split(name,".")
       modelname = name[1]
