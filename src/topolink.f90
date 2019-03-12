@@ -37,7 +37,8 @@ program topolink
   character(len=max_string_length) :: record, inputfile, endread
   character(len=max_string_length), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  logical :: error, r1, r2, inexp, warning, interchain, expstart
+  logical :: error, ignore_missing_residues, r1, r2, inexp, warning, interchain, expstart
+  logical, allocatable :: missing_residue(:)
 
   external :: computef, computeg
 
@@ -50,7 +51,6 @@ program topolink
   type(pdbatom), allocatable :: atom(:)
   type(specific_link), allocatable :: link(:)
   type(specific_link) :: linktest
-
 
   ! Print title on the screen
 
@@ -166,6 +166,7 @@ program topolink
   nexp = 0
   error = .false.
   expstart = .false.
+  ignore_missing_residues = .false.
   input : do 
     read(10,string_read,iostat=ioerr) record
     if ( ioerr /= 0 ) exit
@@ -300,6 +301,8 @@ program topolink
       case ("iguess")
         record = keyvalue(record,1)
         read(record,*) iguess
+      case ("ignore_missing_residues")
+        ignore_missing_residues = .true.
       case ("seed")
         if ( keyvalue(record,1) == 'random' ) then
           seed = 0
@@ -746,7 +749,10 @@ program topolink
   error = .false.
   do iexp = 1, nexp
 
+    allocate( missing_residue(experiment(iexp)%nobs) ) 
+
     checkobs1 : do i = 1, experiment(iexp)%nobs
+      missing_residue(i) = .false.
       do j = 1, natoms
         if ( atom(j) .in. experiment(iexp)%observed(i)%residue1 ) cycle checkobs1
       end do
@@ -754,7 +760,11 @@ program topolink
       write(str,*) ' ERROR: First residue of observed link could not be found on the structure. ' ; call writelog(str)
       write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
       write(str,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
-      error = .true.
+      if ( ignore_missing_residues ) then
+        missing_residue(i) = .true.
+      else
+        error = .true.
+      end if
     end do checkobs1
 
     checkobs2 : do i = 1, experiment(iexp)%nobs
@@ -765,10 +775,29 @@ program topolink
       write(str,*) ' ERROR: Second residue of observed link could not be found on the structure. ' ; call writelog(str)
       write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
       write(str,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
-      error = .true.
+      if ( ignore_missing_residues ) then
+        missing_residue(i) = .true.
+      else
+        error = .true.
+      end if
     end do checkobs2
 
+    ! Remove observed links with missing atoms in the structure if desisred
+
+    if ( ignore_missing_residues ) then
+      j = experiment(iexp)%nobs
+      do i = j, 1, -1
+        if ( missing_residue(i) ) then
+          call remove_observed(experiment(iexp),i)
+        end if
+      end do
+    end if
+    deallocate( missing_residue )
+
+    allocate( missing_residue(experiment(iexp)%ndeadends) ) 
+
     checkdeadend : do i = 1, experiment(iexp)%ndeadends
+      missing_residue(i) = .false.
       do j = 1, natoms
         if ( atom(j) .in. experiment(iexp)%deadend(i) ) cycle checkdeadend
       end do
@@ -776,8 +805,24 @@ program topolink
       write(str,*) ' ERROR: Residue of observed deadend could not be found on the structure. ' ; call writelog(str)
       write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
       write(str,*) '        Observed deadend: ', trim(print_deadend(experiment(iexp)%deadend(i))) ; call writelog(str)
-      error = .true.
+      if ( ignore_missing_residues ) then
+        missing_residue(i) = .true.
+      else
+        error = .true.
+      end if
     end do checkdeadend
+
+    ! Remove deadends with missing atoms in the structure if desisred
+
+    if ( ignore_missing_residues ) then
+      j = experiment(iexp)%ndeadends
+      do i = j, 1, -1
+        if ( missing_residue(i) ) then
+          call remove_deadend(experiment(iexp),i)
+        end if
+      end do
+    end if
+    deallocate( missing_residue )
 
     checktypes1 : do i = 1, experiment(iexp)%ntypes
       do j = 1, natoms

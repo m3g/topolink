@@ -62,6 +62,8 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  initguess.o \
                  linkstatus.o \
                  linkconsistency.o \
+                 remove_observed.o \
+                 remove_deadend.o \
                  lnf.o \
                  overlapcell.o \
                  overlap.o \
@@ -88,6 +90,8 @@ $(BIN)/topolink: Makefile $(MODULES) \
                  initguess.o \
                  linkstatus.o \
                  linkconsistency.o \
+                 remove_observed.o \
+                 remove_deadend.o \
                  lnf.o \
                  overlapcell.o \
                  overlap.o \
@@ -206,6 +210,12 @@ linkstatus.o : linkstatus.f90
 
 linkconsistency.o : linkconsistency.f90
 	$(FORTRAN) -c linkconsistency.f90 $(FLAGS)
+
+remove_observed.o : remove_observed.f90
+	$(FORTRAN) -c remove_observed.f90 $(FLAGS)
+
+remove_deadend.o : remove_deadend.f90
+	$(FORTRAN) -c remove_deadend.f90 $(FLAGS)
 
 lnf.o : lnf.f90
 	$(FORTRAN) -c lnf.f90 $(FLAGS)
