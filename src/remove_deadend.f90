@@ -24,6 +24,8 @@ subroutine remove_deadend(experiment,irm)
   allocate( experiment%deadend(experiment%ndeadends) )
   experiment%deadend  = newset
 
+  deallocate(newset)
+
 end subroutine remove_deadend
 
 

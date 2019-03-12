@@ -24,6 +24,8 @@ subroutine remove_observed(experiment,irm)
   allocate( experiment%observed(experiment%nobs) )
   experiment%observed = newset
 
+  deallocate( newset )
+
 end subroutine remove_observed
 
 
