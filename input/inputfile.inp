@@ -49,7 +49,6 @@ experiment 1,6-diaminohexane
 
 end experiment Diamina
 
-
 experiment Zero-length
 
   # Possible types of cross-links and maximum distances
@@ -100,6 +99,7 @@ search_limit relative 1.5  # Search for topological distances of up to search_ra
 
 printallfound yes    # Prints, or not, the structure of the links that were found but violate the distances
 printPDBnotfound yes # Prints, or not, PDB files for the links which were not found at all (prints a straight line)
+ignore_missing_residues no # Stop if there are missing residues in the structure for observed links or deadends
 
 pgood 0.70 # Probability of observing a link which is within link reach
 pbad  0.01 # Probability of observing a link which is NOT within linker reach

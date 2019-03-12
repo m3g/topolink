@@ -33,6 +33,7 @@ module inputoptions
   logical :: observedscores
   logical :: mimicchain
   logical :: printaccessible
+  logical :: ignore_missing_residues
 
   logical :: screen_log
   logical :: output_log

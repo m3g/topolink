@@ -37,7 +37,7 @@ program topolink
   character(len=max_string_length) :: record, inputfile, endread
   character(len=max_string_length), allocatable :: logline(:)
   character(len=20) :: floatout, intout, intout2
-  logical :: error, ignore_missing_residues, r1, r2, inexp, warning, interchain, expstart
+  logical :: error, r1, r2, inexp, warning, interchain, expstart
   logical, allocatable :: missing_residue(:)
 
   external :: computef, computeg
@@ -238,6 +238,9 @@ program topolink
       case ("printaccessible")
         if ( keyvalue(record,1) == 'yes' ) printaccessible = .true.
         if ( keyvalue(record,1) == 'no' ) printaccessible = .false.
+      case ("ignore_missing_residues")
+        if ( keyvalue(record,1) == 'yes' ) ignore_missing_residues = .true.
+        if ( keyvalue(record,1) == 'no' ) ignore_missing_residues = .false.
       case ("compute")
         if ( keyvalue(record,1) == 'observed' ) compute = 1
         if ( keyvalue(record,1) == 'reactive' ) compute = 2
@@ -301,8 +304,6 @@ program topolink
       case ("iguess")
         record = keyvalue(record,1)
         read(record,*) iguess
-      case ("ignore_missing_residues")
-        ignore_missing_residues = .true.
       case ("seed")
         if ( keyvalue(record,1) == 'random' ) then
           seed = 0
@@ -316,7 +317,7 @@ program topolink
         error = .true.
         write(str,*) ' ERROR: Input parameter not recognized: ', keyword(record) ; call writelog(str)
     end select
-    
+
   end do input
   if ( error ) then
     close(10)
