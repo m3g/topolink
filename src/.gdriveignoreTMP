@@ -1,0 +1,12 @@
+# /home/leandro/programs/tips/GoogleDrive/GdriveIgnoreBase.txt
+*.aux
+*.bbl
+*.fdb_latexmk
+*.fls
+*.swp
+*.BAK
+*.old
+*.blg
+.~lock*
+# This file:
+.gdriveignoreTMP

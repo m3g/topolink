@@ -511,7 +511,7 @@ module topolink_data
 
      !
      ! subroutine alternate_conformation: check if an atom is from an alternate
-     !                                    conformation, and pick only the "A" conformation
+     !                                    conformation, and annotate the conformation name
      !
      !
      subroutine alternate_conformation(residue)

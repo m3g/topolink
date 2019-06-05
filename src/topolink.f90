@@ -618,6 +618,7 @@ program topolink
                                    trim(adjustl(readatom%residue%chain)),&
                                    readatom%residue%index,&
                                    ' found. Using only A.' ; call writelog(str)
+      cycle
     end if
     if ( readatoms == 1 ) then
       if ( ishydrogen(readatom) ) cycle
@@ -651,6 +652,8 @@ program topolink
     readatom=read_atom(record,error)
     if ( error ) cycle
     if ( .not. isprotein(readatom) ) cycle
+    if ( readatom%residue%conformation /= " " .and. &
+         readatom%residue%conformation /= "A" ) cycle
     if ( readatoms == 1 ) then
       if ( ishydrogen(readatom) ) cycle
     else if ( readatoms == 2 ) then
