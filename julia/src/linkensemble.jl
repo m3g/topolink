@@ -1,5 +1,5 @@
 
-function linkensemble( models :: Vector{Model} ; by= x -> x.gscore, rev = true )
+function linkensemble( models :: Vector{Model} ; by= x -> x.gscore, rev=false )
   
   nlinks = models[1].nlinks
 

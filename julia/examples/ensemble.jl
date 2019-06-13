@@ -13,7 +13,9 @@ compactlog = TopoLink.compactlog("./data/compactlog-TMscore.dat")
 models = TopoLink.models( "./data/logs" , compactlog=compactlog )
 
 
-nsatisfied = linkensemble(models, by = model -> model.degree)
+# Compute the number of links satisfied by subsets of models ordered
+# by degree. rev=true makes sense because the degree is greater for better models
+nsatisfied = linkensemble(models, by = model -> model.degree, rev=true)
 
 plot(index(models),nsatisfied,linewidth=2,label="") 
 plot!(xlabel="Models ordered by degree", ylabel="Cumulative XL satisfied")
