@@ -94,7 +94,7 @@ as classified by any of the model features, necessary to cumulatively
 satisfy the crosslinks. This is the `linkensemble` function:
 
 ```
-nsatisfied = linkensemble(models, by = model -> model.degree)
+nsatisfied = linkensemble(models, by = model -> model.degree, rev = true)
 ```
 
 and these data can be plotted as a function of the index of the model. The
