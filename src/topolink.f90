@@ -110,6 +110,7 @@ program topolink
   kpath = 10.d0
   endread = "##################"
   readatoms = 1
+  skipchecks = .false.
  
   ! Parameters for optimization method
 
@@ -124,9 +125,6 @@ program topolink
   ! Read command line parameters
 
   call getarg(1,inputfile)
-  if ( nargs == 2 ) then
-    call getarg(2,pdbfile)
-  end if
   output_log = .false.
   if ( nargs > 1 ) then
     i = 2
@@ -143,13 +141,13 @@ program topolink
         case ("-readlog")
           i=i+1
           call getarg(i,readlog)
+        case ("-skipchecks")
+          skipchecks = .true.
+        case ("-pdb") 
+          i=i+1
+          call getarg(i,pdbfile)
         case default
-          if ( i == 2 ) then
-            call getarg(2,pdbfile)
-          else 
-            write(*,*) ' ERROR: command line parameters not correctly set. '
-            stop
-          end if
+          call getarg(i,pdbfile)
       end select
       i=i+1
     end do
@@ -311,6 +309,11 @@ program topolink
           record = keyvalue(record,1)
           read(record,*) seed
         end if
+      case ("skipchecks")
+        ! Necessary to not overwrite command line parameter
+        if ( .not. skipchecks ) then
+          if ( keyvalue(record,1) == 'yes' ) skipchecks = .true.
+        end if
       case ("exit") 
         exit input
       case default
@@ -375,19 +378,21 @@ program topolink
     end if
   end if
 
-  call writelog(blank)
-  write(str,intout) ' Printing option: ', print ; call writelog(str)
-  write(str,*) ' Leave when first valid link is found: ', quitgood ; call writelog(str)
-  write(str,floatout) ' Link bond distance: ', dbond ; call writelog(str)
-  write(str,floatout) ' Link bond force-constant: ', kbond ; call writelog(str)
-  write(str,floatout) ' VdW radius for volume exclusion: ', vdwrad ; call writelog(str)
-  write(str,floatout) ' Path energy constant: ', kpath ; call writelog(str)
-  write(str,floatout) ' Cutoff for observed scores: ', scorecut ; call writelog(str)
-  write(str,intout) ' Number of trials for link search: ', ntrial ; call writelog(str)
-  write(str,intout) ' Number of repeated best links to find until quit: ', nbest ; call writelog(str)
-  write(str,intout) ' Maximum number of function evaluations of CGNewton: ', optpars(1) ; call writelog(str)
-  write(str,intout) ' Maximum number of CG iterations in CGNewton: ', optpars(2) ; call writelog(str)
-  write(str,intout) ' Seed for random number generator: ', seed ; call writelog(str)
+  if ( .not. skipchecks ) then
+    call writelog(blank)
+    write(str,intout) ' Printing option: ', print ; call writelog(str)
+    write(str,*) ' Leave when first valid link is found: ', quitgood ; call writelog(str)
+    write(str,floatout) ' Link bond distance: ', dbond ; call writelog(str)
+    write(str,floatout) ' Link bond force-constant: ', kbond ; call writelog(str)
+    write(str,floatout) ' VdW radius for volume exclusion: ', vdwrad ; call writelog(str)
+    write(str,floatout) ' Path energy constant: ', kpath ; call writelog(str)
+    write(str,floatout) ' Cutoff for observed scores: ', scorecut ; call writelog(str)
+    write(str,intout) ' Number of trials for link search: ', ntrial ; call writelog(str)
+    write(str,intout) ' Number of repeated best links to find until quit: ', nbest ; call writelog(str)
+    write(str,intout) ' Maximum number of function evaluations of CGNewton: ', optpars(1) ; call writelog(str)
+    write(str,intout) ' Maximum number of CG iterations in CGNewton: ', optpars(2) ; call writelog(str)
+    write(str,intout) ' Seed for random number generator: ', seed ; call writelog(str)
+  end if
 
   if ( readlog /= "none" ) then
     write(str,*) ' Will read link data from previous run: ', trim(adjustl(readlog)) ; call writelog(str)
@@ -417,8 +422,10 @@ program topolink
     close(30)
   end if
 
-  call writelog(blank)
-  write(str,intout) ' Number of experiments: ', nexp ; call writelog(str)
+  if ( .not. skipchecks ) then
+    call writelog(blank)
+    write(str,intout) ' Number of experiments: ', nexp ; call writelog(str)
+  end if
   allocate( experiment(nexp) )
 
   !
@@ -579,19 +586,21 @@ program topolink
   ! Checking if the input of observed links does not contain repeated data
   !
 
-  do iexp = 1, nexp
-    do i = 1, experiment(iexp)%nobs - 1
-      do j = i + 1, experiment(iexp)%nobs
-        if ( experiment(iexp)%observed(i) .eq. experiment(iexp)%observed(j) ) then
-          write(str,*) ' ERROR: An observed link is listed repeatedly in experiment: ', &
-                     trim(experiment(iexp)%name) ; call writelog(str)
-          write(str,*) ' Repeated observed link: ', trim(print_obs(experiment(iexp)%observed(i)))
-          call writelog(str)
-          stop
-        end if
+  if ( .not. skipchecks ) then
+    do iexp = 1, nexp
+      do i = 1, experiment(iexp)%nobs - 1
+        do j = i + 1, experiment(iexp)%nobs
+          if ( experiment(iexp)%observed(i) .eq. experiment(iexp)%observed(j) ) then
+            write(str,*) ' ERROR: An observed link is listed repeatedly in experiment: ', &
+                       trim(experiment(iexp)%name) ; call writelog(str)
+            write(str,*) ' Repeated observed link: ', trim(print_obs(experiment(iexp)%observed(i)))
+            call writelog(str)
+            stop
+          end if
+        end do
       end do
     end do
-  end do
+  end if
 
   !
   ! Read atom information from PDB file
@@ -687,12 +696,14 @@ program topolink
 
   ! If interchain and there is only one chain, report error and stop
 
-  write(str,*) ' Number of chains found in structure file: ', nchains ; call writelog(str)
-  if ( interchain ) then
-    if ( nchains == 1 ) then
-      write(str,*) ' ERROR: Only one chain was found in structure file, and the interchain keyword was used. '
-      call writelog(str)
-      stop
+  if ( .not. skipchecks ) then
+    write(str,*) ' Number of chains found in structure file: ', nchains ; call writelog(str)
+    if ( interchain ) then
+      if ( nchains == 1 ) then
+        write(str,*) ' ERROR: Only one chain was found in structure file, and the interchain keyword was used. '
+        call writelog(str)
+        stop
+      end if
     end if
   end if
 
@@ -730,241 +741,245 @@ program topolink
   ! Checking the validity of the input data
   !
 
-  ! Checking if a linktype was defined with ambiguous reactivity 
+  if ( .not. skipchecks ) then
 
-  error = .false.
-  do iexp = 1, nexp
-    do i = 1, experiment(iexp)%ntypes
-      if ( experiment(iexp)%linktype(i)%atom1%residue%name == &
-           experiment(iexp)%linktype(i)%atom2%residue%name ) then
-        if ( experiment(iexp)%linktype(i)%atom1%name /= &
-             experiment(iexp)%linktype(i)%atom2%name ) then
-          write(str,*) ' ERROR: Two different atoms of the same residue define a linktype. ' ; call writelog(str)
-          write(str,*) '        The reactivity becomes ambiguous. ' ; call writelog(str)
-          write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
-          write(str,*) '        Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
+    ! Checking if a linktype was defined with ambiguous reactivity 
+
+    error = .false.
+    do iexp = 1, nexp
+      do i = 1, experiment(iexp)%ntypes
+        if ( experiment(iexp)%linktype(i)%atom1%residue%name == &
+             experiment(iexp)%linktype(i)%atom2%residue%name ) then
+          if ( experiment(iexp)%linktype(i)%atom1%name /= &
+               experiment(iexp)%linktype(i)%atom2%name ) then
+            write(str,*) ' ERROR: Two different atoms of the same residue define a linktype. ' ; call writelog(str)
+            write(str,*) '        The reactivity becomes ambiguous. ' ; call writelog(str)
+            write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+            write(str,*) '        Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
+            stop
+          end if
+        end if
+      end do
+    end do
+    if ( error ) stop
+
+    error = .false.
+    do iexp = 1, nexp
+
+      allocate( missing_residue(experiment(iexp)%nobs) ) 
+
+      checkobs1 : do i = 1, experiment(iexp)%nobs
+        missing_residue(i) = .false.
+        do j = 1, natoms
+          if ( atom(j) .in. experiment(iexp)%observed(i)%residue1 ) cycle checkobs1
+        end do
+        call writelog(blank)
+        write(str,*) ' ERROR: First residue of observed link could not be found on the structure. ' ; call writelog(str)
+        write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+        write(str,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
+        if ( ignore_missing_residues ) then
+          missing_residue(i) = .true.
+        else
+          error = .true.
+        end if
+      end do checkobs1
+
+      checkobs2 : do i = 1, experiment(iexp)%nobs
+        do j = 1, natoms
+          if ( atom(j) .in. experiment(iexp)%observed(i)%residue2 ) cycle checkobs2 
+        end do
+        call writelog(blank)
+        write(str,*) ' ERROR: Second residue of observed link could not be found on the structure. ' ; call writelog(str)
+        write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+        write(str,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
+        if ( ignore_missing_residues ) then
+          missing_residue(i) = .true.
+        else
+          error = .true.
+        end if
+      end do checkobs2
+
+      ! Remove observed links with missing atoms in the structure if desisred
+
+      if ( ignore_missing_residues ) then
+        j = experiment(iexp)%nobs
+        do i = j, 1, -1
+          if ( missing_residue(i) ) then
+            call remove_observed(experiment(iexp),i)
+          end if
+        end do
+      end if
+      deallocate( missing_residue )
+
+      allocate( missing_residue(experiment(iexp)%ndeadends) ) 
+
+      checkdeadend : do i = 1, experiment(iexp)%ndeadends
+        missing_residue(i) = .false.
+        do j = 1, natoms
+          if ( atom(j) .in. experiment(iexp)%deadend(i) ) cycle checkdeadend
+        end do
+        call writelog(blank)
+        write(str,*) ' ERROR: Residue of observed deadend could not be found on the structure. ' ; call writelog(str)
+        write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+        write(str,*) '        Observed deadend: ', trim(print_deadend(experiment(iexp)%deadend(i))) ; call writelog(str)
+        if ( ignore_missing_residues ) then
+          missing_residue(i) = .true.
+        else
+          error = .true.
+        end if
+      end do checkdeadend
+
+      ! Remove deadends with missing atoms in the structure if desisred
+
+      if ( ignore_missing_residues ) then
+        j = experiment(iexp)%ndeadends
+        do i = j, 1, -1
+          if ( missing_residue(i) ) then
+            call remove_deadend(experiment(iexp),i)
+          end if
+        end do
+      end if
+      deallocate( missing_residue )
+
+      checktypes1 : do i = 1, experiment(iexp)%ntypes
+        do j = 1, natoms
+          if ( atom(j) .in. experiment(iexp)%linktype(i)%atom1%residue ) cycle checktypes1
+        end do
+        call writelog(blank)
+        write(str,*) ' WARNING: First atom of link type does not correspond to any atom of the structure. ' ; call writelog(str)
+        write(str,*) '          Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+        write(str,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
+        warning = .true.
+      end do checktypes1
+ 
+      checktypes2 : do i = 1, experiment(iexp)%ntypes
+        do j = 1, natoms
+          if ( atom(j) .in. experiment(iexp)%linktype(i)%atom2%residue ) cycle checktypes2
+        end do
+        call writelog(blank)
+        write(str,*) ' WARNING: Second atom of link type does not correspond to any atom of the structure. ' ; call writelog(str)
+        write(str,*) '          Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+        write(str,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
+        warning = .true.
+      end do checktypes2
+
+      checkobstype : do i = 1, experiment(iexp)%nobs
+        do j = 1, experiment(iexp)%ntypes
+          if ( experiment(iexp)%observed(i) .matches. experiment(iexp)%linktype(j) ) then
+            experiment(iexp)%observed(i)%type = j
+            cycle checkobstype
+          end if
+        end do
+        call writelog(blank)
+        write(str,*) ' ERROR: Observed link does not match any link type. ' ; call writelog(str)
+        write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+        write(str,*) '        Obseved link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
+        error = .true.
+      end do checkobstype
+
+    end do
+    if ( error ) stop
+
+    ! Checking whether atoms that define observed links are missing in the structure
+
+    error = .false.
+    do iexp = 1, nexp
+      do k = 1, experiment(iexp)%nobs
+
+        ! Type of linker of this observation
+
+        j = experiment(iexp)%observed(k)%type
+
+        ! Checking first residue of observed link (the next question is ok because the 
+        ! observed link was already tested for consistency with some linktype previously)
+
+        testatom = experiment(iexp)%linktype(j)%atom1
+        if ( experiment(iexp)%observed(k)%residue1%name /= testatom%residue%name ) then
+          testatom = experiment(iexp)%linktype(j)%atom2
+        end if
+        error = .true.
+        do i = 1, natoms
+          if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue1%chain ) then
+            if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue1%index ) then
+              if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue1%name ) then
+                if ( atom(i)%name == testatom%name ) then
+                  error = .false.
+                  exit
+                end if
+              end if
+            end if
+          end if
+        end do
+        if ( error ) then
+          write(str,*) ' ERROR: Atom missing in the structure is required for observed link: ' ; call writelog(str)
+          write(str,*) '        Missing atom: ', testatom%residue%name, &
+                       experiment(iexp)%observed(k)%residue1%chain, &
+                       experiment(iexp)%observed(k)%residue1%index, &
+                       testatom%name ; call writelog(str)
           stop
         end if
-      end if
-    end do
-  end do
-  if ( error ) stop
 
-  error = .false.
-  do iexp = 1, nexp
+        ! Checking second residue of observed link
 
-    allocate( missing_residue(experiment(iexp)%nobs) ) 
-
-    checkobs1 : do i = 1, experiment(iexp)%nobs
-      missing_residue(i) = .false.
-      do j = 1, natoms
-        if ( atom(j) .in. experiment(iexp)%observed(i)%residue1 ) cycle checkobs1
-      end do
-      call writelog(blank)
-      write(str,*) ' ERROR: First residue of observed link could not be found on the structure. ' ; call writelog(str)
-      write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
-      write(str,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
-      if ( ignore_missing_residues ) then
-        missing_residue(i) = .true.
-      else
-        error = .true.
-      end if
-    end do checkobs1
-
-    checkobs2 : do i = 1, experiment(iexp)%nobs
-      do j = 1, natoms
-        if ( atom(j) .in. experiment(iexp)%observed(i)%residue2 ) cycle checkobs2 
-      end do
-      call writelog(blank)
-      write(str,*) ' ERROR: Second residue of observed link could not be found on the structure. ' ; call writelog(str)
-      write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
-      write(str,*) '        Observed link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
-      if ( ignore_missing_residues ) then
-        missing_residue(i) = .true.
-      else
-        error = .true.
-      end if
-    end do checkobs2
-
-    ! Remove observed links with missing atoms in the structure if desisred
-
-    if ( ignore_missing_residues ) then
-      j = experiment(iexp)%nobs
-      do i = j, 1, -1
-        if ( missing_residue(i) ) then
-          call remove_observed(experiment(iexp),i)
+        testatom = experiment(iexp)%linktype(j)%atom1
+        if ( experiment(iexp)%observed(k)%residue2%name /= testatom%residue%name ) then
+          testatom = experiment(iexp)%linktype(j)%atom2
         end if
-      end do
-    end if
-    deallocate( missing_residue )
-
-    allocate( missing_residue(experiment(iexp)%ndeadends) ) 
-
-    checkdeadend : do i = 1, experiment(iexp)%ndeadends
-      missing_residue(i) = .false.
-      do j = 1, natoms
-        if ( atom(j) .in. experiment(iexp)%deadend(i) ) cycle checkdeadend
-      end do
-      call writelog(blank)
-      write(str,*) ' ERROR: Residue of observed deadend could not be found on the structure. ' ; call writelog(str)
-      write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
-      write(str,*) '        Observed deadend: ', trim(print_deadend(experiment(iexp)%deadend(i))) ; call writelog(str)
-      if ( ignore_missing_residues ) then
-        missing_residue(i) = .true.
-      else
         error = .true.
-      end if
-    end do checkdeadend
-
-    ! Remove deadends with missing atoms in the structure if desisred
-
-    if ( ignore_missing_residues ) then
-      j = experiment(iexp)%ndeadends
-      do i = j, 1, -1
-        if ( missing_residue(i) ) then
-          call remove_deadend(experiment(iexp),i)
-        end if
-      end do
-    end if
-    deallocate( missing_residue )
-
-    checktypes1 : do i = 1, experiment(iexp)%ntypes
-      do j = 1, natoms
-        if ( atom(j) .in. experiment(iexp)%linktype(i)%atom1%residue ) cycle checktypes1
-      end do
-      call writelog(blank)
-      write(str,*) ' WARNING: First atom of link type does not correspond to any atom of the structure. ' ; call writelog(str)
-      write(str,*) '          Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
-      write(str,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
-      warning = .true.
-    end do checktypes1
- 
-    checktypes2 : do i = 1, experiment(iexp)%ntypes
-      do j = 1, natoms
-        if ( atom(j) .in. experiment(iexp)%linktype(i)%atom2%residue ) cycle checktypes2
-      end do
-      call writelog(blank)
-      write(str,*) ' WARNING: Second atom of link type does not correspond to any atom of the structure. ' ; call writelog(str)
-      write(str,*) '          Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
-      write(str,*) '          Link type: ', trim(print_linktype(experiment(iexp)%linktype(i))) ; call writelog(str)
-      warning = .true.
-    end do checktypes2
-
-    checkobstype : do i = 1, experiment(iexp)%nobs
-      do j = 1, experiment(iexp)%ntypes
-        if ( experiment(iexp)%observed(i) .matches. experiment(iexp)%linktype(j) ) then
-          experiment(iexp)%observed(i)%type = j
-          cycle checkobstype
-        end if
-      end do
-      call writelog(blank)
-      write(str,*) ' ERROR: Observed link does not match any link type. ' ; call writelog(str)
-      write(str,*) '        Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
-      write(str,*) '        Obseved link: ', trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
-      error = .true.
-    end do checkobstype
-
-  end do
-  if ( error ) stop
-
-  ! Checking whether atoms that define observed links are missing in the structure
-
-  error = .false.
-  do iexp = 1, nexp
-    do k = 1, experiment(iexp)%nobs
-
-      ! Type of linker of this observation
-
-      j = experiment(iexp)%observed(k)%type
-
-      ! Checking first residue of observed link (the next question is ok because the 
-      ! observed link was already tested for consistency with some linktype previously)
-
-      testatom = experiment(iexp)%linktype(j)%atom1
-      if ( experiment(iexp)%observed(k)%residue1%name /= testatom%residue%name ) then
-        testatom = experiment(iexp)%linktype(j)%atom2
-      end if
-      error = .true.
-      do i = 1, natoms
-        if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue1%chain ) then
-          if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue1%index ) then
-            if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue1%name ) then
-              if ( atom(i)%name == testatom%name ) then
-                error = .false.
-                exit
+        do i = 1, natoms
+          if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue2%chain ) then
+            if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue2%index ) then
+              if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue2%name ) then
+                if ( atom(i)%name == testatom%name ) then
+                  error = .false.
+                  exit
+                end if
               end if
             end if
           end if
+        end do
+        if ( error ) then
+          write(str,*) ' ERROR: Atom missing in the structure is required for observed link: ' ; call writelog(str)
+          write(str,*) '        Missing atom: ', testatom%residue%name, &
+                       experiment(iexp)%observed(k)%residue2%index, &
+                       testatom%name ; call writelog(str)
+          stop
         end if
       end do
-      if ( error ) then
-        write(str,*) ' ERROR: Atom missing in the structure is required for observed link: ' ; call writelog(str)
-        write(str,*) '        Missing atom: ', testatom%residue%name, &
-                     experiment(iexp)%observed(k)%residue1%chain, &
-                     experiment(iexp)%observed(k)%residue1%index, &
-                     testatom%name ; call writelog(str)
-        stop
-      end if
-
-      ! Checking second residue of observed link
-
-      testatom = experiment(iexp)%linktype(j)%atom1
-      if ( experiment(iexp)%observed(k)%residue2%name /= testatom%residue%name ) then
-        testatom = experiment(iexp)%linktype(j)%atom2
-      end if
-      error = .true.
-      do i = 1, natoms
-        if ( atom(i)%residue%chain == experiment(iexp)%observed(k)%residue2%chain ) then
-          if ( atom(i)%residue%index == experiment(iexp)%observed(k)%residue2%index ) then
-            if ( atom(i)%residue%name == experiment(iexp)%observed(k)%residue2%name ) then
-              if ( atom(i)%name == testatom%name ) then
-                error = .false.
-                exit
-              end if
-            end if
-          end if
-        end if
-      end do
-      if ( error ) then
-        write(str,*) ' ERROR: Atom missing in the structure is required for observed link: ' ; call writelog(str)
-        write(str,*) '        Missing atom: ', testatom%residue%name, &
-                     experiment(iexp)%observed(k)%residue2%index, &
-                     testatom%name ; call writelog(str)
-        stop
-      end if
     end do
-  end do
  
-  ! Writing the observed and deadend data back
+    ! Writing the observed and deadend data back
 
-  do iexp = 1, nexp
+    do iexp = 1, nexp
 
+      call writelog(blank)
+      write(str,dashes) ; call writelog(str)
+      write(str,*) ' Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+
+      ! Printing observed links for this experiment
+         
+      if ( experiment(iexp)%nobs > 0 ) then
+        write(str,*) ' Observed links: ' ; call writelog(str)
+        do i = 1, experiment(iexp)%nobs
+          write(str,"( i5, a )") i, trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
+        end do
+      end if
+
+     ! Printing the observed deadend data
+        
+      if ( experiment(iexp)%ndeadends > 0 ) then
+        write(str,*) ' Observed deadends: ' ; call writelog(str)
+        do i = 1, experiment(iexp)%ndeadends
+          write(str,*) trim(print_deadend(experiment(iexp)%deadend(i))) ; call writelog(str)
+        end do
+      end if
+
+    end do
     call writelog(blank)
-    write(str,dashes) ; call writelog(str)
-    write(str,*) ' Experiment: ', trim(experiment(iexp)%name) ; call writelog(str)
+    write(str,dashes)  ; call writelog(str)
+    write(str,dashes)  ; call writelog(str)
 
-    ! Printing observed links for this experiment
-       
-    if ( experiment(iexp)%nobs > 0 ) then
-      write(str,*) ' Observed links: ' ; call writelog(str)
-      do i = 1, experiment(iexp)%nobs
-        write(str,"( i5, a )") i, trim(print_obs(experiment(iexp)%observed(i))) ; call writelog(str)
-      end do
-    end if
-
-   ! Printing the observed deadend data
-      
-    if ( experiment(iexp)%ndeadends > 0 ) then
-      write(str,*) ' Observed deadends: ' ; call writelog(str)
-      do i = 1, experiment(iexp)%ndeadends
-        write(str,*) trim(print_deadend(experiment(iexp)%deadend(i))) ; call writelog(str)
-      end do
-    end if
-
-  end do
-  call writelog(blank)
-  write(str,dashes)  ; call writelog(str)
-  write(str,dashes)  ; call writelog(str)
+  end if
 
   ! Counting how many atoms in the structure are "reactive", according to link types, save
   ! their indices in reactiveatom vector
@@ -1000,7 +1015,9 @@ program topolink
   ! Counting how many atoms in the structure are "reactive", according to observed reactivity
 
   call writelog(blank)
-  write(str,*) ' All reactive atoms, according to observations: '  ; call writelog(str)
+  if ( .not. skipchecks ) then
+    write(str,*) ' All reactive atoms, according to observations: '  ; call writelog(str)
+  end if
   i2 = 0
   reactive3 : do i = 1, natreactive
     i1 = reactiveatom(i)
@@ -1008,14 +1025,18 @@ program topolink
       do j = 1, experiment(iexp)%nobs
         if ( atom(i1) .in. experiment(iexp)%observed(j) ) then
           i2 = i2 + 1
-          write(str,*) i2, print_atom(atom(i1)) ; call writelog(str)
+          if ( .not. skipchecks ) then
+            write(str,*) i2, print_atom(atom(i1)) ; call writelog(str)
+          end if
           cycle reactive3
         end if
       end do
       do j = 1, experiment(iexp)%ndeadends
         if ( atom(i1) .in. experiment(iexp)%deadend(j) ) then
           i2 = i2 + 1
-          write(str,*) i2, print_atom(atom(i1)) ; call writelog(str)
+          if ( .not. skipchecks ) then
+            write(str,*) i2, print_atom(atom(i1)) ; call writelog(str)
+          end if
           cycle reactive3
         end if
       end do
@@ -1163,8 +1184,10 @@ program topolink
 
   ! Printing the list of reactive pairs of atoms
 
-  call writelog(blank)
-  write(str,*) ' List of reactive atom pairs, according to observations: '  ; call writelog(str)
+  if ( .not. skipchecks ) then
+    call writelog(blank)
+    write(str,*) ' List of reactive atom pairs, according to observations: '  ; call writelog(str)
+  end if
   j = 0
   do i = 1, npairs
     r1 = .false.
@@ -1180,10 +1203,12 @@ program topolink
         end if
       end if
     end do
-    if ( r1 ) then
-       write(str,"( i5, a, a, a )") j, print_atom(link(i)%atom1), &
-                                       print_atom(link(i)%atom2), &
-                                       trim(record) ; call writelog(str)
+    if ( .not. skipchecks ) then
+      if ( r1 ) then
+         write(str,"( i5, a, a, a )") j, print_atom(link(i)%atom1), &
+                                         print_atom(link(i)%atom2), &
+                                         trim(record) ; call writelog(str)
+      end if
     end if
   end do
 

@@ -34,6 +34,7 @@ module inputoptions
   logical :: mimicchain
   logical :: printaccessible
   logical :: ignore_missing_residues
+  logical :: skipchecks
 
   logical :: screen_log
   logical :: output_log
