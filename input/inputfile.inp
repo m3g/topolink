@@ -95,7 +95,8 @@ end experiment DSS
 
 # Optional parameters 
 
-search_limit relative 1.5  # Search for topological distances of up to search_range*dmaxlink
+#search_limit relative 1.5  # Search for topological distances of up to search_range*dmaxlink
+search_limit fixed 30.  # Search for topological distances of up to search_range*dmaxlink
 
 printallfound yes    # Prints, or not, the structure of the links that were found but violate the distances
 printPDBnotfound yes # Prints, or not, PDB files for the links which were not found at all (prints a straight line)
