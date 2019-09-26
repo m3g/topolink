@@ -9,6 +9,6 @@ http://m3g.iqm.unicamp.br/topolink
 
 <b>TopoLink: Evaluation structural models using chemical crosslinking distance constraints.</b>
 
-A. J. R. Ferrari, M. A. Clasen, L. Kurt, P. C. Carvalho, F. C. Gozzo, L Martínez
+A. J. R. Ferrari, M. A. Clasen, L. Kurt, P. C. Carvalho, F. C. Gozzo, L Martínez,
 Bioinformatics, 35 (17) 3169–3170, 2019. https://doi.org/10.1093/bioinformatics/btz014
 
